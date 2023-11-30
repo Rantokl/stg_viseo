@@ -1,0 +1,91 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+
+    <!--<record model="ir.ui.view" id="type_reclamation_list">
+      <field name="name">Reclamation list</field>
+      <field name="model">fleet.claim.type</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>-->
+    <record model="ir.ui.view" id="type_reclamation_form">
+      <field name="name">Reclamation form</field>
+      <field name="model">fleet.claim.type</field>
+      <field name="arch" type="xml">
+        <form>
+          <group>
+            <field name="name"/>
+          </group>
+
+        </form>
+      </field>
+    </record>
+
+    <!-- actions opening views on models -->
+    <record model="ir.actions.act_window" id="viseo_mobile.action_window">
+      <field name="name">Reclamation window</field>
+      <field name="res_model">fleet.claim.type</field>
+      <field name="view_mode">form</field>
+    </record>
+
+<!--
+    <record model="ir.ui.view" id="viseo_mobile.list">
+      <field name="name">viseo_mobile list</field>
+      <field name="model">viseo_mobile.viseo_mobile</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+-->
+
+    <!-- actions opening views on models -->
+<!--
+    <record model="ir.actions.act_window" id="viseo_mobile.action_window">
+      <field name="name">viseo_mobile window</field>
+      <field name="res_model">viseo_mobile.viseo_mobile</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+-->
+
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="viseo_mobile.action_server">
+      <field name="name">viseo_mobile server</field>
+      <field name="model_id" ref="model_viseo_mobile_viseo_mobile"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="viseo_mobile" id="viseo_mobile.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="viseo_mobile.menu_1" parent="viseo_mobile.menu_root"/>
+    <menuitem name="Menu 2" id="viseo_mobile.menu_2" parent="viseo_mobile.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="viseo_mobile.menu_1_list" parent="viseo_mobile.menu_1"
+              action="viseo_mobile.action_window"/>
+    <menuitem name="Server to list" id="viseo_mobile" parent="viseo_mobile.menu_2"
+              action="viseo_mobile.action_server"/>
+-->
+  </data>
+</odoo>
