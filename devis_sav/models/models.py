@@ -162,7 +162,8 @@ class devis_pdf_sav(models.Model):
     
 class DemandeDevis(models.Model):
     _name = 'sale.order.demand'
-
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _description = 'Demande de devis'
 
 
     customer_id = fields.Many2one('res.partner', string="Client", related="customer_vehicle_id.driver_id")
@@ -227,7 +228,7 @@ class OpenSaleOrderDemand(models.Model):
         return {
             'type': 'ir.actions.act_window',
             'name': 'Demande(s) de devis',
-            'view_mode': 'tree',
+            'view_mode': 'tree,form',
             'res_model': 'sale.order.demand',
             'domain': [('customer_vehicle_id', '=', self.id)],
             'context': {'default_customer_vehicle_id': self.id}
