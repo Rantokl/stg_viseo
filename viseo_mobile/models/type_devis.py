@@ -12,7 +12,7 @@ class Typedevis(models.Model):
     def create(self,vals):
         curs, connex = database.dbconnex(self)
         res = super(Typedevis, self).create(vals)
-        curs.execute("""INSERT INTO public.viseoApi_typedevis(
+        curs.execute("""INSERT INTO public."viseoApi_typedevis"(
         	id, libelle)
         	VALUES (%s, %s);
          """, (res.id, res.name))
@@ -29,7 +29,7 @@ class Typedevis(models.Model):
         id = self.id
         name = self.name
         curs.execute("""UPDATE
-                        public.viseoApi_typedevis
+                        public."viseoApi_typedevis"
                         SET
                         id =%s, libelle =%s
                         WHERE id = %s;
