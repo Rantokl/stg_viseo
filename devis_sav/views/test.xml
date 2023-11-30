@@ -1,0 +1,117 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+    <!-- <record model="ir.ui.view" id="devis_sav_list">
+      <field name="name">Liste des types de devis SAV</field>
+      <field name="model">type.devis.sav</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+
+        </tree>
+      </field>
+    </record> -->
+
+     <record id="button_devis_form" model="ir.ui.view">
+            <field name="name">devis_sav.view.form</field>
+            <field name="model">sale.order</field>
+            <!-- <field name="mode">primary</field> -->
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+            <!-- <xpath expr="//notebook/page[@name='customer_signature']" position="after">
+                    
+                    <page string="APK" name="export_pdf" >
+
+                      <button name="export_pdf" type="object" string="Envoi apk"  class="oe_highlight"/>
+
+                    </page>
+
+                    </xpath>
+                 <xpath expr="//button[@name='428']" position="before">
+                    <button name="export_pdf" type="object" string="Envoi apk"  class="oe_highlight"/>
+                    <button name="export_pdf" string="Envoi apk" type="object" class="oe_stat_button" icon="fa-globe icon"> 
+                </xpath> -->
+
+                <xpath expr="//button[@name='preview_sale_order']" position="before">
+                    <!-- <button name="export_pdf" type="object" string="Envoi apk"  class="oe_highlight"/> -->
+                    <button name="export_pdf" string="Envoi apk" type="object" class="oe_stat_button" icon="fa-globe icon"/>
+                </xpath> 
+
+                <!-- <xpath expr="//field[@name='family_group']" position="after">
+                   <field name="test1">
+                </xpath>  -->
+                
+            </field>
+        </record>
+
+    <!-- actions opening views on mode -->
+    <!-- <record model="ir.actions.act_window" id="devis_sav.action_window">
+      <field name="name">Type de devis</field>
+      <field name="res_model">type.devis.sav</field>
+      <field name="view_mode">tree,form</field>
+    </record> -->
+    <record id="view_sale_order_pdf" model="ir.ui.view">
+            <field name="name">sale.order.pdf.view.form</field>
+            <field name="model">sale.order.pdf.view</field>
+            <field name="arch" type="xml">
+                <form string="Sale Order PDF">
+                    <group>
+                    <field name="sale_order_id" readonly="1"/>
+                    <field name="name" invisible="1"/>
+                    <field name="ir_attach" readonly="1"/>
+                    <field name="quotation_pdf" filename="name"/>
+                    <!-- <field name="datas" filename="name"/> -->
+                    </group>
+                </form>
+            </field>
+        </record>
+
+    <record id="launch_devis_pdf_sav" model="ir.actions.act_window">
+        <field name="name">devis pdf sav</field>
+        <field name="res_model">sale.order.pdf.view</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">form</field>
+        
+    </record>
+
+
+   
+
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="devis_sav.action_server">
+      <field name="name">devis_sav server</field>
+      <field name="model_id" ref="model_devis_sav_devis_sav"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="devis_sav" id="devis_sav.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="devis_sav.menu_1" parent="devis_sav.menu_root"/>
+    	-->
+    <!-- <menuitem name="Menu 2" id="devis_sav.menu" parent="fleet.fleet_configuration"/> -->
+
+
+    <!-- actions -->
+
+    <!-- <menuitem name="Tyde de devis" id="devis_sav_menu_1_list" parent="fleet.fleet_configuration"
+              action="devis_sav.action_window" sequence="5"/> -->
+
+<!--    <menuitem name="Server to list" id="devis_sav" parent="devis_sav.menu_2"-->
+<!--              action="devis_sav.action_server"/>-->
+
+  </data>
+</odoo>

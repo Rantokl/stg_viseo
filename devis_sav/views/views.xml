@@ -1,0 +1,135 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+    <record model="ir.ui.view" id="devis_sav_list">
+      <field name="name">Liste des types de devis SAV</field>
+      <field name="model">type.devis.sav</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+
+        </tree>
+      </field>
+    </record>
+
+    
+
+    <!-- actions opening views on mode -->
+    <record model="ir.actions.act_window" id="devis_sav.action_window">
+      <field name="name">Type de devis</field>
+      <field name="res_model">type.devis.sav</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+      <record model="ir.ui.view" id="demande_devis_sav_list">
+      <field name="name">Liste demande de devis via Application</field>
+      <field name="model">sale.order.demand</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="customer_vehicle_id"/>
+            <field name="customer_id"/>
+            <field name="type_devis"/>
+            <field name="date_devis"/>
+        </tree>
+      </field>
+    </record>
+
+
+
+
+
+
+    <record id="sale_order_demand_button" model="ir.ui.view">
+            <field name="name">inherited.sale.order.demand.button</field>
+            <field name="model">fleet.vehicle</field>
+            <field name="inherit_id" ref="viseo_parc_auto.new_fleet_vehicle_view_form"/>
+            <!--<field name="groups_id" eval="[(4, ref('mrp.group_mrp_user'))]"/>-->
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_view_claim']" position="before">
+                    <button  name="open_sale_order_demand" type="object" class="oe_stat_button"
+                         icon="fa-shopping-cart"  string="Demandes devis">
+
+                    </button>
+
+                </xpath>
+            </field>
+        </record>
+
+      <!--<record id="action_view_logs_vehicules" model="ir.actions.act_window">
+
+        <field name="name">Vehicule logs</field>
+        <field name="res_model">fleet.viseo.vehicule.logs</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="viseo_rfid.ir_vehicule_logs_button_view_form"/>
+        <field name="target">new</field>
+   </record>-->
+
+      <record id="action_view_sale_demand_inherit" model="ir.actions.act_window.view">
+            <field name="sequence" eval="5"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="demande_devis_sav_list"/>
+            <field name="act_window_id" ref="devis_sav.action_window_sale_demand"/>
+        </record>
+
+      <record model="ir.actions.act_window" id="action_window_sale_demand">
+      <field name="name">Listes des demandes de devis</field>
+      <field name="res_model">sale.order.demand</field>
+      <field name="view_mode">tree,form</field>
+          <field name="view_id" ref="devis_sav.demande_devis_sav_list"/>
+          <field name="target">new</field>
+    </record>
+
+      <!--<record id="vehicule_logs_button_view_form" model="ir.ui.view">
+            <field name="name">inherited.fleet.vehicle.viseo.inherit</field>
+            <field name="model">fleet.vehicle</field>
+
+            <field name="inherit_id" ref="viseo_parc_auto.new_fleet_vehicle_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_view_stock_move_lines']" position="after">
+                    <button name="open_vehicle_logs" type="object" class="oe_stat_button" icon="fa-exchange" string="Logs"/>
+                </xpath>
+
+            </field>
+        </record>-->
+
+
+   
+
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="devis_sav.action_server">
+      <field name="name">devis_sav server</field>
+      <field name="model_id" ref="model_devis_sav_devis_sav"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="devis_sav" id="devis_sav.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="devis_sav.menu_1" parent="devis_sav.menu_root"/>
+    	-->
+    <menuitem name="Menu 2" id="devis_sav.menu" parent="fleet.fleet_configuration"/>
+
+
+    <!-- actions -->
+
+    <menuitem name="Tyde de devis" id="devis_sav_menu_1_list" parent="fleet.fleet_configuration"
+              action="devis_sav.action_window" sequence="5"/>
+
+<!--    <menuitem name="Server to list" id="devis_sav" parent="devis_sav.menu_2"-->
+<!--              action="devis_sav.action_server"/>-->
+
+  </data>
+</odoo>

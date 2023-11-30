@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record model="ir.ui.view" id="wizard_form_view_quotation_validity_date">
+        <field name="name">wizard.form.devis.sav.application</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <form string="Wizard sale validity">
+                <group>
+                    
+                    <field name="name" invisible="1"/>
+                    <field name="report" filename="name"/>
+                </group>
+                <footer>
+                    <button name="export_pdf" string="Devis" type="object" class="oe_highlight"/>
+                    <button special="cancel" string="Annuler" class="btn btn-sm btn-default"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

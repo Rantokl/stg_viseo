@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_devis_sav_devis_sav,devis_sav.devis_sav,model_type_devis_sav,base.group_user,1,1,1,1
+access_sale_order_pdf_view,sale.order.pdf.view,model_sale_order_pdf_view,base.group_user,1,1,1,1
+access_sale_order_demand,sale.order.demand,model_sale_order_demand,base.group_user,1,1,1,1
+
