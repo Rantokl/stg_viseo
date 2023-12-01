@@ -1,0 +1,70 @@
+<odoo>
+	<data>
+	 	<record model="ir.ui.view" id="viseo_atelier_list_test">
+			<field name="name">Liste type de rendez-vous</field>
+			<field name="model">type_rdv.type_rdv</field>
+			<field name="arch" type="xml">
+				<tree>
+					<field name="atelier_id"/>
+					<field name="name"/>
+					<field name="sms"/>
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="viseo_atelier_form_test">
+			<field name="name">Formulaire type de rendez-vous</field>
+			<field name="model">type_rdv.type_rdv</field>
+			<field name="arch" type="xml">
+				<form>
+					<group>
+					<field name="atelier_id"/>
+					<field name="name"/>
+					<field name="sms"/>
+					</group>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="viseo_rdv_mobile_place_viseo">
+			<field name="name">viseo_rdv_mobile_place_tree</field>
+			<field name="model">place_vehicle.place_vehicle</field>
+			<field name="arch" type="xml">
+				<tree>
+					<field name="atelier_id"/>
+					<field name="name"/>
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="viseo_rdv_mobile_place_viseo_form">
+			<field name="name">viseo_rdv_mobile_pont_form</field>
+			<field name="model">place_vehicle.place_vehicle</field>
+			<field name="arch" type="xml">
+				<form>
+					<group>
+					<field name="atelier_id"/>
+					<field name="name"/>
+				</group>
+				</form>
+			</field>
+		</record>
+
+		<!-- actions opening views on models -->
+		<record model="ir.actions.act_window" id="place_vehicle_action_window">
+			<field name="name">Place</field>
+			<field name="res_model">place_vehicle.place_vehicle</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="type_rdv_vehicle_viseo_action_window">
+			<field name="name">Type de rendez-vous</field>
+			<field name="res_model">type_rdv.type_rdv</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem name="Type de rendez-vous" id="viseo_type_menu_2_list" parent="viseo_rdv_mobile.viseo_rdv_mobile_menu_root1" action="viseo_rdv_mobile.type_rdv_vehicle_viseo_action_window" sequence="5"/>
+		<menuitem name="Place" id="viseo_rdv_mobile_place" parent="viseo_rdv_mobile.viseo_rdv_mobile_menu_root1" action="viseo_rdv_mobile.place_vehicle_action_window" sequence="2"/>
+	</data>
+</odoo>
+

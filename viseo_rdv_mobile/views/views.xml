@@ -1,0 +1,248 @@
+<odoo>
+	<data>
+		<!-- explicit list view definition -->
+		<record id="viseo_rdv_mobile_gantt" model="ir.ui.view">
+			<field name="name">viseo_rdv_mobile_gantt</field>
+			<field name="model">viseo_rdv_mobile.viseo_rdv_mobile</field>
+			<field name="arch" type="xml">
+				<gantt 
+					string="Atelier"
+					default_group_by="atelier_id"
+					date_start="date_start"
+					date_stop="date_stop"
+					color="color"
+					scales="day,week,month,year"
+					default_scale="week"
+					precision="{'day': 'hour:full', 'week': 'day:full', 'month': 'day:full', 'year': 'day:full'}">
+					<field name="place_id"/>
+					<field name="atelier_id"/>
+					<field name="pont_id"/>
+					<field name="customer_vehicle_id"/>
+				</gantt>
+			</field>
+		</record>
+
+
+		<record id="viseo_mobile_rdv_list" model="ir.ui.view">
+			<field name="name">viseo_rdv_mobile_list</field>
+			<field name="model">viseo_rdv_mobile.viseo_rdv_mobile</field>
+			<field name="arch" type="xml">
+				<tree>
+					<field name="name"/>
+					<field name="atelier_id"/>
+					<field name="note"/>
+					<field name="customer_vehicle_id"/>
+					<field name="date_rdv"/>
+					<field name="date_start"/>
+					<field name="date_stop"/>
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+
+
+		<record id="rdv_vehicle_search_view" model="ir.ui.view">
+				<field name="name">viseo_rdv_vehicule_search</field>
+				<field name="model">viseo_rdv_mobile.viseo_rdv_mobile</field>
+				<field name="arch" type="xml">
+					<search string="RDV Vehicule">
+						<filter string="Demande" name="new" domain="[('state', '=', 'new')]"/>
+						<filter string="Broullion" name="draft" domain="[('state', '=', 'refused')]"/>
+						<filter string="Validé" name="refused" domain="[('state', '=', 'refused')]"/>
+						<filter string="Refusée" name="refused" domain="[('state', '=', 'refused')]"/>
+						<filter string="Annuler" name="cancelled" domain="[('state','in', ['canceled','refused'])]"/>
+						<!-- <filter string="En cours" name="active_rdv" domain="[('state','!=', ('refused','canceled'))]"/> -->
+					</search>
+				</field>
+		</record>
+
+
+		<record id="viseo_rdv_mobile_activity" model="ir.ui.view" >
+			<field name="name">viseo_rdv_mobile_activity</field>
+			<field name="model">viseo_rdv_mobile.viseo_rdv_mobile</field>
+			<field name="arch" type="xml">
+				<activity string="Rendez-vous véhicule">
+					<templates>
+						<div t-name="activity-box">
+							<div>
+								<field name="atelier_id" display="full"/>
+								<field name="place_id" muted="1" display="full"/>
+							</div>
+						</div>
+					</templates>
+				</activity>
+			</field>
+		</record>
+
+
+		<record id="viseo_rdv_vehicle_calendar_view" model="ir.ui.view">
+			<field name="name">viseo_rdv_vehicle_calendar</field>
+			<field name="model">viseo_rdv_mobile.viseo_rdv_mobile</field>
+			<field eval="2" name="priority"/>
+			<field name="arch" type="xml">
+				<calendar date_start="date_start" date_stop="date_stop" string="RDV véhicule" mode="week" color="color" event_limit="5">
+					<field name="customer_id" avatar_field="image_128"/>
+					<field name="state"/>
+					<field name="atelier_id"/>
+					<field name="pont_id"/>
+					<field name="place_id"/>
+					<field name="color" invisible="1"/>
+				</calendar>
+			</field>
+		</record>
+
+
+		<record id="viseo_mobile_rdv_form" model="ir.ui.view">
+			<field name="name">viseo_rdv_mobile_form</field>
+			<field name="model">viseo_rdv_mobile.viseo_rdv_mobile</field>
+			<field name="arch" type="xml">
+				<form>
+					<field name="current_user" invisible="1"/>
+					<field name="name" invisible="1"/>
+					<field name="date_start" invisible="1"/>
+					<field name="date_stop" invisible="1"/>
+					<field name="duration_unit" invisible="1"/>
+					<field name="duration" invisible="1"/>
+					<field name="note" invisible="1"/>
+					<field name="color" invisible="1"/>
+					<field name="state" invisible="1"/>
+					<field name="type_rendez_vous_id" invisible="1"/>
+					<field name="customer_id" invisible="1"/>
+					<field name="customer_vehicle_id" invisible="1"/>
+					<field name="atelier_id" invisible="1"/>
+					<field name="responsable_atelier_id" invisible="1"/>
+					<field name="emplacement" invisible="1"/>
+					<field name="place_id" invisible="1"/>
+					<field name="pont_id" invisible="1"/>
+					<field name="validator" invisible="1"/>
+					<field name="customer_vehicle_tag" invisible="1"/>
+
+					<header>
+						<button
+							name="action_ask_rdv" 
+							string="Demande rdv véhicule" 
+							class="oe_highlight"
+							type="object"
+							attrs="{'invisible':[
+								('state', '!=', 'new' ),
+							]}"/>
+						<button
+							name="action_validate_rdv" 
+							string="Autoriser" 
+							class="oe_highlight" 
+							type="object"
+							attrs="{'invisible':[
+								'|',
+								('validator', '=', False ),
+								('state', '!=', 'draft')
+							]}"/>
+						<button
+							name="action_not_validate_rdv" 
+							string="Refuser" 
+							class="oe_highlight"
+							type="object"
+							attrs="{'invisible':[
+								'|',
+								('validator', '=', False ),
+								('state', '!=', 'draft')
+							]}"/>
+						<button
+							name="action_cancel_rdv"
+							string="Annuler" 
+							class="oe_highlight" 
+							type="object" 
+							attrs="{'invisible':[
+								('validator', '=', False ),
+								('state', '=', 'new')
+							]}"/>
+
+						<field
+							name="state" 
+							widget="statusbar" 
+							statusbar_visible="new,draft,accepted,refused,canceled" 
+							statusbar_colors="{'KEY_IS_STATE':'VALUE_IS_COLOR'}"/>
+					</header>
+
+
+					<sheet>
+						<group class="row">
+							<group class="col" >
+								<field name="current_user" string="demandeur" readonly="1"/>
+								<field name="customer_vehicle_tag"/>
+								<field name="customer_id"
+									attrs="{'readonly':[ '|',('state','!=', 'new'),('validator','=',True)]}"/>
+								<field name="customer_vehicle_id" 
+									attrs="{'readonly':['|',('state','!=', 'new'),('validator','=',True)]}"/>
+								<field name="note" 
+									attrs="{'readonly':['|',('state','!=', 'new'),('validator','=',True)]}"/>
+								<separator/>
+								<field name="atelier_id" 
+									attrs="{'readonly':['|',('state','!=', 'new'),('validator','=',True)]}"/>
+								<field name="type_rendez_vous_id" 
+									attrs="{'readonly':['|',('state','!=', 'new'),('validator','=',True)]}"/>
+								<field name="date_start" 
+									attrs="{'readonly':['|',('state','!=', 'new'),('validator','=',True)]}"/>
+							</group>
+
+							<group class="col" >
+								<field name="responsable_atelier_id" readonly="1" 
+									attrs="{'readonly':['|',('state','in', ['canceled','refused']),('validator','=',False)]}"/>
+
+								<field name="emplacement" widget="radio" 
+									attrs="{'readonly':['|',('state','in', ['canceled','refused']),('validator','=',False)]}"/>
+								<field name="pont_id"
+									attrs="{
+										'invisible':[('emplacement', '=', 'pl')],
+										'readonly':['|',('state','in', ['canceled','refused']),('validator','=',False)]}"/>
+								<field name="place_id"
+									attrs="{
+										'invisible':[('emplacement', '=', 'pt')],
+										'readonly':['|',('state','in', ['canceled','refused']),('validator','=',False)]}"/>
+								<field name="mecanicien_id"
+									attrs="{'readonly':['|',('state','in', ['canceled','refused']),('validator','=',False)]}"/>
+					
+								<field name="duration_unit" 
+									attrs="{'readonly':['|',('state','in', ['canceled','refused']),('validator','=',False)]}"/>
+								<field name="duration" 
+									attrs="{'readonly':['|',('state','in', ['canceled','refused']),('validator','=',False)]}"/>
+								<field name="date_stop" 
+									attrs="{'readonly':['|',('state','in', ['canceled','refused']),('validator','=',False)],'invisible':['validator','=',False]}"/>
+							</group>
+						</group>
+					</sheet>
+					<div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+						<field name="message_ids" widget="mail_thread" options='{"thread_level": 1}'/>
+					</div>
+				</form>
+			</field>
+		</record>
+
+
+		<!-- actions opening views on models -->
+		<record model="ir.actions.act_window" id="viseo_rdv_mobile.action_window">
+			<field name="name">RDV Vehicule</field>
+			<field name="res_model">viseo_rdv_mobile.viseo_rdv_mobile</field>
+			<field name="context">{'search_default_active_rdv':1}</field>
+			<field name="view_mode">gantt,tree,form,calendar</field>
+		</record>
+
+		<record id="action_list_rdv_from_database" model="ir.actions.server">
+            <field name="name">Get edv</field>
+            <field name="model_id" ref="viseo_rdv_mobile.model_viseo_rdv_mobile_viseo_rdv_mobile"/>
+            <field name="state">code</field>
+            <field name="code">
+                action = model.rdv_check()
+            </field>
+        </record>
+
+		<menuitem name="RDV véhicule" id="viseo_rdv_mobile.menu_root" parent="fleet.menu_root" />
+		<menuitem name="RDV véhicule" id="viseo_rdv_mobile_menu_root1" parent="fleet.fleet_configuration"  sequence="2"/>
+		<menuitem name="Rendez-vous véhicules" id="viseo_rdv_mobile.menu_1_list" parent="viseo_rdv_mobile.menu_root" action="viseo_rdv_mobile.action_window"/>
+		<menuitem name="Recupérer rendez-vous" id="viseo_rdv_mobile.rdv_1_list" parent="viseo_rdv_mobile.menu_root" 
+		action="action_list_rdv_from_database"/>
+	</data>
+</odoo>
+
+
+

@@ -1,0 +1,600 @@
+# -*- coding: utf-8 -*-
+from datetime import timedelta, datetime
+from odoo import models, fields, api
+from odoo.exceptions import ValidationError
+from odoo.tools.translate import _
+from pprint import pprint
+import psycopg2
+import time
+import psycopg2
+
+def dbconnex(self):
+    connex = psycopg2.connect(database='mobile_101023',
+                               user='etech',
+                               password='3Nyy22Bv',
+                               host='10.68.132.2',
+                               port='5432')
+    curs = connex.cursor()
+
+    return curs, connex
+
+class viseo_rdv_mobile(models.Model):
+	_name = 'viseo_rdv_mobile.viseo_rdv_mobile'
+	_inherit = ['mail.thread', 'mail.activity.mixin']
+	_description = 'Rendez-vous véhicule'
+
+	name = fields.Char(string=f"RDV")
+	date_today = fields.Date(string='Date today', default=fields.Date.today)
+
+	current_user = fields.Many2one('res.users', string="Démandeur", readonly=True, default=lambda self: self.env.user.id)
+	@api.model
+	def create(self, sequence):
+		sequence['name'] = self.env['ir.sequence'].next_by_code('viseo_rdv_mobile.viseo_rdv_mobile') or '/' 
+		# place_pont = f"Place: {sequence.get('place_id')}" if sequence['place_id'] else f"Pont: {sequence.get('pont_id')}"
+		sequence['name'] = f"{sequence['name']}"
+
+		#sequence['date_rdv'] = time.strptime(sequence['date_start'],"%Y-%m-%d %H:%M:%S").date()
+		date = datetime.strptime(sequence['date_start'],"%Y-%m-%d %H:%M:%S").date()
+		print(date)
+		sequence['date_rdv'] = date
+		return super(viseo_rdv_mobile,self).create(sequence)
+
+
+
+
+	date_rdv = fields.Date('Date rdv')
+	date_start = fields.Datetime(string="Date RDV", default=False)
+	date_stop = fields.Datetime(string="Date fin", store=True)
+	duration_unit = fields.Selection(
+		string = "Unité du durrée",
+		selection = [
+			('day', 'Jour(s)'),
+			('hour', 'Heure(s)'),
+			('minute','Minute(s)')
+		],
+		default = 'hour',
+		required = True
+	)
+	duration = fields.Integer(
+		string = 'Durrée',
+		default = 1
+	)
+	note = fields.Text(string='Messages')
+	color = fields.Integer(default=1)
+	etat = fields.Boolean('Etat', default=False)
+	state = fields.Selection(string="Etat", selection=[
+		('new','Demande'),
+		('draft','En attente de validation'),
+		('accepted','Validé'),
+		('refused', 'Refusé'),
+		('canceled','Annulée')
+	], default="new", copy=False)
+
+	# fleet.vehicle.model
+	customer_id = fields.Many2one('res.partner', string="Client", related="customer_vehicle_id.driver_id")
+	customer_vehicle_id = fields.Many2one('fleet.vehicle', 'Vehicules')
+
+	customer_vehicle_tag = fields.Many2one('viseo.tag.rfid', string='Tag rfid', related='customer_vehicle_id.tag_rfid')
+	customer_vehicle_model = fields.Many2one('fleet.vehicle.model', string='Modèle du vehicule', related='customer_vehicle_id.model_id')
+
+	emplacement = fields.Selection(string="Emplacement", selection=[
+		('pl','Place'),
+		('pt','Pont'),
+	], default='pl', required=True )
+	@api.onchange("emplacement")
+	def _onchange_emplacement(self):
+		if self.pont_id:
+			self.pont_id = False
+		if self.place_id:
+			self.place_id = False
+
+	atelier_id = fields.Many2one('fleet.workshop.type', string='Atelier', group_expand="_read_group_atelier_ids", readonly=True)
+	responsable_atelier_id = fields.Many2one('res.users', string='Responsable atelier', related='atelier_id.responsable_id')
+	mecanicien_id = fields.Many2one('hr.employee', string='Mecaniciens')
+
+	place_id = fields.Many2one('place_vehicle.place_vehicle', 'Place', domain="[('atelier_id.id','=',atelier_id)]",copy=False, default=False)
+	pont_id = fields.Many2one('pont_vehicle.pont_vehicle', 'pont', domain="[('atelier_id.id','=',atelier_id)]",copy=False, default=False)
+
+	type_rendez_vous_id = fields.Many2one('type_rdv.type_rdv', string='Type de Rendez-vous', domain="[('atelier_id.id','=',atelier_id)]")
+
+	validator = fields.Boolean(compute='_check_validator')
+	rdv_id = fields.Integer()	
+
+
+	@api.model
+	def _read_group_atelier_ids(self, atelier_id, domain, order):
+		if self._context.get('restrict_rdv'):
+			return atelier_id
+		all_atelier = atelier_id.search([], order='name')
+		return all_atelier
+
+	def action_ask_rdv(self):
+		to_subscribe = self.responsable_atelier_id
+		substitute_leave = self.env['ir.module.module'].sudo().search(
+			[('name', '=', 'viseo_substitute_leave'), ('state', '=', 'installed')])
+		if substitute_leave:
+			if to_subscribe.substitute_id:
+				to_subscribe |= to_subscribe.substitute_id
+		rdv = self.message_post(
+
+			body = '''Demande de rendez-vous de Mr(s) {} le {}'''.format(self.customer_id.name, self.date_start),
+			subject = "Demande de rendez-vous pour {}".format(self.type_rendez_vous_id.name),
+			partner_ids = self.responsable_atelier_id.partner_id.ids
+		)
+		print(rdv.email_from)
+		self.message_subscribe(partner_ids=to_subscribe.partner_id.ids)
+		return self.write({'state': 'draft','color':3}), rdv
+
+	def action_validate_rdv(self):
+
+		mecano = self.mecanicien_id
+		place = self.place_id
+		pont = self.pont_id
+		date_start = self.date_start
+		choice = self.emplacement
+		if choice == 'pl':
+			if mecano.id == False or place.id == False:
+				raise ValidationError(('Veuillez ajouter un mecano ou une place'))
+			else:
+				records = self.env['viseo_rdv_mobile.viseo_rdv_mobile'].search(
+					[('state', '=', 'accepted'), ('id', '<', self.id)])
+				if records:
+					for record in records:
+						if record.mecanicien_id.id == mecano.id and record.date_start == date_start:
+							raise ValidationError(('Vous ne pouvez pas avoir la mécano à la même période'))
+						else:
+							self.message_post(
+								body="Votre demande de rendez-vous du {} pour {} a été validée".format(self.date_start,
+																									   self.type_rendez_vous_id.name),
+								subject="Demande de rendez-vous pour {}".format(self.type_rendez_vous_id),
+								partner_ids=self.customer_id.ids
+							)
+							curs, connex = dbconnex(self)
+							self.message_subscribe(partner_ids=self.customer_id.ids)
+							curs.execute("""UPDATE
+										public."viseoApi_rendezvous"
+										SET
+										status_rendez_vous_id = %s
+										WHERE id = %s;
+									""", (2, self.rdv_id))
+							connex.commit()
+							connex.close()
+							return self.write({'state': 'accepted', 'color': 4})
+				else:
+					return self.write({'state': 'accepted', 'color': 4})
+		elif choice == 'pt':
+			if mecano.id == False or pont.id == False:
+				raise ValidationError(('Veuillez ajouter un mecano ou un pont'))
+			else:
+				records = self.env['viseo_rdv_mobile.viseo_rdv_mobile'].search(
+					[('state', '=', 'accepted'), ('id', '<', self.id)])
+				if records:
+					for record in records:
+						if record.mecanicien_id.id == mecano.id and record.date_start == date_start:
+							raise ValidationError(('Vous ne pouvez pas avoir la mécano à la même période'))
+						else:
+							print("Validé Mecano :", mecano.id)
+							return self.write({'state': 'accepted', 'color': 4})
+				else:
+					self.message_post(
+						body="Votre demande de rendez-vous du {} pour {} a été validée".format(self.date_start,
+																							   self.type_rendez_vous_id.name),
+						subject="Demande de rendez-vous pour {}".format(self.type_rendez_vous_id),
+						partner_ids=self.customer_id.ids
+					)
+					curs, connex = dbconnex(self)
+					self.message_subscribe(partner_ids=self.customer_id.ids)
+					curs.execute("""UPDATE
+								public."viseoApi_rendezvous"
+								SET
+								status_rendez_vous_id = %s
+								WHERE id = %s;
+							""", (2, self.rdv_id))
+					connex.commit()
+					connex.close()
+					return self.write({'state': 'accepted', 'color': 4})
+
+
+	def action_not_validate_rdv(self):
+		# if not self.validator:
+		# 	raise UserError("Vous ne pouvez pas valider cette rendez-vous")
+		# else:
+		self.message_post(
+			body="Votre demande de rendez-vous du {} pour {} a été refusée".format(self.date_start, self.type_rendez_vous_id.name),
+			subject="Demande de rendez-vous pour {}".format(self.type_rendez_vous_id),
+			partner_ids=self.current_user.ids
+		)
+		return self.write({'state': 'refused', 'color': 1})
+
+	def action_cancel_rdv(self):
+		# if not self.validator:
+		# 	raise UserError("Vous ne pouvez pas annuler cette rendez-vous")
+		# else:
+		self.message_post(body="Votre rendez-vous du {} est annulée".format(self.date_start),
+					subject="Retour demande de rendez-vous", partner_ids=self.customer_id.ids)
+		curs, connex = dbconnex(self)
+
+		rdv_id = self.rdv_id
+		curs.execute("""UPDATE public."viseoApi_rendezvous"
+						SET
+						status_rendez_vous_id = %s
+						WHERE id = %s;
+						""", (3, rdv_id))
+		connex.commit()
+		connex.close()
+		return self.write({'state': 'canceled', 'color' : 1})
+
+	def _check_validator(self):
+		current_user = self.env.user.id
+		responsables = self.responsable_atelier_id.id
+		if current_user == responsables or  self.env.user.id == 2:
+			self.validator = True
+		else:
+			self.validator = False
+
+
+	@api.onchange('date_start')
+	def _onchange_start_date(self):
+		if self.date_start and self.duration:
+			if self.duration_unit == 'day':
+				self.date_stop = self.date_start + timedelta(days=self.duration)
+			elif self.duration_unit == 'hour':
+				self.date_stop = self.date_start + timedelta(hours=self.duration)
+			elif self.duration_unit == 'minute':
+				self.date_stop = self.date_start + timedelta(minutes=self.duration)
+
+	@api.onchange('duration_unit')
+	def _onchange_duration_unit(self):
+		if self.duration > 0:
+			if self.date_start:
+				if self.duration_unit == 'day':
+					self.date_stop = self.date_start + timedelta(days=self.duration)
+				elif self.duration_unit == 'hour':
+					self.date_stop = self.date_start + timedelta(hours=self.duration)
+				elif self.duration_unit == 'minute':
+					self.date_stop = self.date_start + timedelta(minutes=self.duration)
+			else:
+				self.date_start = datetime.now()
+				if self.duration_unit == 'day':
+					self.date_stop = self.date_start + timedelta(days=self.duration)
+				elif self.duration_unit == 'hour':
+					self.date_stop = self.date_start + timedelta(hours=self.duration)
+				elif self.duration_unit == 'minute':
+					self.date_stop = self.date_start + timedelta(minutes=self.duration)
+
+	@api.onchange('duration')
+	def _onchange_duration(self):
+		self._onchange_start_date()
+
+	@api.onchange('date_stop')
+	def _onchange_date_stop(self):
+		if self.date_stop and self.date_start:
+			diff_date = self.date_stop - self.date_start
+			if self.duration_unit != 'hour':
+				self.duration_unit == 'hour'
+			self.duration = diff_date.total_seconds() / 3600
+
+	@api.constrains('date_start', 'date_stop', 'pont_id', 'place_id')
+	def _check_date(self):
+		if self.emplacement == 'pl':
+			domain = [
+				('date_start', '<', self.date_stop),
+				('date_stop', '>', self.date_start),
+				('atelier_id', '=', self.atelier_id.id),
+				('id', '!=', self.id),
+				('place_id', '=', self.place_id.id),
+				('place_id', '!=', False),
+			]
+
+		if self.emplacement == 'pt':
+			domain = [
+				('date_start', '<', self.date_stop),
+				('date_stop', '>', self.date_start),
+				('atelier_id', '=', self.atelier_id.id),
+				('id', '!=', self.id),
+				('pont_id', '=', self.pont_id.id),
+				('pont_id', '!=', False),
+			]
+
+		if self.search_count(domain):
+			appointments = self.search(domain)
+
+			print()
+			print(domain)
+			print()
+			print()
+			for x in appointments:
+				print(x.name)
+				print(x.place_id.name)
+				print(x.pont_id.name)
+			print()
+			print()
+			print()
+
+			raise ValidationError(_('Vous ne pouvez pas avoir deux rendez-vous qui se superposent à la même période sur un meme place ou pont'))
+
+
+	def get_ganttt_data(self):
+		rdv_id = self.env['viseo_rdv_mobile.viseo_rdv_mobile'].search([('atelier_id','!=',False)])
+		atelier_id = self.env['fleet.workshop.type'].search([('name','!=',False)])
+		datasets = []
+		for x in atelier_id:
+			data = {
+				'redirection_Id': '',
+				'id': '',
+				'name': '',
+				'actualStart': None,
+				'actualEnd': None,
+				'children': []
+			}
+			data["id"] = x.id
+			data["name"] = x.name
+			datasets.append(data)
+
+			if x.pont_id:
+				for y in x.pont_id:
+					children = {
+						'redirection_Id': '',
+						'id': '',
+						'name': '',
+						'actualStart': None,
+						'actualEnd': None,
+						'children': []
+					}
+					children["id"] = y.id
+					children["name"] = y.name
+					data['children'].append(children)
+
+			if x.place_id:
+				for y in x.place_id:
+					children = {
+						'redirection_Id': '',
+						'id': '',
+						'name': '',
+						'actualStart': None,
+						'actualEnd': None,
+						'children': []
+					}
+					children["id"] = y.id
+					children["name"] = y.name
+					data['children'].append(children)
+		print()
+		print()
+		print()	
+		print()
+		print()
+		for x in rdv_id:
+			print(x.name)	
+			print(x.date_start)
+			print(x.date_stop)
+			print(x.atelier_id.name)
+			if x.place_id:
+				print(x.place_id.name)
+			if x.pont_id:
+				print(x.pont_id.name)
+			print()
+			for data in datasets:
+				if data["id"] == x.atelier_id.id :
+					for place in data['children']:
+						if x.place_id:
+							if place["id"] == x.place_id.id and place["name"] == x.place_id.name:
+								place["actualStart"] = x.date_start
+								place["actualEnd"] = x.date_stop
+
+						if x.pont_id:
+							if place["id"] == x.pont_id.id and place["name"] == x.pont_id.name:
+								place["actualStart"] = x.date_start
+								place["actualEnd"] = x.date_stop
+
+		print()
+		pprint(datasets, sort_dicts=False)	
+		print()
+		print()
+		print()
+		print()
+
+
+		return datasets
+
+	def rdv_check(self):
+		print("Test")
+		conn = psycopg2.connect(database='mobile_101023',
+								user='etech',
+								password='3Nyy22Bv',
+								host='10.68.132.2',
+								port='5432')
+
+		cur = conn.cursor()
+		cur.execute(f"""
+			SELECT 
+				rv.id, 
+				rv.message, 
+				rv.owner_id, 
+				rv.vehicle_id, 
+				drv.type_rendez_vous_id, 
+				drv.date_rendez_vous, 
+				drv.heure_rendez_vous
+			FROM public."viseoApi_rendezvous" rv INNER JOIN public."viseoApi_daterendezvous" drv on rv.date_rendez_vous_id = drv.id
+			
+			
+		""")
+
+		rows = cur.fetchall()
+		print(rows)
+		if rows:
+			for row in rows:
+				print("date: ",row[5],"heure ", row[6])
+
+				existing_record = self.env['viseo_rdv_mobile.viseo_rdv_mobile'].search([('rdv_id', '=', row[0])])
+				if existing_record:
+					print("pass")
+					continue
+
+
+				type_rdv_id = self.env['type_rdv.type_rdv'].search([('id', '=', int(row[4]))])
+				date_start = str(row[5]) +' ' +str(row[6])
+				print(date_start)
+				date_format = "%Y-%m-%d %H:%M:%S"
+				parsed_datetime = datetime.strptime(str(date_start), date_format)
+				time_duration = timedelta(hours=1)
+				gmt = timedelta(hours=3)
+				parsed_datetime = parsed_datetime - gmt
+				new_datetime = parsed_datetime + time_duration
+					# print(atel.atel.id)
+				record = {
+						'rdv_id': row[0],
+						'customer_id': row[2],
+						'note': row[1],
+						'atelier_id': type_rdv_id.atelier_id.id,
+						'place_id': False,
+						'pont_id': False,
+						'customer_vehicle_id': row[3],
+						'type_rendez_vous_id': row[4],
+						'date_start': str(parsed_datetime),
+						'date_stop': str(new_datetime),
+						'state': 'draft'
+					}
+
+
+				rdv = self.env['viseo_rdv_mobile.viseo_rdv_mobile'].create(record)
+
+				rdv1, rdv2 = rdv.action_ask_rdv()
+				rdv2 = self.env['mail.mail'].sudo().search([('mail_message_id','=',rdv2.id)])
+				mail = rdv2.send()
+				if mail:
+					print("Create success")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class ViseoTagRfidInherit(models.Model):
+    _inherit = 'viseo.tag.rfid'
+
+    name = fields.Char(string='Tag RFID')
+    vehicle_id = fields.Many2one('fleet.vehicle', 'Vehicules')
+    partner_id = fields.Many2one('res.partner', string="Propriétaire")
+
+class AtelierVehicle(models.Model):
+	_inherit = 'fleet.workshop.type'
+	responsable_id = fields.Many2one('res.users', string='Responsable(s)')
+
+	pont_id = fields.One2many('pont_vehicle.pont_vehicle', 'atelier_id', string="pont")
+	place_id = fields.One2many('place_vehicle.place_vehicle', 'atelier_id', string="Place")
+	type_rdv_id = fields.One2many('type_rdv.type_rdv', 'atelier_id', string="Type de rendez-vous")
+
+class PlaceVehicle(models.Model):
+	_name= 'place_vehicle.place_vehicle'
+
+	name = fields.Char("Place")
+	atelier_id = fields.Many2one('fleet.workshop.type', 'Atelier')
+
+class PondVehicle(models.Model):
+	_name = 'pont_vehicle.pont_vehicle'
+
+	name = fields.Char("pont")
+	atelier_id = fields.Many2one('fleet.workshop.type', 'Atelier')
+
+class Typerdv(models.Model):
+	_name= 'type_rdv.type_rdv'
+
+	name = fields.Char("Type de rendez-vous")
+	atelier_id = fields.Many2one('fleet.workshop.type', 'Atelier')
+	sms = fields.Text("Sms pour client", size=170)
+
+	@api.model
+	def create(self,vals):
+		res = super(Typerdv, self).create(vals)
+
+		curs, connex = dbconnex(self)
+		curs.execute("""
+			INSERT INTO public."viseoApi_typerendezvous"(id, libelle) VALUES (%s, %s);
+		""", (res.id, res.name))
+		connex.commit()
+		connex.close()
+		print()
+		print()
+		print()
+		print('database record created')
+		print()
+		print()
+		print()
+		print()
+
+		return res
+
+
+	def write(self,vals):
+		curs, connex = dbconnex(self)
+		res = super(Typerdv, self).write(vals)
+		id = self.id
+		name = self.name
+		curs.execute("""
+			UPDATE public."viseoApi_typerendezvous"
+			SET id =%s, libelle =%s
+			WHERE id = %s;
+		""", (id, name,id))
+		curs.execute("""SELECT * FROM public."viseoApi_typerendezvous";
+		""")
+
+		connex.commit()
+		connex.close()
+
+		print()
+		print()
+		print()
+		print()
+		print()
+		print()
+		print('database record modified')
+		print()
+		print()
+		print()
+		print()
+		return res
+
+	def unlink(self):
+		res = super(Typerdv,self).unlink()
+		id = self.id
+		print(id)
+		curs, connex = dbconnex(self)
+		curs.execute("""
+			DELETE FROM public."viseoApi_typerendezvous" WHERE id = %s
+		""", (str(id)))
+		connex.commit()
+		connex.close()
+		print()
+		print()
+		print()
+		print('database record created')
+		print()
+		print()
+		print()
+		print()
+		return res
+

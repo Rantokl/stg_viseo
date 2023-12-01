@@ -1,0 +1,42 @@
+<odoo>
+	<data>
+		<record id="fleet_workshop_type_list" model="ir.ui.view">
+			<field name="name">fleet_workshop_type.list</field>
+			<field name="model">fleet.workshop.type</field>
+			<field name="inherit_id" ref="viseo_repair_order.fleet_service_workshop_type_view_tree"/>
+			<field name="arch" type="xml">
+				<xpath expr="//tree" position="replace">
+					<tree string="Caption">
+						<field name="name"/>
+						<field name="responsable_id" string="Responsable(s)"/>
+						<field name="type_rdv_id" string="Type de rendez-vous" widget="many2many_tags"/>
+						<field name="pont_id" string="pont" widget="many2many_tags"/>
+						<field name="place_id" string="Place" widget="many2many_tags"/>
+					</tree>
+				</xpath>
+			</field>
+		</record>
+
+		<record id="fleet_workshop_type_form" model="ir.ui.view">
+			<field name="name">fleet_workshop_type.form</field>
+			<field name="model">fleet.workshop.type</field>
+			<field name="arch" type="xml">
+				<form>
+					<group>
+						<field name="name"/>
+						<field name="responsable_id" string="Responsable(s)"/>
+						<field name="type_rdv_id" string="Type de rendez-vous" widget="many2many_tags"/>
+						<field name="pont_id" widget="many2many_tags" string="pont"/>
+						<field name="place_id" widget="many2many_tags" string="Place" />
+					</group>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="viseo_repair_order.action_workshop_type">
+			<field name="name">Type d'atelier</field>
+			<field name="res_model">fleet.workshop.type</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+	</data>
+</odoo>

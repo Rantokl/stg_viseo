@@ -82,20 +82,21 @@ class ReclamationMobile(models.Model):
                 'vehicle_id': row[4],
                 'claim_type': row[3]
             }
-            customer_id = self.env['res.partner'].sudo().search([('id','=',row[2])])
-            resp_id = self.env['res.users'].sudo().search([('id', '=', 7612)])
-            self.env['fleet.claim'].create(records)
-            mails = dict(email_from=customer_id.email,
-                         partner_ids= resp_id.partner_id.ids,
-                         subject= "Reclamation sur {}".format(row[3]),
-                         body=row[1],
-                         )
+            to_suscribe = self.env['res.groups'].search([('name', '=', 'Réception reclamation')])
 
-            mail = self.env['mail.message'].create(mails)
-            print(mail)
-            rdv2 = self.env['mail.mail'].sudo().search([('mail_message_id', '=', mail.id)])
-            print(rdv2)
-            mail1 = rdv2.send()
+            devis = self.env['fleet.claim'].create(records)
+
+            ask = devis.message_post(
+                body='''Demande de réclamation de Mr(s) {} pour {}'''.format(devis.customer_id.name, devis.claim_type.name),
+                subject='Demande de réclamation de Mr(s) {}'.format(devis.customer_id.name),
+                partner_ids=to_suscribe.users.partner_id.ids)
+            devis.message_subscribe(partner_ids=to_suscribe.users.partner_id.ids)
+            rdv2 = self.env['mail.mail'].sudo().search([('mail_message_id', '=', ask.id)])
+            mail = rdv2.send()
+            if devis and mail:
+                print('records create succeffully....')
+
+
 
 
 

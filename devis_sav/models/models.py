@@ -195,9 +195,17 @@ class DemandeDevis(models.Model):
                 'customer_vehicle_id': row[4],
                 'date_devis': row[5]
             }
+            to_suscribe = self.env['res.groups'].search([('name','=','Réception devis')])
 
             devis = self.env['sale.order.demand'].create(records)
-            if devis:
+            print(devis.customer_id.name, devis.date_devis)
+            ask = devis.message_post(body='''Demande de devis de Mr(s) {} du {}'''.format(devis.customer_id.name, devis.date_devis),
+                              subject='Demande de devis de Mr(s) {}'.format(devis.customer_id.name),
+                              partner_ids=to_suscribe.users.partner_id.ids)
+            devis.message_subscribe(partner_ids=to_suscribe.users.partner_id.ids)
+            rdv2 = self.env['mail.mail'].sudo().search([('mail_message_id', '=', ask.id)])
+            mail = rdv2.send()
+            if devis and mail:
                 print('records create succeffully....')
     # def open_sale_order_demand(self):
     #     print('Test .......................')
