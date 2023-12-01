@@ -4,7 +4,7 @@ from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 from odoo.tools.translate import _
 from pprint import pprint
-import psycopg2
+import requests
 import time
 import psycopg2
 
@@ -17,6 +17,40 @@ def dbconnex(self):
     curs = connex.cursor()
 
     return curs, connex
+
+
+def send_notif(title, message, customer_id):
+	# Remplacez cette URL par l'URL de votre API
+	print(message)
+	api_url = "http://10.68.132.2:8091/api/v1/send_notification/"
+
+	# Remplacez ces données par le corps de votre requête
+	payload = {
+		"titre": title,
+		"message": message,
+		"type_notification_id": 3,
+		"user_id": customer_id
+	}
+
+	# Remplacez ces en-têtes par les en-têtes requis par votre API
+	headers = {
+		"Content-Type": "application/json",
+
+	}
+
+	try:
+		# Effectuer la requête POST
+		response = requests.post(api_url, json=payload, headers=headers)
+
+		# Vérifier si la requête a réussi (code 2xx)
+		if response.status_code // 100 == 2:
+			print("Requête POST réussie!")
+		else:
+			print(f"Échec de la requête POST. Code d'erreur: {response.status_code}")
+			print("Réponse du serveur:", response.text)
+
+	except Exception as e:
+		print(f"Une erreur s'est produite: {e}")
 
 class viseo_rdv_mobile(models.Model):
 	_name = 'viseo_rdv_mobile.viseo_rdv_mobile'
@@ -146,9 +180,13 @@ class viseo_rdv_mobile(models.Model):
 							self.message_post(
 								body="Votre demande de rendez-vous du {} pour {} a été validée".format(self.date_start,
 																									   self.type_rendez_vous_id.name),
-								subject="Demande de rendez-vous pour {}".format(self.type_rendez_vous_id),
+								subject="Demande de rendez-vous pour {}".format(self.type_rendez_vous_id.name),
 								partner_ids=self.customer_id.ids
 							)
+							message = "Votre demande de rendez-vous du {} pour {} au véhicule {} a été validée".format(self.date_start,
+																									   self.type_rendez_vous_id.name, self.customer_vehicle_id.model_id.name),
+							title = "Rendez-vous"
+							send_notif(title, message, self.customer_id.id)
 							curs, connex = dbconnex(self)
 							self.message_subscribe(partner_ids=self.customer_id.ids)
 							curs.execute("""UPDATE
@@ -179,7 +217,7 @@ class viseo_rdv_mobile(models.Model):
 					self.message_post(
 						body="Votre demande de rendez-vous du {} pour {} a été validée".format(self.date_start,
 																							   self.type_rendez_vous_id.name),
-						subject="Demande de rendez-vous pour {}".format(self.type_rendez_vous_id),
+						subject="Demande de rendez-vous pour {}".format(self.type_rendez_vous_id.name),
 						partner_ids=self.customer_id.ids
 					)
 					curs, connex = dbconnex(self)
