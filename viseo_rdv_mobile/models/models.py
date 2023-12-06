@@ -19,16 +19,16 @@ def dbconnex(self):
     return curs, connex
 
 
-def send_notif(title, message, customer_id):
+def send_notif(title, message,type_notif , customer_id):
 	# Remplacez cette URL par l'URL de votre API
-	print(message)
-	api_url = "http://10.68.132.2:8091/api/v1/send_notification/"
+	#print(message[0])
+	api_url = "http://10.68.132.2:8090/api/v1/send_notification/"
 
 	# Remplacez ces données par le corps de votre requête
 	payload = {
 		"titre": title,
-		"message": message,
-		"type_notification_id": 3,
+		"message": message[0],
+		"type_notification_id": type_notif,
 		"user_id": customer_id
 	}
 
@@ -151,8 +151,8 @@ class viseo_rdv_mobile(models.Model):
 				to_subscribe |= to_subscribe.substitute_id
 		rdv = self.message_post(
 
-			body = '''Demande de rendez-vous de Mr(s) {} le {}'''.format(self.customer_id.name, self.date_start),
-			subject = "Demande de rendez-vous pour {}".format(self.type_rendez_vous_id.name),
+			body = '''Demande de rendez-vous de Mr(s) {} pour {} le {}'''.format(self.customer_id.name, self.type_rendez_vous_id.name, self.date_start, ),
+			subject = "Demande de rendez-vous de Mr(s) {}".format(self.customer_id.name),
 			partner_ids = self.responsable_atelier_id.partner_id.ids
 		)
 		print(rdv.email_from)
@@ -181,12 +181,12 @@ class viseo_rdv_mobile(models.Model):
 								body="Votre demande de rendez-vous du {} pour {} a été validée".format(self.date_start,
 																									   self.type_rendez_vous_id.name),
 								subject="Demande de rendez-vous pour {}".format(self.type_rendez_vous_id.name),
-								partner_ids=self.customer_id.ids
+								#partner_ids=self.customer_id.ids
 							)
-							message = "Votre demande de rendez-vous du {} pour {} au véhicule {} a été validée".format(self.date_start,
+							message = '''Votre demande de rendez-vous du {} pour {} au véhicule {} a été validée'''.format(self.date_start,
 																									   self.type_rendez_vous_id.name, self.customer_vehicle_id.model_id.name),
 							title = "Rendez-vous"
-							send_notif(title, message, self.customer_id.id)
+							send_notif(title, message, 3,self.customer_id.id)
 							curs, connex = dbconnex(self)
 							self.message_subscribe(partner_ids=self.customer_id.ids)
 							curs.execute("""UPDATE
@@ -218,8 +218,13 @@ class viseo_rdv_mobile(models.Model):
 						body="Votre demande de rendez-vous du {} pour {} a été validée".format(self.date_start,
 																							   self.type_rendez_vous_id.name),
 						subject="Demande de rendez-vous pour {}".format(self.type_rendez_vous_id.name),
-						partner_ids=self.customer_id.ids
+						#partner_ids=self.customer_id.ids
 					)
+					message = '''Votre demande de rendez-vous du {} pour {} au véhicule {} a été validée'''.format(
+						self.date_start,
+						self.type_rendez_vous_id.name, self.customer_vehicle_id.model_id.name),
+					title = "Rendez-vous"
+					send_notif(title, message, 3, self.customer_id.id)
 					curs, connex = dbconnex(self)
 					self.message_subscribe(partner_ids=self.customer_id.ids)
 					curs.execute("""UPDATE
@@ -249,7 +254,14 @@ class viseo_rdv_mobile(models.Model):
 		# 	raise UserError("Vous ne pouvez pas annuler cette rendez-vous")
 		# else:
 		self.message_post(body="Votre rendez-vous du {} est annulée".format(self.date_start),
-					subject="Retour demande de rendez-vous", partner_ids=self.customer_id.ids)
+					subject="Retour demande de rendez-vous",
+					#partner_ids=self.customer_id.ids
+					)
+
+		message = '''Votre rendez-vous du {} est annulée'''.format(self.date_start,
+																									  ),
+		title = "Rendez-vous"
+		send_notif(title, message, 3,self.customer_id.id)
 		curs, connex = dbconnex(self)
 
 		rdv_id = self.rdv_id
