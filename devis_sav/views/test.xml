@@ -62,6 +62,14 @@
                     <field name="quotation_pdf" filename="name"/>
                     <!-- <field name="datas" filename="name"/> -->
                     </group>
+                    <footer>
+                    <!--<button name="export_pdf" string="Devis" type="object" class="oe_highlight"/>
+                    <button special="cancel" string="Annuler" class="btn btn-sm btn-default"/>-->
+                    <button string="Envoyer au client" type="object" class="oe_highlight" icon="fa-upload"
+                                    name="save_pdf_to_server"/>
+                        <button string="Test" type="object" class="oe_highlight"
+                                    name="test_info"/>
+                </footer>
                 </form>
             </field>
         </record>

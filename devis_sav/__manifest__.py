@@ -29,6 +29,7 @@
         'views/views.xml',
         'views/test.xml',
         'views/templates.xml',
+        'views/sequence.xml',
         'wizard/sale/sale_pdf.xml'
     ],
     # only loaded in demonstration mode

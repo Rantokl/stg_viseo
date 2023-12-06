@@ -13,6 +13,8 @@
                 <footer>
                     <button name="export_pdf" string="Devis" type="object" class="oe_highlight"/>
                     <button special="cancel" string="Annuler" class="btn btn-sm btn-default"/>
+                    <button string="Enregistrer sur le serveur" type="object" class="oe_highlight" icon="fa-upload"
+                                    name="save_pdf_to_server"/>
                 </footer>
             </form>
         </field>
