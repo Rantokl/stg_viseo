@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<report
+	id="contrat_vente_vehicule"
+	string="contrat de vente vehicule"
+	model="sale.order"
+	report_type="qweb-pdf"
+	name="devis_pdf_vente.contrat_de_vente"
+	file="devis_pdf_vente.contrat_de_vente"
+/>
+<!-- V.23.25052 -->
+<template id="contrat_de_vente">
+	<t t-call="web.html_container">
+		<t t-foreach="docs" t-as="o">
+			<t t-call="web.basic_layout">
+
+				<div class="contrat_contaier_all">
+					<center><h1>CONTRAT DE VENTE A CREDIT AVEC CONSTITUTION DE GAGE</h1></center>
+					<u class="contrat_left"><h5>CATEGORIE:</h5></u>
+
+					<div class="contrat_section">
+						<p>Entre les soussignés :</p>
+						<p>
+							<div>
+								1. La Société CONTINENTAL AUTO SA au Capital de MGA 43 614 000 000 
+								dont le siège est à ANDRAHARO – GALAXY VILLAGE ANTANANARIVO – R.C. N° 2569/2002 B 00264 – 
+								N° d’Identification Statistique : 45101 11 1993 0 10001 TANANARIVE, 
+								représentée par Mr ANDRIATSIMBA Mandimbisoa Joel
+							</div>
+							<div>(Désignée au cours des présentes sous la dénomination "Le vendeur")</div>
+						</p>
+						<div class="contrat_left">d’une part,</div>
+					</div>
+
+					<div class="contrat_section">
+						<p class="contrat_display_inline">2. <div class="contrat_display_inline" t-field="o.partner_id"></div> , ayant son siège social à </p>
+						<div style>
+							NIF : <span>.............</span> STAT : <span>.............</span> RCS : <span>.............</span>
+						</div>
+						<p>
+							<div>Domiciliation bancaire :</div>
+							<div>
+								représentée par <div class="contrat_display_inline" t-field="o.partner_id"></div> fonction Mandataire, 
+								CIN N° <div class="contrat_display_inline" t-field="o.partner_id.cin"></div> 
+								du <div class="contrat_display_inline" t-field="o.partner_id.cin_du"></div>, 
+								à <div class="contrat_display_inline" t-field="o.partner_id.place_of_issue"></div>, 
+								télephone n° <div class="contrat_display_inline" t-field="o.partner_id.phone">.</div>.
+							</div>
+							(Désigné au cours des présentes sous la dénomination "Le Débiteur")
+						</p>
+						<div class="contrat_left">d’une part,</div>
+					</div>
+
+					<div class="contrat_section">
+						<p>
+							<div>- et M / Mme <span>.............</span></div>
+							(Désigné au cours des présentes sous la dénomination  "L’Avaliste")
+						</p>
+						<p>
+							<div>Carte d’Identité N° <span>.............</span> déliver à <span>.............</span></div>
+							<div>Profession :<span>.............</span></div>
+							<div>Date et lieu de naissance :<span>.............</span></div>
+							<div>Domicile réel ou élu :<span>.............</span></div>
+							<div>Nationalité :<span>.............</span></div>
+							<div>Domiciliation bancaire :<span>.............</span></div>
+						</p>
+
+						<div class="contrat_left">encore d’autre part,</div>
+					</div>
+
+					<div class="contrat_section" >
+						<p>Date du contrat :</p>
+						<p><b>Article 1er –</b> <span>.............</span> ; déclare par les présentes, avoir acheté et pris livraison du vendeur :</p>
+
+						<p>
+							<div>Le véhicule ci-après désigné :</div>
+							<div><b>NEUF / D’OCCASION</b> (en état tel que vu et agréé après un essai satisfaisant) : </div>
+							(Rayer la mention inutile)
+						</p>
+						
+						<p>Ci-après désigné :</p>
+						
+						<div t-foreach="o.vehicle_ids" t-as="vehicle_ids">
+							Couleur : <div class="contrat_display_inline" t-field="vehicle_ids.color"></div>
+							<table>
+								<tr>
+									<td>Marque : <div class="contrat_display_inline"  t-field="vehicle_ids.model_id"></div></td>
+									<td>Type : <div class="contrat_display_inline"  t-field="vehicle_ids.color"></div></td>
+								</tr>
+								<tr>
+									<td>N° de série : <div class="contrat_display_inline"  t-field="vehicle_ids.vin_sn"></div></td>
+									<td>N° d’Immatriculation : <div class="contrat_display_inline"  t-field="vehicle_ids.license_plate"></div></td>
+								</tr>
+							</table>
+						</div>
+
+						
+						<div t-foreach="o.order_line" t-as="order_line">
+							<p>
+								<div>Prix (TVA incluse)      : <div class="contrat_display_inline" t-field="order_line.price_subtotal" ></div></div>
+								<div>Prime d’Assurance       : <u><span>..............</span></u></div>
+							</p>
+							<p>
+								<div>TOTAL                   : <div class="contrat_display_inline" t-field="o.amount_total" ></div></div>
+								<div>Versement au comptant % : <div class="contrat_display_inline" > ........... </div></div>
+							</p>
+							<p>	
+								<div>Domicilié chez          :<u><div class="contrat_display_inline" >...........</div></u></div>
+								<div>
+									Intérêts et Agios       : 1,5 % du montant en retard par tranches de 30 jours, 
+									comme stipulé dans les conditions générales de vente, lues et agréées par le Débiteur, 
+									et qui font partie intégrante du présent contrat.
+								</div>
+							</p>
+						</div>
+
+
+						<p>Représenté par <span>...........</span> TRAITES acceptées</p>
+						<p>AVOIR</p>
+						<div>Représenté par <span>...........</span> CHEQUES acceptés</div>
+						<table>
+							<tr>
+								<td>PAIEMENT</td>
+								<td>MONTANT</td>
+								<td>QUANTITE</td>
+								<td>TOTAL</td>
+								<td>DU</td>
+								<td>JUSQU’AU</td>
+							</tr>
+							<tr>
+								<td>..........</td>
+								<td>..........</td>
+								<td>..........</td>
+								<td>..........</td>
+								<td>..........</td>
+								<td>..........</td>
+							</tr>
+						</table>
+
+						<!-- <hr> -->
+
+						<center><p><b>TOTAL GENERAL: MGA</b> <span>...........</span></p></center>
+					</div>
+					
+					<div class="contrat_section">
+						<p>
+							<b>Article 2. -</b> A la garantie des traites acceptées, comme dit à l’article précédent, le débiteur affecte spécialement, à titre de gage
+							et nantissement; le véhicule sus indiqué au profit du vendeur et de tous porteurs successifs desdites traites conformément à la
+							loi N°2003-041 du 03 septembre 2004 sur les sûretés et les articles 2071-2084 du Code Civil .Il certifie que le vendeur est seul
+							bénéficiaire d’un gage sur le véhicule.
+						</p>
+						<p class="contrat_indent">
+							Le vendeur se chargera de faire l’immatriculation au nom du débiteur et effectuera l’ensemble des formalités
+							administratives et fiscales pour la mise en gage du véhicule à son profit conformément à l’article 122 de loi N°2003-041 du 03
+							septembre 2004 sur les sûretés.
+						</p>
+						<p class="contrat_indent">
+							Les frais administratifs pour la réception technique, l’immatriculation, l’inscription de gage seront à la charge du
+							débiteur, ces rubriques pourront :
+
+							<label class="contrat_check_cont contrat_indent">
+								Faire l’objet d’une remise totale ou partielle (les rubriques figurent sur le devis correspondant)
+								<span class="contrat_checkmark"></span>
+							</label>
+							<label class="contrat_check_cont contrat_indent">
+								Etre inclus ; et au cas par cas ; dans le prix du véhicule
+								<span class="contrat_checkmark"></span>
+							</label>
+							(Veuillez cocher l’option retenue et apporter une précision ici si nécessaire)
+						</p>
+						<p>..........................................................</p>
+					</div>
+
+					<div class="contrat_section">
+						<p>
+							<b>Article 3. -</b> Le débiteur s’engage à entretenir convenablement le véhicule.
+						</p>
+						<p class="contrat_indent">
+							Il s’oblige à contracter et maintenir pendant toute la durée du crédit, auprès d’une Compagnie agréée ou représentée
+							par le vendeur, une assurance garantissant le véhicule gagé contre tous les risques et couvrant en outre, sans limitation les
+							risques d’accident aux tiers.
+						</p>
+						<p class="contrat_indent">
+							Un avenant de délégation précisant que la prime a été intégralement payée pour la durée totale du crédit sera adressé
+							au vendeur. La quittance de ce règlement sera jointe à l’avenant.
+						</p>
+						<p class="contrat_indent">
+							Le débiteur autorise le vendeur à informer la Compagnie d’Assurance en cause, pour valoir notification de la
+							délégation consentie. Aucun règlement de sinistre ne pourra être effectué sans le concours et hors la présence de vendeur.
+						</p>
+					</div>
+
+					<div class="contrat_section">
+						<p>
+							<b>Article 4. -</b> Jusqu’à complet paiement des traites, l’acheteur s’interdit formellement de sortir le véhicule hors de Madagascar
+							sans autorisation du vendeur, de le céder, d’en effectuer une cession sous quelque forme que ce soit. La violation de cet
+							engagement entraînera l’exigibilité de toutes les traites non échues et l’application des sanctions de l’article 400 Code Pénal.
+						</p>
+					</div>
+
+					<div class="contrat_section">
+						<p>
+							<b>Article 5. -</b> Le débiteur autorise le créancier gagiste à vérifier en tout temps l’existence et l’état du véhicule. Il s’engage d’autre
+							part à déclarer sous huitaine au vendeur ou à son subrogé, tout accident grave entraînant une importante dépréciation de la
+							valeur du véhicule.
+						</p>
+					</div>
+
+					<div class="contrat_section">
+						<p>
+							<b>Article 6. -</b> Le défaut du paiement à l’échéance d’une seule des traites créées en représentation du solde , à première injonction
+							du vendeur, le véhicule avec la carte grise et les papiers administratifs y afférents (attestation d’assurance, carnet d’entretien et
+							autres) sera conduit à un lieu indiqué afin que le vendeur puisse exercer ses droits de créancier gagiste et ce, en quelque lieu ou
+							en quelques mains que puisse se trouver le véhicule, sous peines de poursuites en application de l’Article 400 du Code Pénal et
+							sans préjudice de l’exercice par ce vendeur de tous ses droits de créancier gagiste résultant de la loi N°2003-041 du 03
+							septembre 2004 sur les sûretés et de l’Article 2078 du Code Civil.
+						</p>
+					</div>
+					
+					<div class="contrat_section">
+						<p><b>Article 7.</b></p>
+						<div class="contrat_article_7_1">
+							<p>
+								<div class="contrat_article_7_index">a)</div> A compter de la date de l’échéance des effets ou de la date de l’exigibilité survenue par anticipation, les intérêts
+								courent de plein droit du jour de l’arrêté des comptes.
+							</p>
+							<p>
+								<div class="contrat_article_7_index">b)</div> Si le débiteur ne satisfait pas à l’injonction de conduire son véhicule au lieu indiqué et à la disposition du vendeur
+								avec remise de la carte grise, ledit vendeur pourra se pouvoir par toutes voies de droit afin d’appréhender son gage en
+								quelque lieu ou en quelques mains que ce soit, ou le faire appréhender par l’Officier Public éventuellement chargé de
+								la vente. Il pourra solliciter par simple requête toutes ordonnances à cet effet, ordonnances assorties de l’exécution
+								provisoire, nonobstant toutes voies de recours.
+							</p>
+							<p>
+								<div class="contrat_article_7_index">c)</div> Dans tous les cas où, en raison de retards dans les paiements, le vendeur engage les formalités extra-judiciaires ou
+								des procédures, que ce soit ou non pour parvenir à la réalisation de son gage, le débiteur est tenu de plein droit au
+								remboursement des frais et honoraires dus aux officiers ministériels et aux avocats, d’après leur tarif, et ce, au besoin,
+								à titre de clause pénale. Toute immobilisation du véhicule, quelle qu’en soit l’origine, n’entraîne nullement
+								suspension des obligations du débiteur.		
+							</p>
+							<p>
+								<div class="contrat_article_7_index">d)</div> Au cas, où les sommes obtenues par la réalisation de gage ne seraient pas suffisantes pour payer le solde restant dû
+								par le débiteur en principal, intérêts, frais divers et honoraires exposés pour toutes procédures, ce dernier restera tenu
+								du montant à parfaite, qui pourra lui être réclamé par toutes voies de droit.		
+							</p>
+							<p>
+								<div class="contrat_article_7_index">e)</div> Le vendeur pourra saisir exécuter entre les mains de toutes les banques, toutes sommes appartenant au débiteur ainsi
+								que tous les effets mobiliers et immobiliers jusqu’à la concurrence des sommes tant en principal qu’en intérêts et en
+								frais divers dont il est redevable envers le vendeur et ce, dans l’observation des règles de procédure.		
+							</p>
+							<p>
+								<div class="contrat_article_7_index">f)</div> Le débiteur consent à ce que les obligations sus-stipulées reçoivent leur exécution forcée dans toutes leurs
+								dispositions et renonce expressément à les attaquer, en aucune manière par voie d’opposition, d’appel ou autres.
+							</p>
+							<p>
+								<div class="contrat_article_7_index">g)</div> Le débiteur reconnaît en outre avoir pris connaissance des points suivants de l’article 88-89 et 124 de la loi N°2003-
+								041 du 03 septembre 2004 sur les sûretés :				
+							</p>
+						</div>
+
+						<div class="contrat_article_7_2">
+							<p>
+								<div class="contrat_article_7_index">1.</div> Par dérogation à l’article 89, à défaut de paiement à l’échéance, le créancier même non muni d’un titre
+								exécutoire, peut, huit jours après une simple signification faite au débiteur et au tiers bailleur de gage, s’il y
+								en a un, faire procéder à la vente publique des objets donnés en gage.
+							</p>
+							<p>
+								<div class="contrat_article_7_index">2.</div> Les ventes autres que celles dont les agents de change peuvent seuls être chargés sont faites par le ministère
+								des huissiers, sans que soit requise leur désignation par voie judiciaire. (art 88)
+							</p>
+							<p>
+								<div>
+									<div class="contrat_article_7_index">3.</div> Sans préjudice des dispositions de l’article 88 ci-dessus, faute de paiement à l’échéance, le créancier gagiste
+									muni d’un titre exécutoire peut huit jours après une sommation restée infructueuse, faite au débiteur et s’il y
+									a lieu, au tiers constituant de gage :
+								</div>
+								<div>
+									-soit faire procéder à la vente forcée de la chose gagée, dans les conditions prévues par les dispositions
+									organisant les voies d’exécution ;
+								</div>
+								<div>
+									-soit se faire attribuer le gage par simple ordonnance sur requête, jusqu’à due concurrence et d’après
+									estimation suivant les cours ou à dire d’expert. (Art 89)
+								</div>
+							</p>
+							<p>
+								<div class="contrat_article_7_index">4.</div> Faute de paiement à l’échéance, le créancier nanti exerce son droit de suite et procède à la réalisation du
+								matériel et des véhicules automobiles selon les dispositions de l’article 88. (art 124)
+							</p>
+							<p>
+								<div class="contrat_article_7_index">5.</div> Toute clause qui autorise le créancier à s’approprier le gage ou en disposer sans les formalités ci-dessus
+								prescrites est nulle.
+							</p>
+						</div>
+					</div>
+
+					<div class="contrat_section">
+						<p>
+							<b>Article 8. - REQUISITION DE GAGE, -</b> Dans le cas de réquisition civile ou militaire, le débiteur s’engage à déclarer à
+							l’autorité opérant la réquisition que le véhicule réquisitionné est l’objet d’une constitution de gage et à informer sans délai le
+							créancier gagiste par lettre recommandée. Le reçu délivré est joint à cette lettre.
+						</p>
+					</div>
+
+					<div class="contrat_section">
+						<p>
+							<b>Article 9. -</b> Le débiteur donne par les présentes au vendeur tous pouvoirs de recevoir de toutes caisses publiques et notamment
+							de la Caisse des Dépôts et Consignations, la totalité de l’indemnité de réquisition et s’engage à les renouveler, dans les formes
+							qui lui seraient indiquées, pour l’encaissement des indemnités de réquisition. L’application du montant des indemnités aux
+							sommes restant dues à titre de principal, intérêts et frais, peut laisser un excédent qui sera versé au débiteur par chèque, on au
+							déficit que le débiteur sera tenu de couvrir dans les huit jours de l’avis qui lui en sera donné, pour obtenir par un
+							désintéressement intégral la remise des traites acceptées par lui.
+						</p>
+					</div>
+
+					<div class="contrat_section">
+						<p>
+							<b>Article 10. - ETABLISSEMENT DES COMPTES.-</b> Tous droits taxes auxquels l’exécution des présentes pourra donner lieu
+							sont à la charge de débiteur, ainsi que tous les débours que nécessite le recouvrement de la créance par voies de droit. Toute
+							somme exigible dont le paiement subit un retard imputable au débiteur produit de plein droit intérêts au taux décompté au
+							présent contrat.
+						</p>
+					</div>
+
+					<div class="contrat_section">
+						<p>
+							<b>Article 11. -</b> Le débiteur peut également se libérer par anticipation des effets à échoir. La demande doit être accompagnée du
+							versement des sommes dues et des frais de banque. Ce paiement étant fait aux conditions prévues à l’article 137 et 2 du Code
+							de Commerce.
+						</p>
+					</div>
+
+					<div class="contrat_section">
+						<p>
+							<b>Article 12. -</b> Après complet règlement des sommes dues en principal, intérêts et frais ; le créancier gagiste fera procéder à la
+							radiation du gage pris sur le véhicule.
+						</p>
+						<p class="contrat_indent">
+							Pour tenir compte des délais de retour des effets éventuellement impayés, cette formalité peut n’intervenir que 35
+							jours après la dernière échéance, sauf avis sort obtenu à la demande du débiteur et à ses frais.
+						</p>
+					</div>
+
+					<div class="contrat_section">
+						<p>
+							<b>Article 13. -</b> La caution ou l’avaliste éventuellement constitues pourront toujours être poursuivis solidairement avec le débiteur
+							principal devant le Tribunal d’attribution de compétence désigné aux présentes.
+						</p>
+						<p class="contrat_indent">
+							Le vendeur sera dans tous les cas, dispensé du protêt des effets impayés et de l’avis à l’Article 149 du Code de
+							Commerce.
+						</p>
+						<p class="contrat_indent">
+							Les dispositions du présent acte et spécialement celles des deux paragraphes qui précédent seront opposables à la
+							caution ou à l’avaliste du seul fit de leur signature au bas de cet acte.
+						</p>
+						<p class="contrat_indent">
+							Le vendeur pourra subroger dans tous ses droits lesdits garants acquittant la dette et plus généralement tous tiers
+							porteurs des effets créés comme dit à l’article premier.
+						</p>
+					</div>
+
+
+					<div class="contrat_section">
+						<p>
+							<b>Article 14. -</b> Il est formellement convenu que les avalistes ou cautions, s’il en existe, pourront, en cas d’impayés, être
+							poursuivis par le porteur directement, principalement et sans discussion préalable ; pour le principal des effets impayés que
+							pour les intérêts et frais accessoires ci-dessous rappelés. Les avalistes ayant payé pour le compte de débiteur principal
+							bénéficieront de la subrogation légale des Articles 130 du Code de Commerce dans les droits du créancier gagiste.
+						</p>
+					</div>
+
+					<div class="contrat_section">
+						<p>
+							<b>Article 15. -</b> En cas de contestation ou de litige pouvant découler les présentes ou de ses suites, les Tribunaux du lieu de la
+							vente seront seuls compétents (sauf ce qui est dit aux Articles 6 et 7), même en cas de pluralité de défendeurs, et l’acceptation
+							de traites en règlement n’opère pas novation non plus que la prorogation ou la division éventuelle de traites en cours.
+						</p>
+					</div>
+
+					<div class="contrat_section">
+						<p>
+							<b>Article 16. -</b> Les frais des présentes, tous ceux qui en seront la suite et conséquences, notamment ceux exposés pour la
+							réalisation du gage, seront à la charge du débiteur.
+						</p>
+					</div>
+
+					<div class="contrat_section">
+						<p> 
+							<div><b>Article 17. -ELECTION DE DOMICILE- FORMALITES</b></div>
+							Le débiteur peut également se libérer par anticipation des effets à échoir. La demande doit être accompagnée du
+							versement des sommes dues et des frais de banque. Ce paiement étant fait aux conditions prévues à l’article 137 et 2 du Code
+							de Commerce.
+						</p>
+					</div>
+
+					<div class="contrat_section">
+						<p>
+							<b>Article 18. -</b> Le présent acte sera enregistré au Centre fiscal du 1er Arrondissement et au Registre de commerce du tribunal du
+							commerce d’Antananarivo (Article I-35 du code de procédure fiscale- Art 120-121-122 de la loi n°2002-041du 03 septembre
+							2004 sur les sûretés). La déclaration de gage sera inscrite au Centre immatriculateur d’Antananarivo. Il en sera de même pour
+							la radiation de gage.
+						</p>
+					</div>
+
+					<div class="contrat_footer">
+						<p>Fait en 05 (cinq) exemplaires et de bonne foi, en français à Antananarivo, le <span>.............</span></p>
+						<div class="d-flex justify-content-between">
+							<p>le vendeur</p>
+							<p>L’avaliste</p>
+							<p>Le débiteur</p>
+						</div>
+					</div>
+				</div>
+			</t>
+		</t>
+	</t>
+</template>
+</odoo>
+
+
+

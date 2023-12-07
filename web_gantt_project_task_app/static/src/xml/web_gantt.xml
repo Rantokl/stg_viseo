@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates>
+	<t t-name="GantttView">
+		<div>
+			<div class="o_ganttt_view" >
+				<div id="container"></div>
+			</div>
+		</div>
+	</t>
+</templates>

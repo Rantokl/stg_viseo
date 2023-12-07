@@ -1,0 +1,230 @@
+
+:root{
+	--main-color:#3399ff;
+}
+
+body{
+	margin: 0;
+	padding: 0;
+	font-size: small;
+	background-color: antiquewhite;
+}
+
+.row{
+	margin: 0;
+}
+
+/* ******************** table ******************** */
+
+table, td, th{  
+	border: 1.5px solid #3399ff;
+	text-align: left;
+}
+
+table {
+	border-collapse: collapse;
+	width: 100%;
+	margin-bottom: 1rem;
+}
+
+th, td {
+	padding: 5px;
+}
+
+p{
+	margin: 0 ;
+	padding: 1.5px 5px;
+}
+
+.content{
+	position: relative;
+	top: 14.8rem;
+}
+
+/* ******************** header ******************** */
+
+.logo_img{
+	height: 70px;
+	width: 100%;
+	text-align: right;
+	margin-bottom: 1rem;
+}
+
+.logo_img > img {
+	height: 100%;
+	padding: 10px 0 15px 10px;
+}
+
+.info_date {
+	display: flex;
+	margin-top: 1rem;
+}
+
+.title{
+	color: white;
+	background-color: #3399ff;
+}
+
+.blue{
+	color: #3399ff;
+	background-color: #d8ebff;
+}
+
+.head_col{	
+	border: 1.5px solid #3399ff;
+	padding: 0;
+	width: 32%;
+}
+
+.head_cont{	
+	padding: 7px 0 7px 7px;
+}
+
+.head_col p, .col b{
+	padding: 1px 1px;
+}
+
+.header .head_col:nth-child(2){
+	margin-left: 2.25%;
+	margin-right: 2.25%;
+}
+
+.signature .head_col:nth-child(2){
+	margin-left: 2.25%;
+	margin-right: 2.25%;
+}
+
+.line, .line-head, .line-car{
+	background-color: #3399ff;
+	height: 1.5px;
+	margin: 1.5rem 0;
+}
+
+.line-head{
+	margin-top: 0;
+}
+
+.line-car{
+	margin: 0.8rem 0;
+}
+
+#head_title {
+	padding-left: 80%;
+	color: #3399ff;
+}
+
+/* ******************** bar ******************** */
+
+.separator{
+	display: flex;
+	margin-bottom: 1rem;
+}
+
+.bar1{
+	width: 60%;
+}
+
+.bar2{
+	width: 10%;
+}
+
+.bar1, .bar2{
+	background-color: #3399ff;
+	height: 13px;
+	position: relative;
+	top: 8px;
+}
+
+.devis{
+	width: 30%;
+	color: #3399ff;
+	text-align: center;
+}
+
+/* ******************** observation ******************** */
+
+.observation{
+	margin: 0 0 0.5rem 0;
+	border: 0px;
+}
+
+.obs_item{
+	padding: 7px;
+	border: 1.5px solid #3399ff;
+}
+
+.observation .col-8{
+	border: 1.5px solid #3399ff;
+	padding: 0;
+}
+
+
+.note_observation{
+	margin: 1rem;
+	background-color: antiquewhite;
+}
+
+.observation .col-4{
+	padding: 0;
+	margin: 0;
+}
+
+#obs_table{
+	width: 97%;
+	margin-left: 3.3%;
+}
+
+#obs_table{
+	border: 1.5px solid #3399ff;
+}
+#obs_table th, #obs_table td{
+	border: 0;
+}
+#obs_table tr:nth-child(2) {
+	border-top: 1.5px solid #3399ff;
+}
+
+.amount{
+	text-align: right;
+}
+
+/* ******************** date ******************** */
+
+.date{
+	display: flex;
+}
+
+/* ******************** détails des véhicules ******************** */
+.details-sep{
+	margin-top: 2rem;
+}
+.det_vehicule{
+	height: 175px;
+}
+
+.title_vehicule{
+	margin: 0.5rem 0 0 1.5rem;
+}
+
+.logo-vehicule{
+	height: 50px;
+	margin-left: 0;
+}
+
+.img-vehicule{
+	max-height: 100%;
+}
+
+.img-fiche-tech{
+	max-height: 75%;
+}
+
+/* ******************** signature ******************** */
+
+.signature{
+	height: 150px;
+}
+
+.signature .title{
+	text-align: center;
+}
