@@ -12,29 +12,72 @@ init: function () {
 	this._super.apply(this, arguments);
 },
 
-_render: function () {
+_render: function () { 
 	this.$el.empty();
 	this.show_ganttt();
 	return $.when();
 },
 
+open_project_item_form_page: function(id) {
+	var self = this;
+	self.do_action({
+		type: 'ir.actions.act_window',
+		res_model: 'viseo.project.project',
+		// view_id: 'inherited_edit_project2',
+		views: [
+			[false, 'form']
+		],
+		target: 'current',
+		context: {
+			'form_view_ref': 'web_gantt_project_task_app.inherited_edit_project2',
+			'form_view_initial_mode': 'edit',
+		},
+		res_id: id
+	}, {
+		on_reverse_breadcrumb: this.on_reverse_breadcrumb,
+	});
+},
+
+
+open_task_item_form_page: function(id) {
+	var self = this;
+	self.do_action({
+		type: 'ir.actions.act_window',
+		res_model: 'viseo.project.task',
+		// view_id: 'inherited_edit_project2',
+		views: [
+			[false, 'form']
+		],
+		target: 'current',
+		context: {
+			'form_view_ref': 'web_gantt_project_task_app.inherited_view_task_form2',
+			'form_view_initial_mode': 'edit',
+		},
+		res_id: id
+	}, {
+		on_reverse_breadcrumb: this.on_reverse_breadcrumb,
+	});
+},
+
 
 show_ganttt: function () {
+	var self = this
 	anychart.onDocumentReady(function () {
+
 		core.bus.on('DOM_updated', this, function () {
-			// create data
+			console.log(this)
 			var url = window.location.href
 			var match = url.match(/active_id=(\d+)|\/web#id=(\d+)/);
-			var id = match ? match[1] : null;
-			console.log(url)
-			console.log(match)
-
+			var record_id = match ? match[1] : null;
+			
 			rpc.query({
 				model: 'viseo.project.project',
 				method: 'get_ganttt_data',
-				args: [id],
+				args: [record_id],
 			}).then(function(output) {
-
+				if ($('.o_ganttt_view #container')) {
+					$('.o_ganttt_view #container').remove()
+				}
 				$('.o_ganttt_view').css("height", "98%");
 
 				$('.o_ganttt_view').append(`
@@ -63,19 +106,19 @@ show_ganttt: function () {
 								<label>count: <input id="countInput" value="2" style="width:30px;"></label>
 							</div>
 						</div>
+						<style>
+							button, select, label {
+								margin: 5px 0 5px 10px;
+							}
+	
+							#container {
+								width: 100%;
+								height: calc(100% - 20px);
+								padding: 0;
+							}
+	
+						</style>
 					</div>
-					<style>
-						button, select, label {
-							margin: 5px 0 5px 10px;
-						}
-
-						#container {
-							width: 100%;
-							height: calc(100% - 20px);
-							padding: 0;
-						}
-
-					</style>
 				`);
 
 				// create a chart
@@ -233,10 +276,6 @@ show_ganttt: function () {
 				});
 
 				/******************************  ROW EVENTS  *********************************/
-				// port formation : 10.68.169.4:8097
-				// port reel : 10.68.169.3:8069
-				var ip = '127.0.0.1'
-				var port = (ip == "10.68.169.4") ? 8097 : 8069
 
 				// redirection vers formulaires
 				chart.listen("rowClick", function (row) {
@@ -244,16 +283,14 @@ show_ganttt: function () {
 					var hierarchical_id = row.item.get("id")
 					if (hierarchical_id.length > 1) { hierarchical_id = hierarchical_id.slice(-1) }
 
-					if (parseInt(hierarchical_id)) { window.location.href = 'http://' + ip + ':' + port + '/web#id=' + id + '&action=1367&model=viseo.project.project&view_type=form&cids=1&menu_id=925'; }
-					else { window.location.href = 'http://' + ip + ':' + port +'/web#id=' + id + '&action=1364&active_id=3&model=viseo.project.task&view_type=form&cids=1&menu_id=925'; }
+					if (parseInt(hierarchical_id)) { self.open_project_item_form_page(id); }
+					else { self.open_task_item_form_page(id); }
 
-
-					// http://10.68.163.4/web#id=32&action=1252&model=viseo.project.project&view_type=form&cids=1&menu_id=852
-					// http://10.68.163.4/web#id=2&action=1249&active_id=32&model=viseo.project.task&view_type=form&cids=1&menu_id=852
 				});
 
-				chart.fitAll();
 
+
+				chart.fitAll();
 				// create a data tree
 				var treeData = anychart.data.tree(output, "as-tree");
 
@@ -266,3 +303,6 @@ show_ganttt: function () {
 		})
 	})
 }})});
+
+
+

@@ -12,8 +12,7 @@ class Base(models.AbstractModel):
 
     @api.model
     def _get_default_ganttt_view(self):
-        """ Generates a default gantt view by trying to infer
-        time-based fields from a number of pre-set attribute names
+        """ Generates a default gantt view by trying to infer time-based fields from a number of pre-set attribute names
 
         :returns: a gantt view
         :rtype: etree._Element
