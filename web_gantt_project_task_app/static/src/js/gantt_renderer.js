@@ -171,19 +171,19 @@ show_ganttt: function () {
 				/******************************  COLUMN CONFIG  *********************************/
 				// FUNCTION STYLING for dataGrid data
 
-				function formatParent(data , children){
-					if (children) {
+				function formatParent(data , type){
+					if (type == 'project') {
 						return "<span style='font-weight:bold;color:#00234f;font-size:11px'>" + String(data).toUpperCase() + "</span>";
 					} else {
 						return "<span style='color:#00234f';font-size:14px>" + data + "</span>";
 					}
 				}
 
-				function formatDate(date, children){
+				function formatDate(date, type){
 					if ( isNaN(date) ) return '...'
 					let newDate = new Date(date);
 					let formatted_date = newDate.getDate() + "/" + (newDate.getMonth() + 1) + "/" + newDate.getFullYear();
-					return formatParent(formatted_date, children);
+					return formatParent(formatted_date, type);
 				}
 
 				// Column 1 style
@@ -193,7 +193,7 @@ show_ganttt: function () {
 				column1.title().fontSize(12).fontWeight('bold').fontColor('#00234f');
 				column1.labels().useHtml(true);
 				column1.labels().format(function(){
-					return formatParent(this.id, this.item.numChildren())
+					return formatParent(this.id, this.item.get("type"))
 				});
 
 				// Column 2 style
@@ -203,7 +203,7 @@ show_ganttt: function () {
 				column2.title().fontSize(12).fontWeight('bold').fontColor('#00234f');
 				column2.labels().useHtml(true);
 				column2.labels().format(function(){
-					return formatParent(this.name, this.item.numChildren())
+					return formatParent(this.name, this.item.get("type"))
 				});
 
 				// Column 3: start date style
@@ -214,7 +214,7 @@ show_ganttt: function () {
 				startColumn.title().fontSize(12).fontWeight('bold').fontColor('#00234f');
 				startColumn.labels().useHtml(true);
 				startColumn.labels().format(function(){
-					return formatDate(this.actualStart, this.item.numChildren())
+					return formatDate(this.actualStart, this.item.get("type"))
 				});
 
 				// Column 4: end date style
@@ -225,7 +225,7 @@ show_ganttt: function () {
 				endColumn.title().fontSize(12).fontWeight('bold').fontColor('#00234f');
 				endColumn.labels().useHtml(true);
 				endColumn.labels().format(function(){
-					return formatDate(this.actualEnd, this.item.numChildren())
+					return formatDate(this.actualEnd, this.item.get("type"))
 				});
 
 				// Column 5: durrée
@@ -243,7 +243,7 @@ show_ganttt: function () {
 					const diffTime = date2 - date1;
 					const diffDays = diffTime / (1000 * 60 * 60 * 24);
 
-					return formatParent( diffDays , this.item.numChildren());
+					return formatParent( diffDays , this.item.get("type"));
 				});
 
 				/******************************  EVENT LISTENER  *********************************/
@@ -280,10 +280,9 @@ show_ganttt: function () {
 				// redirection vers formulaires
 				chart.listen("rowClick", function (row) {
 					var id = row.item.get("redirection_Id");
-					var hierarchical_id = row.item.get("id")
-					if (hierarchical_id.length > 1) { hierarchical_id = hierarchical_id.slice(-1) }
+					var type = row.item.get("type")
 
-					if (parseInt(hierarchical_id)) { self.open_project_item_form_page(id); }
+					if ( type == 'project') { self.open_project_item_form_page(id); }
 					else { self.open_task_item_form_page(id); }
 
 				});

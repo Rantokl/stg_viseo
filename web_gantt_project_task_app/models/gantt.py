@@ -33,6 +33,7 @@ class GanttView(models.Model):
 			hierarchical_parent_Id = int_To_Roman(hierarchical_parent_Id) if isinstance(hierarchical_parent_Id, int) else hierarchical_parent_Id
 
 			data = {
+				'type': 'project',
 				'redirection_Id': project.id,
 				'id': hierarchical_parent_Id,
 				'name': project.name,
@@ -57,6 +58,7 @@ class GanttView(models.Model):
 					actual_end = None
 
 				data['children'].append({
+					'type': 'task',
 					'redirection_Id': task.id,
 					'id': hierarchical_Id,
 					'name': task.name,
