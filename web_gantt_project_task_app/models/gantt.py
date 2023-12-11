@@ -89,12 +89,12 @@ class GanttView(models.Model):
 
 		return all_projects
 
-		return []
+
 
 def convert_int_to_char(id_counter):
 	alphabet = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
 	return alphabet[id_counter - 1]
-
+	
 
 def int_To_Roman(num):
 	m = ["", "M", "MM", "MMM"]
@@ -109,6 +109,9 @@ def int_To_Roman(num):
 	ans = (thousands + hundreds + tens + ones)
  
 	return ans
+
+
+
 
 class ViseoTask(models.Model):
 	_inherit = "viseo.project.task"

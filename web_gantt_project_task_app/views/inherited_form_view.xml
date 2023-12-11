@@ -17,14 +17,24 @@
 		</field>
 	</record>
 
-	<record id="action_view_task_form2" model="ir.actions.act_window">
-		<field name="name">Open.Task.Form</field>
+	<record id="action_view_task_tee2" model="ir.actions.act_window">
+		<field name="name">Open.Task.tree</field>
 		<field name="res_model">viseo.project.task</field>
-		<field name="view_mode">form</field>
 		<field name="view_id" ref="viseo_project_project.view_task_tree2"/>
-		<field name="view_mode">form</field>
+		<field name="view_mode">tree</field>
 		<field name="target">current</field>
 	</record>
+
+
+	<record id="action_view_task_tee2" model="ir.actions.act_window">
+		<field name="name">Open.Task.tree</field>
+		<field name="res_model">viseo.project.task</field>
+		<field name="view_id" ref="viseo_project_project.view_task_tree2"/>
+		<field name="view_mode">tree</field>
+		<field name="target">current</field>
+	</record>
+
+
 
    <!-- Project -->
     <record id="inherited_edit_project2" model="ir.ui.view">
@@ -32,13 +42,64 @@
         <field name="model">viseo.project.project</field>
 		<field name="inherit_id" ref="viseo_project_project.edit_project2"/>
         <field name="arch" type="xml">
+			<div name='button_box' position='replace'>
+				<div class="oe_button_box" name="button_box" groups="base.group_user">
 
-			<!-- <xpath position="inside" expr="//div[@name='button_box']">
-				<button class="oe_stat_button" type="action"  name="%(action_view_task_form2)d" icon="fa-tasks" context="{'active_id': id}">
-					<field string="Tasks" name="task_count" widget="statinfo" options="{'label_field': 'label_tasks'}"/>
-				</button>
-            </xpath> -->
-        
+					<button 
+						class="oe_stat_button" 
+						type="action"
+						name="%(web_gantt_project_task_app.action_view_task_tee2)d" icon="fa-tasks" context="{'active_id': id}">
+						<field string="Tasks" name="task_count" widget="statinfo" options="{'label_field': 'label_tasks'}"/>
+					</button>
+
+					<button 
+						class="oe_stat_button" 
+						type="action"
+						name="%(web_gantt_project_task_app.action_view_task_tee2)d" icon="fa-tasks" context="{'active_id': id}">
+						<field string="Tasks" name="task_count" widget="statinfo" options="{'label_field': 'label_tasks'}"/>
+					</button>
+
+					<button 
+						class="oe_stat_button" 
+						type="action"
+						name="%(web_gantt_project_task_app.action_view_task_tee2)d" icon="fa-tasks" context="{'active_id': id}">
+						<field string="Tasks" name="task_count" widget="statinfo" options="{'label_field': 'label_tasks'}"/>
+					</button>
+
+					<button 
+						string='Vue Gantt'
+						class="oe_stat_button" 
+						type="action"
+						name="%(viseo_project_project.act_project_project_2_project_task_all2)d" 
+						icon="fa-tasks" 
+						context="{'active_id': id}"/>
+
+					<button name="action_view_all_rating" type="object" attrs="{'invisible': ['|', '|', ('rating_status', '=', 'no'), ('rating_percentage_satisfaction', '=', -1)]}" class="oe_stat_button oe_percent" icon="fa-smile-o" groups="viseo_project_project.group_project_rating_viseo">
+						<div class="o_field_widget o_stat_info">
+							<span class="o_stat_value">
+								<field name="rating_percentage_satisfaction" nolabel="1"/>
+							</span>
+							<span class="o_stat_text">
+								% On <field readonly="1" name="label_tasks" options="{'label_field': 'label_tasks'}" />
+							</span>
+						</div>
+					</button>
+				</div>
+			</div>
+
+			<button class="oe_stat_button" type="action"
+				name="%(viseo_project_project.act_project_project_2_project_task_all2)d" icon="fa-tasks" context="{'active_id': id}">
+				<field string="Tasks" name="task_count" widget="statinfo" options="{'label_field': 'label_tasks'}"/>
+			</button>
+
+			<field name="child_ids" position="replace">
+				<field name="child_ids" string="Sous projet(s)">
+					<tree string="Sous projet(s)" target="current">
+						<field name="name" />
+						<field name="user_id" />
+					</tree>
+				</field>
+			</field>
 
 			<field name="parent_id" position='replace'>
 				<group col="1" style="margin: 0px; padding: 0px;">
@@ -55,25 +116,6 @@
 				</page>
 			</page>
 
-			<xpath expr="//div[@name='button_box']" position="replace">
-				<div class="oe_button_box" name="button_box" groups="base.group_user">
-
-					<button class="oe_stat_button" type="action"  name="%(viseo_project_project.act_project_project_2_project_task_all2)d" icon="fa-tasks" context="{'active_id': id}">
-						<field string="Vue Gantt" name="task_count" widget="statinfo" options="{'label_field': 'label_tasks'}"/>
-					</button>
-
-					<button name="action_view_all_rating" type="object" attrs="{'invisible': ['|', '|', ('rating_status', '=', 'no'), ('rating_percentage_satisfaction', '=', -1)]}" class="oe_stat_button oe_percent" icon="fa-smile-o" groups="viseo_project_project.group_project_rating_viseo">
-						<div class="o_field_widget o_stat_info">
-							<span class="o_stat_value">
-								<field name="rating_percentage_satisfaction" nolabel="1"/>
-							</span>
-							<span class="o_stat_text">
-								% On <field readonly="1" name="label_tasks" options="{'label_field': 'label_tasks'}" />
-							</span>
-						</div>
-					</button>
-				</div>
-			</xpath>
 
 			<xpath expr="//div[@class='oe_title']" position="replace">
 				<div class="oe_title">
@@ -83,10 +125,10 @@
 				</div>
 			</xpath>
 
-
 		</field>
 	</record>
 
 
 
 </odoo>
+
