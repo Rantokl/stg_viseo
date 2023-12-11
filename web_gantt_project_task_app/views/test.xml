@@ -1,0 +1,444 @@
+<!-- Project -->
+
+<record id="open_view_project_all2" model="ir.actions.act_window">
+	<field name="name">Projets</field>
+	<field name="res_model">viseo.project.project</field>
+	<field name="domain">[]</field>
+	<field name="view_mode">tree,kanban,form</field>
+	<field name="domain">[('has_parent', '=', False)]</field><!-- , ('is_project_viseo', '=', True)-->
+	<field name="view_id" ref="viseo_project_project.view_project2"/>
+	<field name="search_view_id" ref="viseo_project_project.view_project_project_filter2"/>
+	<field name="target">main</field>
+	<field name="help" type="html">
+		<p class="o_view_nocontent_smiling_face">
+			Créer nouveau projet viseo
+		</p><p>
+			Or <a type="action" name="%(viseo_project_project.ir_actions_server_project_sample2)d" tabindex="-1">activate a sample project</a> to play with.
+		</p>
+	</field>
+</record>
+
+<record id="action_view_sub_project_tree2" model="ir.actions.act_window">
+	<field name="res_model">viseo.project.project</field>
+	<field name="view_mode">tree,kanban,form</field>
+	<field name="domain">[('parent_id', '=', active_id)]</field>
+	<field name="view_id" ref="viseo_project_project.view_project2"/>
+	<field name="search_view_id" ref="viseo_project_project.view_project_project_filter2"/>
+	<field name="target">main</field>
+	<field name="context">{
+		'default_parent_id': active_id,
+	}</field>
+</record>
+
+<record id="edit_project2" model="ir.ui.view">
+	<field name="name">project.project2.form</field>
+	<field name="model">viseo.project.project</field>
+	<field name="arch" type="xml">
+		<form string="Projets">
+			<header>
+				<button name="%(portal.portal_share_action)d" string="Partager" type="action" class="oe_highlight oe_read_only"/>
+				<button name="valid_expenses" string="Validation DG" type="object"/>
+			</header>
+			
+			<sheet string="Project">
+				<div class="oe_button_box" name="button_box" groups="base.group_user">
+					
+					<button class="oe_stat_button" type="action"
+						name="%(act_project_project_2_project_task_all2)d" icon="fa-tasks" context="{'active_id': id}">
+						<field string="Tasks" name="task_count" widget="statinfo" options="{'label_field': 'label_tasks'}"/>
+					</button>
+					
+					<button name="action_view_all_rating" type="object" attrs="{'invisible': ['|', '|', ('rating_status', '=', 'no'), ('rating_percentage_satisfaction', '=', -1)]}" class="oe_stat_button oe_percent" icon="fa-smile-o" groups="viseo_project_project.group_project_rating_viseo">
+						<div class="o_field_widget o_stat_info">
+							<span class="o_stat_value">
+								<field name="rating_percentage_satisfaction" nolabel="1"/>
+							</span>
+							<span class="o_stat_text">
+								% On <field readonly="1" name="label_tasks" options="{'label_field': 'label_tasks'}" />
+							</span>
+						</div>
+					</button>
+				</div>
+				
+				<widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+				
+				<div class="oe_title">
+					<h1>
+						<field name="name" placeholder="Nom du projet"/>
+					</h1>
+					<div name="options_active">
+						<div>
+							<label for="label_tasks" class="oe_inline" string="Name of the tasks :"/>
+							<field name="label_tasks" class="oe_inline oe_input_align"/>
+						</div>
+					</div>
+				</div>
+				
+				<field name="parent_id"/>
+				<field name="has_parent" invisible="1"/>
+				
+				<separator string="Sous projet(s)"/>
+				
+				<field name="child_ids" string="Sous projet(s)">
+					<tree string="Sous projet(s)" target="current">
+						<field name="name"/>
+						<field name="user_id"/>
+					</tree>
+				</field>
+				
+				<group col="3" style="margin: 0px; padding: 0px;">
+					<group style="margin: 0px; padding: 0px;">
+						<field name="budget_purpose"/>
+					</group>
+				</group>
+				<group col="3" style="margin: 0px; padding: 0px;">
+					<group style="margin: 0px; padding: 0px;">
+						<field name="total_expense"/>
+					</group>
+					<group style="margin: 0px; padding: 0px;">
+						<field name="total_validate"/>
+					</group>
+					<group style="margin: 0px; padding: 0px;">
+						<field name="total_paid"/>
+					</group>
+				</group>
+				<group col="3" style="margin: 0px; padding: 0px;">
+					<group style="margin: 0px; padding: 0px;">
+						<field name="start_date"/>
+					</group>
+					<group style="margin: 0px; padding: 0px;">
+						<field name="end_date"/>
+					</group>
+					<group style="margin: 0px; padding: 0px;">
+						<label for="duration"/>
+						<div class="o_row">
+							<field name="duration"/>
+							<field name="duration_unit" readonly="0"/>
+						</div>
+					</group>
+				</group>
+				
+				<notebook>
+					<page string="Budget">
+						<field name="budget_ids">
+							<tree editable="top">
+								<field name='viseo_project_id' invisible='1'/>
+								<field name='is_valid' invisible='1'/>
+								<field name='family_group' attrs="{'readonly': [('is_valid', '=', True)]}"/>
+								<field name='amount' attrs="{'readonly': [('is_valid', '=', True)]}"/>
+								<field name='description' attrs="{'readonly': [('is_valid', '=', True)]}"/>
+								<field name='observation' attrs="{'readonly': [('is_valid', '=', True)]}"/>
+							</tree>
+						</field>
+					</page>
+					<page string="Achats">
+					<field name="purchase_order_ids" context="{'default_viseo_project_id': id}">
+						<tree>
+							<field name='company_id' invisible='1'/>
+							<field name='name'/>
+							<field name='date_order'/>
+							<field name='partner_id'/>
+							<field name='note_project'/>
+							<field name='amount_untaxed' sum="Total montant HT" string="Montant HT" widget="monetary"/>
+							<field name='amount_total' sum="Montant Total" widget="monetary"/>
+							<field name='state'/>
+						</tree>
+					</field>
+					</page>
+					<page string="Consommation de stock">
+						<field name="internal_request_ids" context="{'default_viseo_project_id': id}">
+							<tree delete="false">
+								<field name='name'/>
+								<field name='date_start'/>
+								<field name='demandeur'/>
+								<field name='usage_type'/>
+								<field name='state'/>
+							</tree>
+						</field>
+					</page>
+					<page string="Note de frais">
+						<field name="expense_sheet_ids" context="{'default_viseo_project_id': id}">
+							<tree  delete="false">
+								<field name='company_id' invisible='1'/>
+								<field name='name'/>
+								<field name='employee_id'/>
+								<field name='total_amount' sum="Montant total" widget="monetary"/>
+								<field name='state'/>
+							</tree>
+						</field>
+					</page>
+					<page string="Ventes">
+						<field name="sale_order_ids" context="{'default_viseo_project_id': id}">
+							<tree delete="false">
+								<field name='company_id' invisible='1'/>
+								<field name='name'/>
+								<field name='create_date'/>
+								<field name='partner_id'/>
+								<field name='user_id'/>
+								<field name='amount_untaxed' sum="Total montant HT" string="Montant HT" widget="monetary"/>
+								<field name='amount_total' sum="Montant Total" widget="monetary"/>
+								<field name='state'/>
+							</tree>
+						</field>
+					</page>
+					<page string="Autre coûts">
+						<field name="cost_ids">
+							<tree delete="false">
+								<field name='viseo_project_id' invisible='1'/>
+								<field name='description'/>
+								<field name='cost_amount'/>
+							</tree>
+						</field>
+					</page>
+					<page string="Configuration dépenses">
+						<group col="4">
+							<div class="row">
+								<div class="col-1">
+									<span style="font-weight: bold" class="o_light_label">DEPENSES:</span>
+								</div>
+								<div class="col-1">
+									<field name="po" style="font-weight: bold"/>
+								</div>
+								<div class="col-1">
+									<field name="cs" style="font-weight: bold"/>
+								</div>
+								<div class="col-1">
+									<field name="ndf" style="font-weight: bold"/>
+								</div>
+								<div class="col-1">
+									<field name="vente" style="font-weight: bold"/>
+								</div>
+							</div>
+						</group>
+					</page>
+					<page name="settings" string="Paramètre">
+						<group>
+							<group>
+								<field name="active" invisible="1"/>
+								<field name="user_id" string="Project Manager" attrs="{'readonly':[('active','=',False)]}"/>
+								<field name="partner_id" string="Client"/>
+							</group>
+							<group>
+								<field name="analytic_account_id" domain="['|', ('company_id', '=', company_id), ('company_id', '=', False)]" context="{'default_partner_id': partner_id}" groups="analytic.group_analytic_accounting"/>
+
+								<field name="privacy_visibility" widget="radio"/>
+
+								<field name="subtask_viseo_project_id" groups="project.group_subtask_project"/>
+								<field name="company_id" groups="base.group_multi_company"/>
+							</group>
+							<group name="extra_settings">
+							</group>
+						</group>
+						<div class="row mt16 o_settings_container">
+							<div id="rating_settings" class="col-lg-6 o_setting_box" groups="viseo_project_project.group_project_rating_viseo">
+								<div class="o_setting_right_pane">
+									<label for="rating_status"/>
+									<div class="text-muted">
+										Get customer feedback
+									</div>
+									<div>
+										<field name="rating_status" widget="radio"/>
+										<p attrs="{'invisible': [('rating_status','not in',('periodic','stage'))]}" class="text-muted oe_edit_only">
+											Edit project's stages and set an email template on the stages on which you want to activate the rating.
+										</p>
+										<div  attrs="{'required': [('rating_status','=','periodic')], 'invisible': [('rating_status','!=','periodic')]}">
+											<label for="rating_status_period"/>
+											<field name="rating_status_period"  class="oe_inline"/>
+										</div>
+										<div attrs="{'invisible': [('rating_status','==','no')]}">
+											<label for="portal_show_rating"/>
+											<field name="portal_show_rating"/>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</page>
+				</notebook>
+			</sheet>
+			
+			
+			<div class="oe_chatter">
+				<field name="message_follower_ids" 
+					widget="mail_followers" 
+					help="Follow this project to automatically track the events associated to tasks and issues of this project." 
+					groups="base.group_user"/>
+			</div>
+		
+		</form>
+	</field>
+</record>
+
+<record id="view_project_project_filter2" model="ir.ui.view">
+	<field name="name">project.project.select2</field>
+	<field name="model">viseo.project.project</field>
+	<field name="arch" type="xml">
+		<search string="Search Project">
+			<field name="name" string="Project"/>
+			<field name="user_id" string="Project Manager"/>
+			<field name="partner_id" string="Customer" filter_domain="[('partner_id', 'child_of', self)]"/>
+			<filter string="My Favorites" name="my_projects" domain="[('favorite_user_ids', 'in', uid)]"/>
+			<separator/>
+			<filter string="Followed" name="followed_by_me" domain="[('message_is_follower', '=', True)]"/>
+			<separator/>
+			<filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+			<group expand="0" string="Group By">
+				<filter string="Project Manager" name="Manager" context="{'group_by': 'user_id'}"/>
+				<filter string="Customer" name="Partner" context="{'group_by': 'partner_id'}"/>
+			</group>
+		</search>
+	</field>
+</record>
+
+<record id="view_project2" model="ir.ui.view">
+	<field name="name">project.project.tree2</field>
+	<field name="model">viseo.project.project</field>
+	<field name="arch" type="xml">
+		<tree decoration-bf="message_needaction==True" decoration-muted="active == False" string="Projects" default_order="create_date desc">
+			<field name="sequence" widget="handle"/>
+			<field name="message_needaction" invisible="1"/>
+			<field name="active" invisible="1"/>
+			<field name="name" string="Project Name"/>
+			<field name="user_id" string="Project Manager"/>
+			<field name="partner_id" string="Contact"/>
+			<field name="create_date" string="Contact"/>
+			<field name="company_id" groups="base.group_multi_company"/>
+		</tree>
+	</field>
+</record>
+
+<record id="project_view_kanban2" model="ir.ui.view">
+	<field name="name">project.project.kanban2</field>
+	<field name="model">viseo.project.project</field>
+	<field name="arch" type="xml">
+		<kanban class="o_kanban_mobile">
+			<field name="user_id" string="Project Manager"/>
+			<templates>
+				<t t-name="kanban-box">
+					<div t-attf-class="oe_kanban_content oe_kanban_global_click o_kanban_get_form">
+						<div class="row">
+							<div class="col-12">
+								<strong><field name="name" string="Project Name"/></strong>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-8">
+								<field name="partner_id" string="Contact"/>
+							</div>
+							<div class="col-4">
+								<div class="oe_kanban_bottom_right">
+									<img t-att-src="kanban_image('res.users', 'image_128', record.user_id.raw_value)" t-att-title="record.user_id.value" t-att-alt="record.user_id.value" class="oe_kanban_avatar o_image_24_cover float-right"/>
+								</div>
+							</div>
+						</div>
+					</div>
+				</t>
+			</templates>
+		</kanban>
+	</field>
+</record>
+
+<record id="view_project_kanban2" model="ir.ui.view">
+	<field name="name">project.project.kanban2</field>
+	<field name="model">viseo.project.project</field>
+	<field name="arch" type="xml">
+		<kanban class="oe_background_grey o_kanban_dashboard o_project_kanban o_emphasize_colors" on_create="project.open_create_project">
+			<field name="name"/>
+			<field name="partner_id"/>
+			<field name="color"/>
+			<field name="task_count"/>
+			<field name="label_tasks"/>
+			<field name="alias_id"/>
+			<field name="alias_name"/>
+			<field name="alias_domain"/>
+			<field name="is_favorite"/>
+			<field name="rating_percentage_satisfaction"/>
+			<field name="rating_status"/>
+			<field name="analytic_account_id"/>
+			<templates>
+				<t t-name="kanban-box">
+					<div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click o_has_icon">
+						<div class="o_project_kanban_main">
+							<div class="o_kanban_card_content">
+								<div class="o_kanban_primary_left">
+									<div class="o_primary">
+										<span><t t-esc="record.name.value"/></span>
+										<span t-if="record.partner_id.value">
+											<strong><t t-esc="record.partner_id.value"/></strong>
+										</span>
+									</div>
+									<div t-if="record.alias_name.value and record.alias_domain.value">
+										<span><i class="fa fa-envelope" role="img" aria-label="Domain Alias" title="Domain Alias"></i> <t t-esc="record.alias_id.value"/></span>
+									</div>
+									<div t-if="record.rating_status.raw_value != 'no'" class="mt8 text-primary" title="Percentage of happy ratings over the past 30 days. Get rating details from the More menu." groups="viseo_project_project.group_project_rating_viseo">
+										<b>
+											<t t-if="record.rating_percentage_satisfaction.value == -1">
+												<i class="fa fa-smile-o"/> No rating yet
+											</t>
+											<t t-if="record.rating_percentage_satisfaction.value != -1">
+												<a name="action_view_all_rating" type="object" context="{'search_default_rating_last_30_days':1}">
+													<i class="fa fa-smile-o" role="img" aria-label="Percentage of satisfaction" title="Percentage of satisfaction"/> <t t-esc="record.rating_percentage_satisfaction.value"/>%
+												</a>
+											</t>
+										</b>
+									</div>
+								</div>
+							</div>
+							<div class="o_kanban_card_manage_pane dropdown-menu" groups="viseo_project_project.group_project_manager_viseo" role="menu">
+								<div class="o_kanban_card_manage_section o_kanban_manage_reports">
+									<div role="menuitem">
+										<a name="%(portal.portal_share_action)d" type="action">Share</a>
+									</div>
+									<div role="menuitem">
+										<a type="edit">Edit</a>
+									</div>
+									<div role="menuitem" t-if="record.rating_status.raw_value != 'no'">
+										<a name="action_view_all_rating" type="object">Customer Ratings</a>
+									</div>
+								</div>
+								<div role="menuitem" aria-haspopup="true" class="o_no_padding_kanban_colorpicker">
+									<ul class="oe_kanban_colorpicker" data-field="color" role="popup"/>
+								</div>
+							</div>
+							<a class="o_kanban_manage_toggle_button o_left" href="#" groups="viseo_project_project.group_project_manager_viseo"><i class="fa fa-ellipsis-v" role="img" aria-label="Manage" title="Manage"/></a>
+							<span class="o_right"><field name="is_favorite" widget="boolean_favorite" nolabel="1" force_save="1" /></span>
+						</div>
+
+						<div class="o_project_kanban_boxes">
+							<a class="o_project_kanban_box" name="%(act_project_project_2_project_task_all2)d" type="action">
+								<div>
+									<span class="o_value"><t t-esc="record.task_count.value"/></span>
+									<span class="o_label"><t t-esc="record.label_tasks.value"/></span>
+								</div>
+							</a>
+							<a t-if="record.analytic_account_id.raw_value" class="o_project_kanban_box o_project_timesheet_box" name="action_view_account_analytic_line" type="object" groups="analytic.group_analytic_accounting">
+								<div>
+									<span class="o_label">Profitability</span>
+								</div>
+							</a>
+						</div>
+					</div>
+				</t>
+			</templates>
+		</kanban>
+	</field>
+</record>
+
+
+<record id="new_action_window_tree" model="ir.actions.act_window.view">
+	<field name="view_mode">tree</field>
+	<field name="view_id" ref="view_project2" />
+	<field name="act_window_id" ref="open_view_project_all2" />
+</record>
+<record id="new_action_window_kanban" model="ir.actions.act_window.view">
+	<field name="view_mode">kanban</field>
+	<field name="view_id" ref="view_project_kanban2" />
+	<field name="act_window_id" ref="open_view_project_all2" />
+</record>
+<record id="new_action_window_form" model="ir.actions.act_window.view">
+	<field name="view_mode">form</field>
+	<field name="view_id" ref="edit_project2" />
+	<field name="act_window_id" ref="open_view_project_all2" />
+</record>
+
+

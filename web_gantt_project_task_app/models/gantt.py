@@ -12,6 +12,29 @@ class GanttView(models.Model):
 
 	project_description = fields.Html(string='Description')	
 
+	@api.model
+	@api.depends('parent_id', 'parent_id.hierarchical_id')
+	def _compute_hierarchical_id(self):
+		for project in self:
+			if project.parent_id == False:
+				return str(project.id)
+
+			hierarchical_id = str(project.id)
+			parent = project.parent_id
+
+			while parent:
+				hierarchical_id = str(parent.id) + '-' + hierarchical_id
+				parent = parent.parent_id
+
+			project.hierarchical_id = hierarchical_id
+
+	hierarchical_id = fields.Char(
+		string='Hierarchical ID',
+		store=True,  # Set store to True if you want to store the computed value in the database
+		default=_compute_hierarchical_id,
+	)
+
+
 	def get_ganttt_data(self, project_id=None):
 		record_id = int(self.id)
 		print()
@@ -117,6 +140,30 @@ class ViseoTask(models.Model):
 	_inherit = "viseo.project.task"
 
 	date_start = fields.Date(string='Start', index=True, copy=False, tracking=True)
+
+	# hierarchical_id = fields.Char(
+	# 	string='Hierarchical ID',
+	# 	default='_compute_hierarchical_id',
+	# 	store=True,  # Set store to True if you want to store the computed value in the database
+	# )
+
+	# @api.depends('parent_id', 'parent_id.hierarchical_id')
+	# def _compute_hierarchical_id(self):
+	# 	for project in self:
+	# 		hierarchical_id = str(project.id)
+	# 		parent = project.parent_id
+
+	# 		while parent:
+	# 			hierarchical_id = str(parent.id) + '-' + hierarchical_id
+	# 			parent = parent.parent_id
+
+	# 		project.hierarchical_id = hierarchical_id
+
+
+
+
+
+
 
 
 
