@@ -66,7 +66,7 @@ class devis_sav(models.Model):
 class SaleOrderPDFView(models.TransientModel):
     _name = 'sale.order.pdf.view'
     _description = 'Sale Order PDF View'
-    _inherit='ir.attachment'
+    # _inherit='ir.attachment'
     name = fields.Char('Devis')
     sale_order_id= fields.Many2one('sale.order', 'Devis')
     ir_attach = fields.Many2one('ir.attachment', 'Fichier')
@@ -77,7 +77,7 @@ class SaleOrderPDFView(models.TransientModel):
     
     #@api.model
     def take_pdf(self):
-        pdf = self.env['ir.attachement'].search(['id','=','ir_attach.id'])
+        pdf = self.env['ir.attachment'].search(['id','=','ir_attach.id'])
         return pdf.datas
 
     def test_info(self):
@@ -247,7 +247,8 @@ class devis_pdf_sav(models.Model):
                 'context':{'default_sale_order_id' : sale_order,
                            'default_ir_attach':attachment.id,
                            'default_name':attachment.name,
-                           'default_quotation_pdf':_report},
+                           'default_quotation_pdf':_report
+                           },
                 
             }
         else:
