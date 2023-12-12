@@ -13,7 +13,7 @@
 				<field name="date_start"/>
 				<field name="date_deadline"/>
 			</field>
-<!-- 
+
 			<notebook position='before'>
 				<separator string="Sous Tâche(s)"/>
 
@@ -23,7 +23,7 @@
 						<field name="user_id"/>
 					</tree>
 				</field>
-			</notebook> -->
+			</notebook>
 		</field>
 	</record>
 
@@ -56,6 +56,23 @@
 
 
    <!-- Project Form view-->
+
+
+
+	<record id="view_project2" model="ir.ui.view">
+		<field name="name">project.project.tree2</field>
+		<field name="model">viseo.project.project</field>
+		<field name="inherit_id" ref="viseo_project_project.view_project2"/>
+		<field name="arch" type="xml">
+			<field name="name" position='replace'>
+				<field name="hierarchical_id"/>
+				<!-- <field name="name" string="Project Name"/> -->
+			</field>
+		</field>
+	</record>
+
+
+
     <record id="inherited_edit_project2" model="ir.ui.view">
         <field name="name">inherited.project.project2.form</field>
         <field name="model">viseo.project.project</field>
@@ -99,12 +116,13 @@
 				</div>
 			</div>
 
+
 			<field name="child_ids" position="before">
-				<!-- <group col="1" style="margin: 0px; padding: 0px;">
+				<group col="1" style="margin: 0px; padding: 0px;">
 					<group style="margin: 0px; padding: 0px;">
 						<field name="hierarchical_id"/>
 					</group>
-				</group>	 -->
+				</group>	
 			</field>
 
 
@@ -117,13 +135,16 @@
 				</field>
 			</field>
 
+
 			<field name="parent_id" position='replace'>
 				<group col="1" style="margin: 0px; padding: 0px;">
 					<group style="margin: 0px; padding: 0px;">
 						<field name="parent_id"/>
+						<field name="next_project"/>
 					</group>
 				</group>
 			</field>
+
 
 			<page name="settings" position="after">
 				<page name="note"  string="Note">
@@ -131,6 +152,7 @@
 					<div class="oe_clear"/>
 				</page>
 			</page>
+
 
 			<xpath expr="//div[@class='oe_title']" position="replace">
 				<div class="oe_title">
@@ -140,8 +162,11 @@
 				</div>
 			</xpath>
 
+
 		</field>
 	</record>
+
+
 
 
 

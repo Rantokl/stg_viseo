@@ -2,9 +2,9 @@
   <data>
     <!-- explicit list view definition -->
 <!--
-    <record model="ir.ui.view" id="devis_pdf_vente.list">
-      <field name="name">devis_pdf_vente list</field>
-      <field name="model">devis_pdf_vente.devis_pdf_vente</field>
+    <record model="ir.ui.view" id="doc_pdf_vn.list">
+      <field name="name">doc_pdf_vn list</field>
+      <field name="model">doc_pdf_vn.doc_pdf_vn</field>
       <field name="arch" type="xml">
         <tree>
           <field name="name"/>
@@ -17,17 +17,17 @@
 
     <!-- actions opening views on models -->
 <!--
-    <record model="ir.actions.act_window" id="devis_pdf_vente.action_window">
-      <field name="name">devis_pdf_vente window</field>
-      <field name="res_model">devis_pdf_vente.devis_pdf_vente</field>
+    <record model="ir.actions.act_window" id="doc_pdf_vn.action_window">
+      <field name="name">doc_pdf_vn window</field>
+      <field name="res_model">doc_pdf_vn.doc_pdf_vn</field>
       <field name="view_mode">tree,form</field>
     </record>
 -->
 
     <!-- server action to the one above -->
 <!--
-    <record model="ir.actions.server" id="devis_pdf_vente.action_server">
-      <field name="name">devis_pdf_vente server</field>
+    <record model="ir.actions.server" id="doc_pdf_vn.action_server">
+      <field name="name">doc_pdf_vn server</field>
       <field name="model_id" ref="model_devis_pdf_vente_devis_pdf_vente"/>
       <field name="state">code</field>
       <field name="code">
@@ -42,19 +42,19 @@
 
     <!-- Top menu item -->
 <!--
-    <menuitem name="devis_pdf_vente" id="devis_pdf_vente.menu_root"/>
+    <menuitem name="doc_pdf_vn" id="doc_pdf_vn.menu_root"/>
 -->
     <!-- menu categories -->
 <!--
-    <menuitem name="Menu 1" id="devis_pdf_vente.menu_1" parent="devis_pdf_vente.menu_root"/>
-    <menuitem name="Menu 2" id="devis_pdf_vente.menu_2" parent="devis_pdf_vente.menu_root"/>
+    <menuitem name="Menu 1" id="doc_pdf_vn.menu_1" parent="doc_pdf_vn.menu_root"/>
+    <menuitem name="Menu 2" id="doc_pdf_vn.menu_2" parent="doc_pdf_vn.menu_root"/>
 -->
     <!-- actions -->
 <!--
-    <menuitem name="List" id="devis_pdf_vente.menu_1_list" parent="devis_pdf_vente.menu_1"
-              action="devis_pdf_vente.action_window"/>
-    <menuitem name="Server to list" id="devis_pdf_vente" parent="devis_pdf_vente.menu_2"
-              action="devis_pdf_vente.action_server"/>
+    <menuitem name="List" id="doc_pdf_vn.menu_1_list" parent="doc_pdf_vn.menu_1"
+              action="doc_pdf_vn.action_window"/>
+    <menuitem name="Server to list" id="doc_pdf_vn" parent="doc_pdf_vn.menu_2"
+              action="doc_pdf_vn.action_server"/>
 -->
   </data>
 </odoo>

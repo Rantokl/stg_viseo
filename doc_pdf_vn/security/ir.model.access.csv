@@ -1,2 +1,2 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_devis_pdf_vente_devis_pdf_vente,devis_pdf_vente.devis_pdf_vente,model_devis_pdf_vente_devis_pdf_vente,base.group_user,1,1,1,1
+access_devis_pdf_vente_devis_pdf_vente,doc_pdf_vn.doc_pdf_vn,model_devis_pdf_vente_devis_pdf_vente,base.group_user,1,1,1,1

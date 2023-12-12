@@ -2,9 +2,9 @@
 <odoo>
 	<template id="assets_backend" name="esti Assets" inherit_id="web.report_assets_common">
 		<xpath expr="." position="inside">
-			<!-- <link rel="stylesheet" type="text/scss" href="/devis_pdf_vente/static/src/style.css"/> -->
-			<link rel="stylesheet" type="text/scss" href="/devis_pdf_vente/static/src/check_list.css"/>
-			<link rel="stylesheet" type="text/scss" href="/devis_pdf_vente/static/src/contrat_de_vente.css"/>
+			<!-- <link rel="stylesheet" type="text/scss" href="/doc_pdf_vn/static/src/style.css"/> -->
+			<link rel="stylesheet" type="text/scss" href="/doc_pdf_vn/static/src/check_list.css"/>
+			<link rel="stylesheet" type="text/scss" href="/doc_pdf_vn/static/src/contrat_de_vente.css"/>
 		</xpath>
 	</template>
 </odoo>

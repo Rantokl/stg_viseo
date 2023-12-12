@@ -5,9 +5,10 @@
 	string="contrat de vente vehicule"
 	model="sale.order"
 	report_type="qweb-pdf"
-	name="devis_pdf_vente.contrat_de_vente"
-	file="devis_pdf_vente.contrat_de_vente"
+	name="doc_pdf_vn.contrat_de_vente"
+	file="doc_pdf_vn.contrat_de_vente"
 />
+
 <!-- V.23.25052 -->
 <template id="contrat_de_vente">
 	<t t-call="web.html_container">
@@ -16,7 +17,8 @@
 
 				<div class="contrat_contaier_all">
 					<center><h1>CONTRAT DE VENTE A CREDIT AVEC CONSTITUTION DE GAGE</h1></center>
-					<u class="contrat_left"><h5>CATEGORIE:</h5></u>
+					
+					<div class="contrat_left"><u><h5>CATEGORIE:</h5></u></div>
 
 					<div class="contrat_section">
 						<p>Entre les soussignés :</p>
@@ -33,21 +35,33 @@
 					</div>
 
 					<div class="contrat_section">
-						<p class="contrat_display_inline">2. <div class="contrat_display_inline" t-field="o.partner_id"></div> , ayant son siège social à </p>
-						<div style>
-							NIF : <span>.............</span> STAT : <span>.............</span> RCS : <span>.............</span>
-						</div>
-						<p>
-							<div>Domiciliation bancaire :</div>
+						<t t-if="o.partner_id.company_type == 'company'">
+							<p class="contrat_display_inline">2. <span t-field="o.partner_id"></span> , ayant son siège social à </p>
 							<div>
-								représentée par <div class="contrat_display_inline" t-field="o.partner_id"></div> fonction Mandataire, 
-								CIN N° <div class="contrat_display_inline" t-field="o.partner_id.cin"></div> 
-								du <div class="contrat_display_inline" t-field="o.partner_id.cin_du"></div>, 
-								à <div class="contrat_display_inline" t-field="o.partner_id.place_of_issue"></div>, 
-								télephone n° <div class="contrat_display_inline" t-field="o.partner_id.phone">.</div>.
+								NIF : <span t-field="o.partner_id.nif"></span> STAT : <span t-field="o.partner_id.stat"></span> RCS : <span t-field="o.partner_id.rcs"></span>
 							</div>
-							(Désigné au cours des présentes sous la dénomination "Le Débiteur")
-						</p>
+							<p>
+								<div>Domiciliation bancaire :</div>
+								<div>
+									représentée par <span t-field="o.partner_id"></span> fonction Mandataire, 
+									CIN N° <span t-field="o.partner_id.cin"></span> 
+									du <span t-field="o.partner_id.cin_du"></span>, 
+									à <span t-field="o.partner_id.place_of_issue"></span>, 
+									télephone n° <span t-field="o.partner_id.phone"></span>.
+								</div>
+								(Désigné au cours des présentes sous la dénomination "Le Débiteur")
+							</p>
+						</t><t t-else="">
+							<div>2. M/Mme <span t-field="o.partner_id.name"></span></div>
+							<div>Date et lieu de naissance : <span ></span></div>
+							<div>Adresse : <span t-field="o.partner_id.street"></span> <span t-field="o.partner_id.street2"></span>  <span t-field="o.partner_id.city"></span>  <span t-field="o.partner_id.country_id"></span></div>
+							<!-- <div>Nationalité : <span t-field="o.partner_id."></span></div> -->
+							<div>CIN N° <span t-field="o.partner_id.cin"></span> délivrée à <span t-field="o.partner_id.place_of_issue"></span> le <span t-field="o.partner_id.cin_du"></span></div>
+							<div>Duplicata du <span t-field="o.partner_id.duplicata_du"></span> à <span t-field="o.partner_id.duplicata"></span></div>
+							<div>Activité professionnelle :<span t-field="o.partner_id.function"></span></div>
+							<div>Téléphone N°: <span t-field="o.partner_id.phone"></span></div>
+							<!-- <div>Domiciliation bancaire : <span t-field="o.partner_id."></span></div> -->
+						</t>
 						<div class="contrat_left">d’une part,</div>
 					</div>
 
@@ -70,7 +84,7 @@
 
 					<div class="contrat_section" >
 						<p>Date du contrat :</p>
-						<p><b>Article 1er –</b> <span>.............</span> ; déclare par les présentes, avoir acheté et pris livraison du vendeur :</p>
+						<p><b>Article 1er –</b> <span t-field="o.partner_id.name"></span> ; déclare par les présentes, avoir acheté et pris livraison du vendeur :</p>
 
 						<p>
 							<div>Le véhicule ci-après désigné :</div>
@@ -81,31 +95,30 @@
 						<p>Ci-après désigné :</p>
 						
 						<div t-foreach="o.vehicle_ids" t-as="vehicle_ids">
-							Couleur : <div class="contrat_display_inline" t-field="vehicle_ids.color"></div>
+							Couleur : <span t-field="vehicle_ids.color"></span>
 							<table>
 								<tr>
-									<td>Marque : <div class="contrat_display_inline"  t-field="vehicle_ids.model_id"></div></td>
-									<td>Type : <div class="contrat_display_inline"  t-field="vehicle_ids.color"></div></td>
+									<td>Marque : <span t-field="vehicle_ids.model_id"></span></td>
+									<!-- <td>Type : <span  t-field="vehicle_ids.type"></div></td> -->
 								</tr>
 								<tr>
-									<td>N° de série : <div class="contrat_display_inline"  t-field="vehicle_ids.vin_sn"></div></td>
-									<td>N° d’Immatriculation : <div class="contrat_display_inline"  t-field="vehicle_ids.license_plate"></div></td>
+									<td>N° de série : <span t-field="vehicle_ids.vin_sn"></span></td>
+									<td>N° d’Immatriculation : <span t-field="vehicle_ids.license_plate"></span></td>
 								</tr>
 							</table>
 						</div>
 
-						
 						<div t-foreach="o.order_line" t-as="order_line">
 							<p>
-								<div>Prix (TVA incluse)      : <div class="contrat_display_inline" t-field="order_line.price_subtotal" ></div></div>
-								<div>Prime d’Assurance       : <u><span>..............</span></u></div>
+								<div>Prix (TVA incluse)      : <span t-field="order_line.price_subtotal" ></span></div>
+								<div>Prime d’Assurance       : <span>____________-____________</span></div>
 							</p>
 							<p>
-								<div>TOTAL                   : <div class="contrat_display_inline" t-field="o.amount_total" ></div></div>
-								<div>Versement au comptant % : <div class="contrat_display_inline" > ........... </div></div>
+								<div>TOTAL                   : <span t-field="o.amount_total"></span></div>
+								<div>Versement au comptant % : <span> ........... </span></div>
 							</p>
-							<p>	
-								<div>Domicilié chez          :<u><div class="contrat_display_inline" >...........</div></u></div>
+							<p>
+								<div>Domicilié chez          :<u><span>...........</span></u></div>
 								<div>
 									Intérêts et Agios       : 1,5 % du montant en retard par tranches de 30 jours, 
 									comme stipulé dans les conditions générales de vente, lues et agréées par le Débiteur, 
@@ -115,31 +128,34 @@
 						</div>
 
 
-						<p>Représenté par <span>...........</span> TRAITES acceptées</p>
-						<p>AVOIR</p>
-						<div>Représenté par <span>...........</span> CHEQUES acceptés</div>
-						<table>
-							<tr>
-								<td>PAIEMENT</td>
-								<td>MONTANT</td>
-								<td>QUANTITE</td>
-								<td>TOTAL</td>
-								<td>DU</td>
-								<td>JUSQU’AU</td>
-							</tr>
-							<tr>
-								<td>..........</td>
-								<td>..........</td>
-								<td>..........</td>
-								<td>..........</td>
-								<td>..........</td>
-								<td>..........</td>
-							</tr>
-						</table>
+						<div t-foreach="o.invoice_ids" t-as="invoice_ids">
+							<p>Représenté par <span t-field="invoice_ids.pdc_payment_count"> </span><span t-field="invoice_ids.payment_mode_id.name"></span> acceptées</p>
+							<!-- <p>AVOIR</p>
+							<div>Représenté par <span t-field="invoice_count.name"></span> CHEQUES acceptés</div> -->
+							<table>
+								<tr>
+									<td><center>PAIEMENT</center></td>
+									<td><center>MONTANT</center></td>
+									<td><center>QUANTITE</center></td>
+									<td><center>TOTAL</center></td>
+									<td><center>DU</center></td>
+									<td><center>JUSQU’AU</center></td>
+								</tr>
+								<tr>
+									<td><center><span t-field="invoice_ids.payment_mode_id.name"></span></center></td>
+									<td><center></center></td>
+									<td><center><span t-field="invoice_ids.pdc_payment_count"></span></center></td>
+									<td><center><span t-field="invoice_ids.amount_untaxed"></span></center></td>
+									<td><center></center></td>
+									<td><center></center></td>
+								</tr>
+							</table>
+							<!-- <hr> -->
+							<p></p>
+							<center><p><b>TOTAL GENERAL: MGA </b><span t-field="invoice_ids.amount_untaxed"></span></p></center>
+						</div>
 
-						<!-- <hr> -->
 
-						<center><p><b>TOTAL GENERAL: MGA</b> <span>...........</span></p></center>
 					</div>
 					
 					<div class="contrat_section">
