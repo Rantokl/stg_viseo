@@ -1,0 +1,60 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+<!--
+    <record model="ir.ui.view" id="devis_pdf_vente.list">
+      <field name="name">devis_pdf_vente list</field>
+      <field name="model">devis_pdf_vente.devis_pdf_vente</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+-->
+
+    <!-- actions opening views on models -->
+<!--
+    <record model="ir.actions.act_window" id="devis_pdf_vente.action_window">
+      <field name="name">devis_pdf_vente window</field>
+      <field name="res_model">devis_pdf_vente.devis_pdf_vente</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+-->
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="devis_pdf_vente.action_server">
+      <field name="name">devis_pdf_vente server</field>
+      <field name="model_id" ref="model_devis_pdf_vente_devis_pdf_vente"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="devis_pdf_vente" id="devis_pdf_vente.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="devis_pdf_vente.menu_1" parent="devis_pdf_vente.menu_root"/>
+    <menuitem name="Menu 2" id="devis_pdf_vente.menu_2" parent="devis_pdf_vente.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="devis_pdf_vente.menu_1_list" parent="devis_pdf_vente.menu_1"
+              action="devis_pdf_vente.action_window"/>
+    <menuitem name="Server to list" id="devis_pdf_vente" parent="devis_pdf_vente.menu_2"
+              action="devis_pdf_vente.action_server"/>
+-->
+  </data>
+</odoo>

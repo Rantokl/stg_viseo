@@ -1,0 +1,25 @@
+<odoo>
+    <data>
+
+        <!-- Gantt view -->
+        <record id="project_task_ganttt_view" model="ir.ui.view">
+            <field name="name">project.task.ganttt</field>
+            <field name="model">viseo.project.task</field>
+            <field name="arch" type="xml">
+                <ganttt date_stop="date_deadline" date_start="date_assign" progress="progress" string="Tâches projet" default_group_by="stage_id">
+                </ganttt>
+            </field>
+        </record>
+
+        <!-- Add gantt view mode to the project.task dashboard -->
+        <record id="viseo_project_project.act_project_project_2_project_task_all2" model="ir.actions.act_window">
+            <field name="view_mode">ganttt,tree,kanban,form,calendar,pivot,activity</field>
+            <field name="context">{
+                'pivot_row_groupby': ['user_id'],
+                'search_default_viseo_project_idd': [active_id],
+                'default_viseo_project_id': active_id,
+            }</field>
+        </record>
+
+    </data>
+</odoo>
