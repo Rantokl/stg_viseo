@@ -66,18 +66,18 @@ class devis_sav(models.Model):
 class SaleOrderPDFView(models.TransientModel):
     _name = 'sale.order.pdf.view'
     _description = 'Sale Order PDF View'
-    _inherit='ir.attachment'
+    # _inherit='ir.attachment'
     name = fields.Char('Devis')
     sale_order_id= fields.Many2one('sale.order', 'Devis')
     ir_attach = fields.Many2one('ir.attachment', 'Fichier')
-    quotation_pdf = fields.Binary(string='Devis PDF', compute = 'take_pdf',related='ir_attach.datas', default=lambda self : self.ir_attach.datas)
+    quotation_pdf = fields.Binary(string='Devis PDF',filters='.pdf' , compute = 'take_pdf',related='ir_attach.datas', default=lambda self : self.ir_attach.datas)
     
     
     datas = fields.Binary(string='File Content', compute='_compute_datas', inverse='_inverse_datas')
     
     #@api.model
     def take_pdf(self):
-        pdf = self.env['ir.attachement'].search(['id','=','ir_attach.id'])
+        pdf = self.env['ir.attachment'].search(['id','=','ir_attach.id'])
         return pdf.datas
 
     def test_info(self):
@@ -171,7 +171,7 @@ class devis_pdf_sav(models.Model):
                 'type':'ir.actions.act_window',
                 'res_model':'sale.order.pdf.view',
                 'view_mode':'form',
-                'res_id':self.id,
+                # 'res_id':self.id,
                 'views':[(False,'form')],
                 'target':'new',
                 
@@ -247,7 +247,8 @@ class devis_pdf_sav(models.Model):
                 'context':{'default_sale_order_id' : sale_order,
                            'default_ir_attach':attachment.id,
                            'default_name':attachment.name,
-                           'default_quotation_pdf':_report},
+                           'default_quotation_pdf':_report
+                           },
                 
             }
         else:
@@ -275,6 +276,7 @@ class DemandeDevis(models.Model):
     type_devis = fields.Many2one('type.devis.sav', 'Type de devis')
     date_devis = fields.Date("Date du demande")
     devis_id = fields.Integer()
+    note = fields.Html(string="Note")
     number_sale = fields.Integer(default=0)
 
     @api.model
