@@ -70,7 +70,7 @@ class SaleOrderPDFView(models.TransientModel):
     name = fields.Char('Devis')
     sale_order_id= fields.Many2one('sale.order', 'Devis')
     ir_attach = fields.Many2one('ir.attachment', 'Fichier')
-    quotation_pdf = fields.Binary(string='Devis PDF', compute = 'take_pdf',related='ir_attach.datas', default=lambda self : self.ir_attach.datas)
+    quotation_pdf = fields.Binary(string='Devis PDF',filters='.pdf' , compute = 'take_pdf',related='ir_attach.datas', default=lambda self : self.ir_attach.datas)
     
     
     datas = fields.Binary(string='File Content', compute='_compute_datas', inverse='_inverse_datas')
@@ -171,7 +171,7 @@ class devis_pdf_sav(models.Model):
                 'type':'ir.actions.act_window',
                 'res_model':'sale.order.pdf.view',
                 'view_mode':'form',
-                'res_id':self.id,
+                # 'res_id':self.id,
                 'views':[(False,'form')],
                 'target':'new',
                 
@@ -275,6 +275,7 @@ class DemandeDevis(models.Model):
     type_devis = fields.Many2one('type.devis.sav', 'Type de devis')
     date_devis = fields.Date("Date du demande")
     devis_id = fields.Integer()
+    note = fields.Html(string="Note")
     number_sale = fields.Integer(default=0)
 
     @api.model

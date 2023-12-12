@@ -55,12 +55,14 @@
             <field name="type_devis"/>
             <field name="date_devis"/>
                  </group>
+                 <field name="note" nolabel="1"/>
               </sheet>
             <div class="oe_chatter">
 						<field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
 						<field name="message_ids" widget="mail_thread" options='{"thread_level": 1}'/>
 					</div>
         </form>
+
       </field>
     </record>
 
