@@ -10,46 +10,68 @@ class GanttView(models.Model):
 	start_date = fields.Date(string="Date debut")
 	end_date = fields.Date(string="Date fin")
 
-	project_description = fields.Html(string='Description')	
+	project_description = fields.Html(string='Description')
+	next_project = fields.Many2one('viseo.project.project', string='Projet suivant')
 
-	@api.model
+	# def _compute_next_project(self):
+	# 	return 
+
+
+	# @api.onchange('next_project')
+	# def _onchange_next_project(self):
+	# 	# Update the hierarchical order based on the selected next project
+	# 	if self.next_project:
+	# 		self._swap_projects(self, self.next_project)
+
+	# def _swap_projects(self, project1, project2):
+	# 	# Swap the parent_id values of the two projects
+	# 	project1_parent = project1.parent_id
+	# 	project2_parent = project2.parent_id
+
+	# 	project1.write({'parent_id': project2_parent.id})
+	# 	project2.write({'parent_id': project1_parent.id})
+
+
 	@api.depends('parent_id', 'parent_id.hierarchical_id')
 	def _compute_hierarchical_id(self):
 		for project in self:
-			if project.parent_id == False:
-				return str(project.id)
+			hierarchical_id = ''
 
-			hierarchical_id = str(project.id)
-			parent = project.parent_id
+			# If the project has a parent, get the parent's hierarchical ID and count the number of siblings
+			if project.parent_id:
+				parent_hierarchical_id = project.parent_id.hierarchical_id
+				sibling_count = self.search_count([('parent_id', '=', project.parent_id.id), ('id', '<=', project.id)])
+				hierarchical_id = f'{parent_hierarchical_id}-{sibling_count}'
 
-			while parent:
-				hierarchical_id = str(parent.id) + '-' + hierarchical_id
-				parent = parent.parent_id
+			# If the project has no parent, it's a root project, so use its own creation sequence
+			else:
+				root_count = self.search_count([('parent_id', '=', False), ('id', '<=', project.id)])
+				hierarchical_id = f'{root_count}'
 
 			project.hierarchical_id = hierarchical_id
 
+
+			next_sibling = self.search([
+				('parent_id', '=', project.parent_id.id),
+				('hierarchical_id', '=', int(project.hierarchical_id[-1] - 1))
+			], limit=1)
+			if next_sibling:
+				project.next_project = next_sibling.id
+			else:
+				project.next_project = False
+
+
+
 	hierarchical_id = fields.Char(
 		string='Hierarchical ID',
-		store=True,  # Set store to True if you want to store the computed value in the database
-		default=_compute_hierarchical_id,
+		compute='_compute_hierarchical_id'
 	)
 
 
 	def get_ganttt_data(self, project_id=None):
 		record_id = int(self.id)
-		print()
-		print()
-		print(record_id)
-		print()
-		print()
-
+		
 		project_ids = self.env['viseo.project.project'].browse([record_id])
-
-		print()
-		print()
-		print(project_ids)
-		print()
-		print()
 
 		def create_data_structure(project, hierarchical_parent_Id):
 			

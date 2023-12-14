@@ -3,7 +3,7 @@
 from odoo import models, fields, api
 
 
-class devis_pdf_vente(models.Model):
+class doc_pdf_vn(models.Model):
 	_inherit = 'sale.order.line'
 
 	def get_vehicle_model(self):

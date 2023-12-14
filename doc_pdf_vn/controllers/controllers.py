@@ -3,19 +3,19 @@
 
 
 # class DevisPdfVente(http.Controller):
-#     @http.route('/devis_pdf_vente/devis_pdf_vente/', auth='public')
+#     @http.route('/doc_pdf_vn/doc_pdf_vn/', auth='public')
 #     def index(self, **kw):
 #         return "Hello, world"
 
-#     @http.route('/devis_pdf_vente/devis_pdf_vente/objects/', auth='public')
+#     @http.route('/doc_pdf_vn/doc_pdf_vn/objects/', auth='public')
 #     def list(self, **kw):
-#         return http.request.render('devis_pdf_vente.listing', {
-#             'root': '/devis_pdf_vente/devis_pdf_vente',
-#             'objects': http.request.env['devis_pdf_vente.devis_pdf_vente'].search([]),
+#         return http.request.render('doc_pdf_vn.listing', {
+#             'root': '/doc_pdf_vn/doc_pdf_vn',
+#             'objects': http.request.env['doc_pdf_vn.doc_pdf_vn'].search([]),
 #         })
 
-#     @http.route('/devis_pdf_vente/devis_pdf_vente/objects/<model("devis_pdf_vente.devis_pdf_vente"):obj>/', auth='public')
+#     @http.route('/doc_pdf_vn/doc_pdf_vn/objects/<model("doc_pdf_vn.doc_pdf_vn"):obj>/', auth='public')
 #     def object(self, obj, **kw):
-#         return http.request.render('devis_pdf_vente.object', {
+#         return http.request.render('doc_pdf_vn.object', {
 #             'object': obj
 #         })

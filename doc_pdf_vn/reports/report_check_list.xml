@@ -5,8 +5,8 @@
 	string="CHECK LIST LIVRAISON VEHICULE"
 	model="sale.order"
 	report_type="qweb-pdf"
-	name="devis_pdf_vente.check_list"
-	file="devis_pdf_vente.check_list"
+	name="doc_pdf_vn.check_list"
+	file="doc_pdf_vn.check_list"
 />
 <!-- V.23.25052 -->
 <template id="check_list">
