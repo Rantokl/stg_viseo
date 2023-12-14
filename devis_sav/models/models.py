@@ -139,6 +139,9 @@ class SaleOrderPDFView(models.TransientModel):
             connex.commit()
             curs.close()
             connex.close()
+            sale_order_id.message_post(
+                body="Devis envoyé à l'application"
+            )
             #date_devis = self.sale_order_id.demand_devis.date_devis
             message = '''Votre devis du {} est prêt'''.format(date_devis)
             send_notif("Devis", message, 2, sale_order_id.partner_id.id)
