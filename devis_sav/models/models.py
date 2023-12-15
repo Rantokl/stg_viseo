@@ -306,6 +306,7 @@ class DemandeDevis(models.Model):
 
             records = {
                 'devis_id': row[0],
+                'note':row[1],
                 'customer_id': row[2],
                 'type_devis': row[3],
                 'customer_vehicle_id': row[4],
