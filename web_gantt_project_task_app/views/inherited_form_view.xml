@@ -66,7 +66,7 @@
 		<field name="arch" type="xml">
 			<field name="name" position='replace'>
 				<field name="hierarchical_id"/>
-				<!-- <field name="name" string="Project Name"/> -->
+				<field name="name" string="Project Name"/>
 			</field>
 		</field>
 	</record>
@@ -117,15 +117,6 @@
 			</div>
 
 
-			<field name="child_ids" position="before">
-				<group col="1" style="margin: 0px; padding: 0px;">
-					<group style="margin: 0px; padding: 0px;">
-						<field name="hierarchical_id"/>
-					</group>
-				</group>	
-			</field>
-
-
 			<field name="child_ids" position="replace">
 				<field name="child_ids" string="Sous projet(s)">
 					<tree string="Sous projet(s)" target="current">
@@ -140,7 +131,8 @@
 				<group col="1" style="margin: 0px; padding: 0px;">
 					<group style="margin: 0px; padding: 0px;">
 						<field name="parent_id"/>
-						<field name="next_project"/>
+						<field name="hierarchical_id"/>
+						<field name="precedent_project_id"/>
 					</group>
 				</group>
 			</field>

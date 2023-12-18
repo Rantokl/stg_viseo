@@ -150,7 +150,6 @@
 									<td><center></center></td>
 								</tr>
 							</table>
-							<!-- <hr> -->
 							<p></p>
 							<center><p><b>TOTAL GENERAL: MGA </b><span t-field="invoice_ids.amount_untaxed"></span></p></center>
 						</div>
