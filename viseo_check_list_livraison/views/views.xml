@@ -1,0 +1,175 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+    <record model="ir.ui.view" id="viseo_check_list_livraison.form">
+      <field name="name">viseo_check_list_livraison form</field>
+      <field name="model">viseo_check.list_livraison</field>
+      <field name="arch" type="xml">
+        <form>
+         <sheet>
+			 <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+			 <group>
+			 <field name="customer_id" readonly="1"/>
+			 <field name="customer_vehicle_id" readonly="1"/>
+			</group>
+						<group class="row">
+							<group class="col" >
+                                <group>
+								<h3>NIVEAU</h3>
+								<field name="oil_motor" />
+								<field name="liquid_refroid"/>
+								<field name="battery"/>
+                                  <field name="brake_liquid" />
+								<field name="liquid_direction"/>
+								<field name="liquid_lave_glace"/>
+
+                                  </group>
+                              <group>
+								  <h3>ÉCLAIRAGE ET SIGNALISATION</h3>
+								<field name="code" />
+								<field name="clignotant"/>
+								<field name="led_immatricul"/>
+                                  <field name="led_recul" />
+								<field name="sonor"/>
+								<!--<field name="liqui_lave_glace"/>-->
+
+                                  </group>
+								  <group>
+									  <h3>VISIBILITÉ</h3>
+								<field name="essui_gl" />
+								<field name="pare_brise"/>
+								<field name="lunette"/>
+                                  <field name="retro" />
+
+                                  </group>
+
+
+							</group>
+
+							<group class="col" >
+								<!--<h3>SÉCURITÉ</h3>-->
+								<group>
+									<h4>FREINAGE</h4>
+								<field name="brake_plaque" />
+								<field name="circuit_frein"/>
+								<field name="flexible_frein"/>
+                                  <field name="hand_brake" />
+								<field name="brake_disk"/>
+									<field name="etrier"/>
+									<field name="brake_service" />
+								<field name="brake_station"/>
+								<!--<field name="liqui_lave_glace"/>-->
+
+                                  </group>
+								<group>
+									<h4>DIRECTION</h4>
+								<field name="wheel" />
+								<field name="cremaillere"/>
+								<field name="biellette"/>
+                                  <field name="assistance_direction" />
+
+                                  </group>
+
+								<group>
+									<h4>LIAISON AU SOL</h4>
+								<field name="amort" />
+								<field name="barre"/>
+								<field name="trainV"/>
+                                  <field name="jante" />
+								<field name="pneum" />
+								<field name="roueS"/>
+                                  </group>
+
+								<group>
+									<h4>ORGANES MÉCANIQUES</h4>
+								<field name="motor" />
+								<field name="gearbox"/>
+								<field name="pont"/>
+                                  <field name="transmission" />
+								<field name="fuel_circuit" />
+								<field name="tank"/>
+									<field name="echap" />
+								<field name="courroie" />
+								<field name="durite"/>
+                                  </group>
+								<group>
+									<h4>OUTILLAGE DE BORD</h4>
+								<field name="key_roue" />
+								<field name="gilet"/>
+
+                                  </group>
+
+								</group>
+
+
+						</group>
+					</sheet>
+					<div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+						<field name="message_ids" widget="mail_thread" options='{"thread_level": 1}'/>
+					</div>
+        </form>
+      </field>
+    </record>
+
+	  <record id="check_list_livraison_button" model="ir.ui.view">
+            <field name="name">inherited.check_list_livraison_button</field>
+            <field name="model">fleet.vehicle</field>
+            <field name="inherit_id" ref="viseo_parc_auto.new_fleet_vehicle_view_form"/>
+            <!--<field name="groups_id" eval="[(4, ref('mrp.group_mrp_user'))]"/>-->
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_view_claim']" position="after">
+                    <button  name="open_check_list" type="object" class="oe_stat_button"
+                         icon="fa-check"  string="Check list">
+
+                    </button>
+
+                </xpath>
+            </field>
+        </record>
+
+    <!-- actions opening views on models -->
+    <record model="ir.actions.act_window" id="viseo_check_list_livraison.action_window">
+      <field name="name">viseo_check_list_livraison window</field>
+      <field name="res_model">viseo_check.list_livraison</field>
+      <field name="view_mode">form</field>
+    </record>
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="viseo_check_list_livraison.action_server">
+      <field name="name">viseo_check_list_livraison server</field>
+      <field name="model_id" ref="model_viseo_check_list_livraison_viseo_check_list_livraison"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="viseo_check_list_livraison" id="viseo_check_list_livraison.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="viseo_check_list_livraison.menu_1" parent="viseo_check_list_livraison.menu_root"/>
+    <menuitem name="Menu 2" id="viseo_check_list_livraison.menu_2" parent="viseo_check_list_livraison.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="viseo_check_list_livraison.menu_1_list" parent="viseo_check_list_livraison.menu_1"
+              action="viseo_check_list_livraison.action_window"/>
+    <menuitem name="Server to list" id="viseo_check_list_livraison" parent="viseo_check_list_livraison.menu_2"
+              action="viseo_check_list_livraison.action_server"/>
+-->
+  </data>
+</odoo>
