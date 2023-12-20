@@ -123,7 +123,7 @@ class viseo_rdv_mobile(models.Model):
 			self.place_id = False
 
 	atelier_id = fields.Many2one('fleet.workshop.type', string='Atelier', group_expand="_read_group_atelier_ids", readonly=True)
-	responsable_atelier_id = fields.Many2one('res.users', string='Responsable atelier', related='atelier_id.responsable_id')
+	responsable_atelier_id = fields.Many2many('res.users', string='Responsable atelier', related='atelier_id.responsable_id')
 	mecanicien_id = fields.Many2one('hr.employee', string='Mecaniciens')
 
 	place_id = fields.Many2one('place_vehicle.place_vehicle', 'Place', domain="[('atelier_id.id','=',atelier_id)]",copy=False, default=False)
@@ -276,7 +276,7 @@ class viseo_rdv_mobile(models.Model):
 
 	def _check_validator(self):
 		current_user = self.env.user.id
-		responsables = self.responsable_atelier_id.id
+		responsables = self.responsable_atelier_id.ids
 		if current_user == responsables or  self.env.user.id == 2:
 			self.validator = True
 		else:
@@ -580,7 +580,7 @@ class ViseoTagRfidInherit(models.Model):
 
 class AtelierVehicle(models.Model):
 	_inherit = 'fleet.workshop.type'
-	responsable_id = fields.Many2one('res.users', string='Responsable(s)')
+	responsable_id = fields.Many2many('res.users', string='Responsable(s)')
 
 	pont_id = fields.One2many('pont_vehicle.pont_vehicle', 'atelier_id', string="pont")
 	place_id = fields.One2many('place_vehicle.place_vehicle', 'atelier_id', string="Place")

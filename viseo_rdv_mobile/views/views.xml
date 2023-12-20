@@ -173,7 +173,7 @@
 							string="Créer un RMA"
 							class="oe_highlight"
 							type="object"
-							attrs="{'invisible':[
+							attrs="{'invisible':['|',
 								('validator', '=', False ),
 								('state', '!=', 'accepted')
 							]}"/>
@@ -208,7 +208,7 @@
 
 							<group class="col" >
 								<field name="responsable_atelier_id" readonly="1" 
-									attrs="{'readonly':['|',('state','in', ['canceled','refused']),('validator','=',False)]}"/>
+									attrs="{'readonly':['|',('state','in', ['canceled','refused']),('validator','=',False)]}" widget="many2many_tags"/>
 
 								<field name="emplacement" widget="radio" 
 									attrs="{'readonly':['|',('state','in', ['canceled','refused']),('validator','=',False)]}"/>
