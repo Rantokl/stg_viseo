@@ -1,0 +1,121 @@
+################## groupby_type == relational
+
+{
+    "labels": ["Ocean Trade", "Continental Auto"],
+    "domains": [
+        [["company_id", "=", 1]],
+        [["company_id", "=", 4]]
+	],
+    "groupByIds": [1, 4],
+    "datasets": [
+        {"data": [3440018162606.11, 1074745139421.0], "label": "Total", "type": "line", "yAxisID": "y-axis-1"},
+        {"data": [544178350578.13, 171459370351.29], "label": "Taxes"},
+	],
+	
+    "groupby": "company_id",
+	"ks_currency": 0,
+    "ks_field": "",
+    "ks_selection": "",
+    "ks_show_second_y_scale": true,
+    "previous_domain": [],
+}
+
+
+
+
+################## groupby_type == other
+
+data 1
+
+{
+	'labels': [9705.0, 377.5, 2240.0],
+    "groupByIds": [9705.0, 377.5, 2240.0],
+
+	'datasets': [
+		{'data': [0.0, 0.0, 0.0], 'label': 'Taxes'},
+		{'data': [19410.0, 377.5, 2240.0],'label': 'Untaxed Amount'
+	}],
+	'domains': [[('amount_total', '=', 9705.0)],
+				[('amount_total', '=', 377.5)],
+				[('amount_total', '=', 2240.0)]],
+
+	'groupby': 'amount_total',
+
+	'ks_currency': 0,
+	'ks_field': '',
+	'ks_selection': '',
+	'ks_show_second_y_scale': True
+}
+
+
+
+data 2
+
+{
+	'labels': [9705.0, 2947.5, 377.5 ],
+    "groupByIds": [9705.0, 2947.5, 377.5],
+
+	'datasets': [
+		{'data': [19410.0, 5895.0, 377.5], 'label': 'Total', 'type': 'line', yAxisID': 'y-axis-1'}
+	],
+	'domains': [[('amount_total', '=', 9705.0)],
+				[('amount_total', '=', 2947.5)],
+				[('amount_total', '=', 377.5)]],
+
+	'groupby': 'amount_total',
+
+
+	'ks_currency': 0,
+	'ks_field': '',
+	'ks_selection': '',
+	'ks_show_second_y_scale': True
+}
+
+
+root_model = fields.Many2one('ir.model', string='Modèle',
+	domain="[('access_ids','!=',False),('transient','=',False),"
+			"('model','not ilike','base_import%'),('model','not ilike','ir.%'),"
+			"('model','not ilike','web_editor.%'),('model','not ilike','web_tour.%'),"
+			"('model','!=','mail.thread'),('model','not ilike','ks_dash%')]")
+
+related_root_model_fields = fields.Many2one('ir.model.fields',
+	domain="[('model_id','=',root_model)]"
+)
+
+fields_in_related_root_model_fields = fields.Many2one('ir.model.fields',
+	domain=lambda self: self._compute_domain(),
+	string="Groupé par ")
+
+
+
+def _compute_domain(self):
+	if self.related_root_fields.relation:
+		model_name = self.related_root_fields.relation
+		model_id = self.env['ir.model'].search([('model', '=', model_name)], limit=1)
+
+		model_count = [
+			('model_id', '=', model_id)
+		]
+		return model_count
+
+fields_in_related_root_model_fields = fields.Many2one('ir.model.fields',
+    compute='_compute_fields_in_related_root_model',
+    string="Groupé par"
+)
+
+@api.depends('related_root_model_fields')
+def _compute_fields_in_related_root_model(self):
+    for record in self:
+        related_model = record.related_root_model_fields.relation
+        if related_model:
+            model_id = self.env['ir.model'].search([('model', '=', related_model)], limit=1)
+            if model_id:
+                fields = self.env['ir.model.fields'].search([('model_id', '=', model_id.id)])
+                record.fields_in_related_root_model_fields = fields and fields[0].id or False
+            else:
+                record.fields_in_related_root_model_fields = False
+        else:
+            record.fields_in_related_root_model_fields = False
+
+
+

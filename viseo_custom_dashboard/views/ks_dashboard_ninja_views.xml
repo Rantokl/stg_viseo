@@ -1,0 +1,241 @@
+<odoo>
+<data>
+<record id="custom_item_form_view" model="ir.ui.view">
+	<field name="name">custom.ks.view.form.inherit</field>
+	<field name="model">ks_dashboard_ninja.item</field>
+	<field name="inherit_id" ref="ks_dashboard_ninja.item_form_view"/>
+	<field name="arch" type="xml">
+
+		<field name="ks_graph_preview" position="replace">
+			<field name="ks_graph_preview" string="Preview"
+				class="ks_dn_graph_preview oe_horizontal_separator oe_clear"
+				widget="ks_dashboard_graph_preview"
+				attrs="{'invisible':['|','|',('ks_dashboard_item_type','=','ks_tile'),('ks_dashboard_item_type','=','ks_list_view'),('ks_dashboard_item_type','=','ks_kpi')]}"/>
+		</field>
+
+
+		<!-- MODEL ID -->
+		<field name="ks_model_id" position="replace">
+			<field name="ks_model_id" 
+				options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"
+				context="{'current_id': id}"
+				attrs="{'invisible':[('ks_dashboard_item_type','==','ks_bar_chart_many')]}"/>
+
+			<field name="ks_model_id_1_many" string="Modèles 1 (bar)"
+				options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"
+				context="{'current_id': id}"
+				attrs="{'invisible':[('ks_dashboard_item_type','!=','ks_bar_chart_many')]}"/>
+
+			<field name="ks_model_id_2_many" string="Modèle 2 (ligne)"
+				options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"
+				context="{'current_id': id}"
+				attrs="{'invisible':[('ks_dashboard_item_type','!=','ks_bar_chart_many')]}"/>
+		</field>
+
+		<!-- MEASURE FIELD ORIGINAL -->
+		<field name="ks_chart_measure_field" position="replace">
+			<field name="ks_chart_measure_field" string="Unité de mesure" widget='many2many_tags'
+				options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"
+				context="{'current_id': id}"
+				attrs="{'invisible':['|','|',('ks_chart_data_count_type','=','count'),('ks_model_id','=',False),('ks_dashboard_item_type','==','ks_bar_chart_many')]}"/>
+
+			<!-- <field name="group_by_model_id"/> -->
+			<field name="ks_chart_measure_field_count"/>
+		
+		</field>
+
+
+		<field name="ks_chart_measure_field_2" position="replace">
+			<field name="ks_chart_measure_field_2" string="Line Measure"
+				widget='many2many_tags'
+				options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"
+				context="{'current_id': id}"
+				attrs="{'invisible':['|','|','|',('ks_chart_data_count_type','=','count'),('ks_model_id','=',False),('ks_dashboard_item_type','=','ks_list_view'),('ks_dashboard_item_type','!=','ks_bar_chart')]}"/>
+
+			<field name="ks_chart_data_count_type_many_1" context="{'current_id': id}"
+				attrs="{
+					'invisible':[('ks_dashboard_item_type','!=','ks_bar_chart_many')],
+					'required':[('ks_dashboard_item_type','!=','ks_kpi'),('ks_dashboard_item_type','!=','ks_tile'),('ks_dashboard_item_type','!=','ks_list_view')]
+				}"/>
+
+			<!-- <field name="ks_monetary_unit_1_many"/> -->
+
+			<field name="ks_chart_data_count_type_many_2" context="{'current_id': id}"
+				attrs="{'invisible':[('ks_dashboard_item_type','!=','ks_bar_chart_many')],
+					'required':[('ks_dashboard_item_type','!=','ks_kpi'),('ks_dashboard_item_type','!=','ks_tile'),('ks_dashboard_item_type','!=','ks_list_view')]}"/>
+		</field>
+
+		<!-- GROUPE BY MANY-->
+		<field name="ks_chart_relation_groupby" position="replace">
+			<field name="ks_chart_relation_groupby" string="Group By"
+				context="{'current_id': id}"
+				options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"
+				attrs="{'invisible':['|','|',('ks_model_id','=',False),('ks_dashboard_item_type','=','ks_list_view'),('ks_list_view_type','=','ungrouped'),('ks_dashboard_item_type','=','ks_bar_chart_many')]}"/>
+
+			<field name="ks_chart_relation_groupby_many" string="Group By (many)"
+				context="{'current_id': id}"
+				options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"
+				attrs="{'invisible':[('ks_dashboard_item_type','!=','ks_bar_chart_many')]}"/>
+		</field>
+
+ 		<!-- COUNT TYPE & MEASURE FIELDS MANY -->
+		<field name="ks_chart_data_count_type" position="replace">
+			<field name="ks_chart_data_count_type" context="{'current_id': id}"
+				attrs="{'invisible':['|','|','|','|', ('ks_model_id','=',False),('ks_dashboard_item_type','=','ks_tile'),('ks_dashboard_item_type','=','ks_list_view'),('ks_dashboard_item_type','=','ks_kpi'),('ks_dashboard_item_type','=','ks_bar_chart_many')],
+					'required':[('ks_dashboard_item_type','!=','ks_kpi'),('ks_dashboard_item_type','!=','ks_tile'),('ks_dashboard_item_type','!=','ks_list_view')]}"/>
+
+			<field name="ks_chart_measure_field_many" widget='many2many_tags'
+				options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"
+				context="{'current_id': id}"
+				attrs="{'invisible':['|',('ks_chart_data_count_type_many_1','=','count'),('ks_dashboard_item_type','!=','ks_bar_chart_many')]}"/>
+
+			<field name="ks_chart_measure_field_2_many"
+				widget='many2many_tags'
+				options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"
+				context="{'current_id': id}"
+				attrs="{'invisible':['|','|',('ks_chart_data_count_type_many_2','=','count'),('ks_dashboard_item_type','!=','ks_bar_chart_many')]}"/>
+		</field>
+
+		<!-- DOMAIN FILTER -->
+		<field name="ks_domain" position='replace'>
+			<field name="ks_domain" 
+				widget="domain" 
+				class="ks_domain_content"
+				context="{'current_id': id}"
+				options="{'model': 'ks_model_name', 'in_dialog': True}"
+				attrs="{'invisible':[('ks_dashboard_item_type','==','ks_bar_chart_many')]}"/>
+
+			<field name="ks_model_name_many_1" invisible="1"/>
+			<field name="ks_domain_many_1"
+				string="domain model 1"
+				widget="domain"
+				class="ks_domain_content"
+				context="{'current_id': id}"
+				options="{'model': 'ks_model_name_many_1', 'in_dialog': True}"
+				attrs="{'invisible':[('ks_dashboard_item_type','!=','ks_bar_chart_many')]}"/>
+
+			<field name="ks_model_name_many_2" invisible="1"/>
+			<field name="ks_domain_many_2"
+				string="domain model 2"
+				widget="domain"
+				class="ks_domain_content"
+				context="{'current_id': id}"
+				options="{'model': 'ks_model_name_many_2', 'in_dialog': True}"
+				attrs="{'invisible':[('ks_dashboard_item_type','!=','ks_bar_chart_many')]}"/>
+
+			<field name="ks_domain_many_3"
+				string="domain model 1 and 2"
+				widget="domain"
+				class="ks_domain_content"
+				context="{'current_id': id}"
+				options="{'model': 'ks_model_name_many_2', 'in_dialog': True}"
+				attrs="{'invisible':[('ks_dashboard_item_type','!=','ks_bar_chart_many')]}"/>
+
+			<field name="ks_date_filter_field_many_1" 
+				context="{'current_id': id}"
+				options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"
+				attrs="{'invisible':[('ks_dashboard_item_type','!=','ks_bar_chart_many')]}"/>
+
+			<field name="ks_date_filter_field_many_2" 
+				context="{'current_id': id}"
+				options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"
+				attrs="{'invisible':[('ks_dashboard_item_type','!=','ks_bar_chart_many')]}"/>
+		</field>
+
+
+
+		<!-- DATE FILTER -->
+		<field name="ks_date_filter_selection" position='replace'>
+			<field name="ks_date_filter_selection"/>
+		</field>
+
+		<field name="ks_item_start_date" position='replace'>
+			<field name="ks_item_start_date" string="Start Date"
+				attrs="{'invisible':[('ks_date_filter_selection','!=','l_custom')], 
+					'required':[('ks_model_id','!=',False),('ks_date_filter_selection','=','l_custom')]}"/>
+		</field>
+
+		<field name="ks_item_end_date" position='replace'>
+			<field name="ks_item_end_date"
+				attrs="{'invisible':[('ks_date_filter_selection','!=','l_custom')], 
+					'required':[('ks_model_id','!=',False),('ks_date_filter_selection','=','l_custom')]}"/>
+		</field>
+
+
+		<!-- SORT BY FILTER -->
+		<field name="ks_sort_by_field" position="replace">
+			<field name="ks_sort_by_field"
+				context="{'current_id': id}"
+				options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"
+				attrs="{'invisible':[('ks_dashboard_item_type','=','ks_bar_chart_many')]}"/>
+
+			<field name="ks_sort_by_field_many" 
+				context="{'current_id': id}"
+				options="{'no_create': True, 'no_create_edit':True, 'no_open': True}"
+				attrs="{'invisible':[('ks_dashboard_item_type','!=','ks_bar_chart_many')]}"/>
+
+		</field>
+
+
+		<!-- SHOW LINES -->
+		<field name="ks_show_data_value" position="before">
+			<field name="ks_show_gridlines"/>
+		</field>
+
+		<field name="ks_unit" position="replace">
+			<field name="ks_unit"
+				attrs="{'invisible':[('ks_dashboard_item_type','==','ks_bar_chart_many')]}"/>
+
+			<field name="ks_monetary_unit_2_many"
+				string="Afficher unité monétaire"
+				attrs="{'invisible':[('ks_dashboard_item_type','!=','ks_bar_chart_many')]}"/>
+		</field>
+
+		<field name="ks_unit_selection"
+			attrs="{'invisible':['|',('ks_unit','=',False), ('ks_dashboard_item_type','==','ks_bar_chart_many')],
+				'required':[('ks_unit','=',True)]}"/>
+
+		<field name="ks_chart_unit"
+			attrs="{'invisible':['|','|',('ks_unit_selection','!=','custom'),('ks_unit','=',False), ('ks_dashboard_item_type','==','ks_bar_chart_many')],
+				'required':[('ks_unit_selection','=','custom')]}"/>
+
+
+		<!-- taille de police (chart) -->
+
+
+
+
+
+		<!-- page measure name -->
+		<page name="data_sets" position='after'>
+			<page string="Nom des mesures" name="measure_fields_name">
+				<group string="Modèle 1">
+					<field name="ks_chart_measure_field_name_1_1" attrs="{'invisible':[('ks_chart_measure_field_name_1_1','=',False)]}"/>
+					<field name="ks_chart_measure_field_name_1_2" attrs="{'invisible':[('ks_chart_measure_field_name_1_2','=',False)]}"/>
+					<field name="ks_chart_measure_field_name_1_3" attrs="{'invisible':[('ks_chart_measure_field_name_1_3','=',False)]}"/>
+					<field name="ks_chart_measure_field_name_1_4" attrs="{'invisible':[('ks_chart_measure_field_name_1_4','=',False)]}"/>
+				</group>
+
+				<group string="Modèle 2" attrs="{'invisible':[('ks_dashboard_item_type','!=','ks_bar_chart_many'),('ks_dashboard_item_type','!=','ks_bar_chart')]}">
+					<field name="ks_chart_measure_field_name_2_1" attrs="{'invisible':[('ks_chart_measure_field_name_2_1','=',False)]}"/>
+					<field name="ks_chart_measure_field_name_2_2" attrs="{'invisible':[('ks_chart_measure_field_name_2_2','=',False)]}"/>
+					<field name="ks_chart_measure_field_name_2_3" attrs="{'invisible':[('ks_chart_measure_field_name_2_3','=',False)]}"/>
+					<field name="ks_chart_measure_field_name_2_4" attrs="{'invisible':[('ks_chart_measure_field_name_2_4','=',False)]}"/>
+				</group>
+			</page>
+			<page string="Taille du police (en Pt)" name="measure_fields_name">
+				<group string="Modèle 1">
+					<field name="ks_chart_x_axe_font_size" string="Axe X"/>
+					<field name="ks_chart_y_axe_font_size" string="Axe(s) Y"/>
+					<field name="ks_chart_legend_font_size" string="légende"/>
+				</group>
+			</page>
+		</page>
+
+
+		
+
+	</field>
+	</record>
+</data>
+</odoo>

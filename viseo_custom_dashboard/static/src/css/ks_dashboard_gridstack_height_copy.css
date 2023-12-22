@@ -1,0 +1,900 @@
+
+.grid-stack > .grid-stack-item[data-gs-height='1'] {
+	height: 45px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='1'] {
+	min-height: 45px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='1'] {
+	max-height: 45px !important;
+}
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='1'] {
+  top: 45px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='2'] {
+	height: 90px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='2'] {
+	min-height: 90px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='2'] {
+	max-height: 90px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='2'] {
+  top: 90px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='3'] {
+	height: 135px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='3'] {
+	min-height: 135px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='3'] {
+	max-height: 135px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='3'] {
+  top: 135px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='4'] {
+	height: 180px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='4'] {
+	min-height: 180px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='4'] {
+	max-height: 180px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='4'] {
+  top: 180px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='5'] {
+	height: 225px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='5'] {
+	min-height: 225px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='5'] {
+	max-height: 225px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='5'] {
+  top: 225px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='6'] {
+	height: 270px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='6'] {
+	min-height: 270px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='6'] {
+	max-height: 270px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='6'] {
+  top: 270px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='7'] {
+	height: 315px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='7'] {
+	min-height: 315px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='7'] {
+	max-height: 315px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='7'] {
+  top: 315px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='8'] {
+	height: 360px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='8'] {
+	min-height: 360px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='8'] {
+	max-height: 360px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='8'] {
+  top: 360px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='9'] {
+	height: 405px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='9'] {
+	min-height: 405px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='9'] {
+	max-height: 405px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='9'] {
+  top: 405px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='10'] {
+	height: 450px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='10'] {
+	min-height: 450px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='10'] {
+	max-height: 450px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='10'] {
+  top: 450px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='11'] {
+	height: 495px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='11'] {
+	min-height: 495px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='11'] {
+	max-height: 495px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='11'] {
+  top: 495px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='12'] {
+	height: 540px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='12'] {
+	min-height: 540px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='12'] {
+	max-height: 540px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='12'] {
+  top: 540px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='13'] {
+	height: 585px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='13'] {
+	min-height: 585px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='13'] {
+	max-height: 585px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='13'] {
+  top: 585px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='14'] {
+	height: 630px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='14'] {
+	min-height: 630px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='14'] {
+	max-height: 630px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='14'] {
+  top: 630px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='15'] {
+	height: 675px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='15'] {
+	min-height: 675px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='15'] {
+	max-height: 675px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='15'] {
+  top: 675px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='16'] {
+	height: 720px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='16'] {
+	min-height: 720px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='16'] {
+	max-height: 720px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='16'] {
+  top: 720px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='17'] {
+	height: 765px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='17'] {
+	min-height: 765px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='17'] {
+	max-height: 765px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='17'] {
+  top: 765px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='18'] {
+	height: 810px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='18'] {
+	min-height: 810px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='18'] {
+	max-height: 810px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='18'] {
+  top: 810px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='19'] {
+	height: 855px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='19'] {
+	min-height: 855px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='19'] {
+	max-height: 855px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='19'] {
+  top: 855px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='20'] {
+	height: 900px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='20'] {
+	min-height: 900px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='20'] {
+	max-height: 900px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='20'] {
+  top: 900px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='21'] {
+	height: 945px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='21'] {
+	min-height: 945px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='21'] {
+	max-height: 945px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='21'] {
+  top: 945px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='22'] {
+	height: 990px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='22'] {
+	min-height: 990px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='22'] {
+	max-height: 990px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='22'] {
+  top: 990px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='23'] {
+	height: 1035px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='23'] {
+	min-height: 1035px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='23'] {
+	max-height: 1035px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='23'] {
+  top: 1035px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='24'] {
+	height: 1080px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='24'] {
+	min-height: 1080px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='24'] {
+	max-height: 1080px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='24'] {
+  top: 1080px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='25'] {
+	height: 1125px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='25'] {
+	min-height: 1125px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='25'] {
+	max-height: 1125px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='25'] {
+  top: 1125px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='26'] {
+	height: 1170px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='26'] {
+	min-height: 1170px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='26'] {
+	max-height: 1170px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='26'] {
+  top: 1170px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='27'] {
+	height: 1215px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='27'] {
+	min-height: 1215px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='27'] {
+	max-height: 1215px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='27'] {
+  top: 1215px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='28'] {
+	height: 1260px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='28'] {
+	min-height: 1260px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='28'] {
+	max-height: 1260px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='28'] {
+  top: 1260px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='29'] {
+	height: 1305px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='29'] {
+	min-height: 1305px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='29'] {
+	max-height: 1305px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='29'] {
+  top: 1305px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='30'] {
+	height: 1350px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='30'] {
+	min-height: 1350px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='30'] {
+	max-height: 1350px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='30'] {
+  top: 1350px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='31'] {
+	height: 1395px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='31'] {
+	min-height: 1395px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='31'] {
+	max-height: 1395px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='31'] {
+  top: 1395px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='32'] {
+	height: 1440px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='32'] {
+	min-height: 1440px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='32'] {
+	max-height: 1440px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='32'] {
+  top: 1440px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='33'] {
+	height: 1485px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='33'] {
+	min-height: 1485px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='33'] {
+	max-height: 1485px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='33'] {
+  top: 1485px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='34'] {
+	height: 1530px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='34'] {
+	min-height: 1530px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='34'] {
+	max-height: 1530px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='34'] {
+  top: 1530px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='35'] {
+	height: 1575px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='35'] {
+	min-height: 1575px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='35'] {
+	max-height: 1575px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='35'] {
+  top: 1575px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='36'] {
+	height: 1620px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='36'] {
+	min-height: 1620px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='36'] {
+	max-height: 1620px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='36'] {
+  top: 1620px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='37'] {
+	height: 1665px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='37'] {
+	min-height: 1665px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='37'] {
+	max-height: 1665px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='37'] {
+  top: 1665px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='38'] {
+	height: 1710px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='38'] {
+	min-height: 1710px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='38'] {
+	max-height: 1710px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='38'] {
+  top: 1710px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='39'] {
+	height: 1755px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='39'] {
+	min-height: 1755px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='39'] {
+	max-height: 1755px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='39'] {
+  top: 1755px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='40'] {
+	height: 1800px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='40'] {
+	min-height: 1800px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='40'] {
+	max-height: 1800px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='40'] {
+  top: 1800px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='41'] {
+	height: 1845px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='41'] {
+	min-height: 1845px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='41'] {
+	max-height: 1845px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='41'] {
+  top: 1845px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='42'] {
+	height: 1890px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='42'] {
+	min-height: 1890px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='42'] {
+	max-height: 1890px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='42'] {
+  top: 1890px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='43'] {
+	height: 1935px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='43'] {
+	min-height: 1935px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='43'] {
+	max-height: 1935px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='43'] {
+  top: 1935px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='44'] {
+	height: 1980px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='44'] {
+	min-height: 1980px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='44'] {
+	max-height: 1980px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='44'] {
+  top: 1980px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='45'] {
+	height: 2025px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='45'] {
+	min-height: 2025px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='45'] {
+	max-height: 2025px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='45'] {
+  top: 2025px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='46'] {
+	height: 2070px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='46'] {
+	min-height: 2070px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='46'] {
+	max-height: 2070px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='46'] {
+  top: 2070px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='47'] {
+	height: 2115px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='47'] {
+	min-height: 2115px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='47'] {
+	max-height: 2115px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='47'] {
+  top: 2115px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='48'] {
+	height: 2160px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='48'] {
+	min-height: 2160px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='48'] {
+	max-height: 2160px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='48'] {
+  top: 2160px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='49'] {
+	height: 2205px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='49'] {
+	min-height: 2205px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='49'] {
+	max-height: 2205px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='49'] {
+  top: 2205px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='50'] {
+	height: 2250px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='50'] {
+	min-height: 2250px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='50'] {
+	max-height: 2250px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='50'] {
+  top: 2250px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='51'] {
+	height: 2295px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='51'] {
+	min-height: 2295px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='51'] {
+	max-height: 2295px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='51'] {
+  top: 2295px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='52'] {
+	height: 2340px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='52'] {
+	min-height: 2340px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='52'] {
+	max-height: 2340px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='52'] {
+  top: 2340px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='53'] {
+	height: 2385px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='53'] {
+	min-height: 2385px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='53'] {
+	max-height: 2385px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='53'] {
+  top: 2385px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='54'] {
+	height: 2430px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='54'] {
+	min-height: 2430px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='54'] {
+	max-height: 2430px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='54'] {
+  top: 2430px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='55'] {
+	height: 2475px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='55'] {
+	min-height: 2475px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='55'] {
+	max-height: 2475px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='55'] {
+  top: 2475px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='56'] {
+	height: 2520px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='56'] {
+	min-height: 2520px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='56'] {
+	max-height: 2520px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='56'] {
+  top: 2520px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='57'] {
+	height: 2565px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='57'] {
+	min-height: 2565px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='57'] {
+	max-height: 2565px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='57'] {
+  top: 2565px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='58'] {
+	height: 2610px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='58'] {
+	min-height: 2610px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='58'] {
+	max-height: 2610px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='58'] {
+  top: 2610px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='59'] {
+	height: 2655px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='59'] {
+	min-height: 2655px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='59'] {
+	max-height: 2655px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='59'] {
+  top: 2655px !important;
+}
+	/************************************ */
+	
+.grid-stack > .grid-stack-item[data-gs-height='60'] {
+	height: 2700px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-min-height='60'] {
+	min-height: 2700px !important;
+}
+.grid-stack > .grid-stack-item[data-gs-max-height='60'] {
+	max-height: 2700px !important;
+}
+
+.ks_dashboard_item_content .grid-stack-item[data-gs-y='60'] {
+  top: 2700px !important;
+}
+	/************************************ */
+	
