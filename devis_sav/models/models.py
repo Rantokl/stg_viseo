@@ -281,6 +281,8 @@ class DemandeDevis(models.Model):
     devis_id = fields.Integer()
     note = fields.Html(string="Note")
     number_sale = fields.Integer(default=0)
+    status_sale = fields.Boolean(default=False)
+
 
     @api.model
     def create(self, sequence):
@@ -288,6 +290,46 @@ class DemandeDevis(models.Model):
         # place_pont = f"Place: {sequence.get('place_id')}" if sequence['place_id'] else f"Pont: {sequence.get('pont_id')}"
         sequence['name'] = f"{sequence['name']}"
         return super(DemandeDevis, self).create(sequence)
+
+    def check_sale_order_validate(self):
+        # self.ensure_one()
+        curs, connex = database.dbconnex(self)
+        curs.execute("""
+            SELECT id, numero_devis, status_devis_id from public."viseoApi_devis" where CAST (status_devis_id as INT) = CAST(%s as INT);
+        """,('2'))
+        datas = curs.fetchall()
+        print(datas)
+        for data in datas:
+            devis = self.env['sale.order.demand'].search([('devis_id','=',data[0])])
+            print(data[0], devis.id)
+            if not devis:
+                print('Record doesnt exit')
+                # continue
+            elif devis.status_sale:
+
+                print('pass')
+                continue
+
+
+
+            else:
+                records = {
+                        'status_sale': True
+                        }
+                sale_order = self.env['sale.order'].search([('demand_devis.id' ,'=', devis.id)])
+
+                print(sale_order)
+                if not sale_order:
+                    print('Saleo order doesnt exist')
+                else:
+                    devis.write(records)
+                    sale_order.message_post(
+                                body = 'Devis validé par le client via l\'application mobile'
+                            )
+                    print('Record created')
+
+        connex.commit()
+        connex.close()
 
     def check_devis_apk(self):
         curs, connex = database.dbconnex(self)
@@ -371,6 +413,11 @@ class DevisAPK(models.Model):
     _inherit = 'sale.order'
 
     demand_devis = fields.Many2one('sale.order.demand', 'Ref demande de devis')
+
+
+
+
+
 
 
 
