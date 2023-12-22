@@ -92,6 +92,19 @@
 		</record>
 
 
+		<record id="rma_rdv_id" model="ir.ui.view">
+        <field name="name">rma.rdv.id2</field>
+        <field name="model">fleet.vehicle.log.services</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_log_services_view_form"/>
+        <field name="arch" type="xml">
+            <!-- find field description and add the field
+                 idea_ids after it -->
+            <xpath expr="//field[@name='customer_id']" position="after">
+              <field name="rdv_id" string="Ref RDV"/>
+            </xpath>
+        </field>
+    </record>
+
 		<record id="viseo_mobile_rdv_form" model="ir.ui.view">
 			<field name="name">viseo_rdv_mobile_form</field>
 			<field name="model">viseo_rdv_mobile.viseo_rdv_mobile</field>
@@ -155,6 +168,15 @@
 								('validator', '=', False ),
 								('state', '=', 'new')
 							]}"/>
+						<button
+							name="repair_order"
+							string="Créer un RMA"
+							class="oe_highlight"
+							type="object"
+							attrs="{'invisible':['|',
+								('validator', '=', False ),
+								('state', '!=', 'accepted')
+							]}"/>
 
 						<field
 							name="state" 
@@ -186,7 +208,7 @@
 
 							<group class="col" >
 								<field name="responsable_atelier_id" readonly="1" 
-									attrs="{'readonly':['|',('state','in', ['canceled','refused']),('validator','=',False)]}"/>
+									attrs="{'readonly':['|',('state','in', ['canceled','refused']),('validator','=',False)]}" widget="many2many_tags"/>
 
 								<field name="emplacement" widget="radio" 
 									attrs="{'readonly':['|',('state','in', ['canceled','refused']),('validator','=',False)]}"/>

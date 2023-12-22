@@ -123,7 +123,7 @@ class viseo_rdv_mobile(models.Model):
 			self.place_id = False
 
 	atelier_id = fields.Many2one('fleet.workshop.type', string='Atelier', group_expand="_read_group_atelier_ids", readonly=True)
-	responsable_atelier_id = fields.Many2one('res.users', string='Responsable atelier', related='atelier_id.responsable_id')
+	responsable_atelier_id = fields.Many2many('res.users', string='Responsable atelier', related='atelier_id.responsable_id')
 	mecanicien_id = fields.Many2one('hr.employee', string='Mecaniciens')
 
 	place_id = fields.Many2one('place_vehicle.place_vehicle', 'Place', domain="[('atelier_id.id','=',atelier_id)]",copy=False, default=False)
@@ -276,7 +276,7 @@ class viseo_rdv_mobile(models.Model):
 
 	def _check_validator(self):
 		current_user = self.env.user.id
-		responsables = self.responsable_atelier_id.id
+		responsables = self.responsable_atelier_id.ids
 		if current_user == responsables or  self.env.user.id == 2:
 			self.validator = True
 		else:
@@ -446,6 +446,34 @@ class viseo_rdv_mobile(models.Model):
 
 		return datasets
 
+	def repair_order(self):
+		self.ensure_one()
+		demand = self.id
+		repair_id = self.env['fleet.vehicle.log.services'].sudo().search([('rdv_id.id', '=', demand)])
+		if repair_id:
+			return {
+				'type': 'ir.actions.act_window',
+				'name': 'RMA',
+				'view_mode': 'form',
+				'res_model': 'fleet.vehicle.log.services',
+				'res_id': repair_id.id,
+				'context': {'default_customer_id': self.customer_id,
+							'default_vehicle_id': self.customer_vehicle_id},
+				'target': 'current'
+			}
+		else:
+			return {
+				'type': 'ir.actions.act_window',
+				'name': 'RMA',
+				'view_mode': 'form',
+				'res_model': 'fleet.vehicle.log.services',
+
+				'context': {'default_customer_id': self.customer_id.id,
+							'default_vehicle_id': self.customer_vehicle_id.id,
+							'default_rdv_id': self.id},
+				'target': 'current'
+			}
+
 	def rdv_check(self):
 		print("Test")
 		conn = psycopg2.connect(database='mobile_101023',
@@ -552,7 +580,7 @@ class ViseoTagRfidInherit(models.Model):
 
 class AtelierVehicle(models.Model):
 	_inherit = 'fleet.workshop.type'
-	responsable_id = fields.Many2one('res.users', string='Responsable(s)')
+	responsable_id = fields.Many2many('res.users', string='Responsable(s)')
 
 	pont_id = fields.One2many('pont_vehicle.pont_vehicle', 'atelier_id', string="pont")
 	place_id = fields.One2many('place_vehicle.place_vehicle', 'atelier_id', string="Place")
@@ -569,6 +597,10 @@ class PondVehicle(models.Model):
 
 	name = fields.Char("pont")
 	atelier_id = fields.Many2one('fleet.workshop.type', 'Atelier')
+
+
+
+
 
 class Typerdv(models.Model):
 	_name= 'type_rdv.type_rdv'
@@ -648,3 +680,28 @@ class Typerdv(models.Model):
 		print()
 		return res
 
+
+class Repair_order_viseo(models.Model):
+	_inherit= 'fleet.vehicle.log.services'
+
+	rdv_id = fields.Many2one('viseo_rdv_mobile.viseo_rdv_mobile', 'Ref RDV')
+
+
+	@api.model
+	def create(self, vals):
+		res = super(Repair_order_viseo, self).create(vals)
+		print(res.id,res.rdv_id.name ,res.name2, res.customer_id.id, res.vehicle_id.id)
+		curs, connex = dbconnex(self)
+		curs.execute("""
+					INSERT INTO public."viseoApi_suivisav"(
+	rendez_vous, owner_id, vehicle_id, reference,status_commande_reparation_id, status_contrat_id, status_devis_id, status_diagnostic_id, status_facturation_id, status_lavage_id,
+	 status_liste_des_pieces_id, status_livraison_id, status_reception_id, status_rendez_vous_id, status_sav_id, status_termine_id,
+	 reception, diagnostic, liste_des_pieces, devis, commande_reparation, contrat, facturation, lavage, livraison, termine,type_sav)
+	VALUES ( %s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s,%s, %s, %s,%s
+	);
+				""", ('Rendez-vous',  res.customer_id.id, res.vehicle_id.id,res.name2,1,1,1,1,1,1,1,1,3,3,1,1,'Réception','Diagnostic','Pièces','Devis','Réparation','Contrat','Facturation','Lavage','Livraison','Terminé',res.rdv_id.type_rendez_vous_id.name))
+		connex.commit()
+		curs.close()
+		connex.close()
+
+		return res
