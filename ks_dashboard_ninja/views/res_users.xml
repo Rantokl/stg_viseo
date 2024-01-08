@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data>
+    
+        <record id="dashboard_res_user_access_module_name" model="ir.ui.view">
+            <field name="name">res.users.dashboard.form.inherit</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+                
+                <field name="action_id" position="before">
+                    <field name="dashboard_action_domain" invisible="1"/>
+                </field>
+                <field name="action_id" position="attributes">
+                    <attribute name="domain">[('id','in',dashboard_action_domain)]</attribute>
+                    <attribute name="options">{'no_create':True}</attribute>
+                </field>                
+                
+            </field>
+        </record>
+    
+    </data>
+    
+
+</odoo>
