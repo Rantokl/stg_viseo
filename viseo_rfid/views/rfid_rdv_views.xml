@@ -1,0 +1,59 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+
+    <record model="ir.ui.view" id="ir_vehicule_logs_button_view_form">
+      <field name="name">Vehicule logs</field>
+      <field name="model">fleet.viseo.vehicule.logs</field>
+      <field name="arch" type="xml">
+        <tree>
+          <!--<field name="tag_rfid"/>
+
+          <field name="model_id"/>
+           <button name="action_view_logs_vehicules" type="object" class="oe_stat_button" icon="fa-exchange" string="Logs"/>-->
+            <field name="rfid_tag" />
+            <field name="id_vehicle" invisible="1"/>
+            <field name="vehicle"/>
+            <field name="location"/>
+            <field name="date_check"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="vehicule_logs_button_view_form" model="ir.ui.view">
+            <field name="name">inherited.fleet.vehicle.viseo.inherit</field>
+            <field name="model">fleet.vehicle</field>
+
+            <field name="inherit_id" ref="viseo_parc_auto.new_fleet_vehicle_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_view_stock_move_lines']" position="after">
+                    <button name="open_vehicle_logs" type="object" class="oe_stat_button" icon="fa-exchange" string="Logs"/>
+                </xpath>
+
+            </field>
+        </record>
+
+
+
+    <record id="action_view_logs_vehicules" model="ir.actions.act_window">
+        
+        <field name="name">Vehicule logs</field>
+        <field name="res_model">fleet.viseo.vehicule.logs</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="viseo_rfid.ir_vehicule_logs_button_view_form"/>
+        <field name="target">new</field>
+   </record>
+
+      <record id="action_view_logs_vehicules_inherit" model="ir.actions.act_window.view">
+            <field name="sequence" eval="5"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="vehicule_logs_button_view_form"/>
+            <field name="act_window_id" ref="action_view_logs_vehicules"/>
+        </record>
+
+
+
+
+
+  </data>
+</odoo>
