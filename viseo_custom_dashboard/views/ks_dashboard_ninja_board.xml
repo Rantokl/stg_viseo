@@ -1,0 +1,13 @@
+<odoo>
+<data>
+
+
+	<menuitem 
+		name="dashboards" 
+		id="ks_dashboard_ninja.dashboards_menu_list"
+		parent="ks_dashboard_ninja.board_menu_root"
+		groups="" sequence="10"/>
+
+
+</data>
+</odoo>
