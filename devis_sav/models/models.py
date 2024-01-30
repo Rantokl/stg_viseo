@@ -331,21 +331,24 @@ class DemandeDevis(models.Model):
         connex.commit()
         connex.close()
 
+    # where
+    # CAST(date_devis as DATE) = CAST( % s
+    # AS
+    # DATE)
+    # , (datetime.date.today(),)
     def check_devis_apk(self):
         curs, connex = database.dbconnex(self)
         curs.execute("""
                         SELECT  id, details, owner_id, type_devis_id, vehicle_id, date_devis 
-                        FROM public."viseoApi_devis" where CAST(date_devis as DATE) = CAST(%s AS DATE)
-        """,(datetime.date.today(),))
+                        FROM public."viseoApi_devis" 
+        """)
         devis = curs.fetchall()
-
         for row in devis:
-
             existing_record = self.env['sale.order.demand'].search([('devis_id', '=', row[0])])
             if existing_record:
-                print("pass")
+                # print("pass")
+                existing_record.write({'note': row[1]})
                 continue
-
             records = {
                 'devis_id': row[0],
                 'note':row[1],
@@ -357,7 +360,7 @@ class DemandeDevis(models.Model):
             to_suscribe = self.env['res.groups'].search([('name','=','Réception devis')])
 
             devis = self.env['sale.order.demand'].create(records)
-            print(devis.customer_id.name, devis.date_devis)
+            devis.write({'note': row[1]})
             ask = devis.message_post(body='''Demande de devis de Mr(s) {} du {}'''.format(devis.customer_id.name, devis.date_devis),
                               subject='Demande de devis de Mr(s) {}'.format(devis.customer_id.name),
                               partner_ids=to_suscribe.users.partner_id.ids)
