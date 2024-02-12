@@ -474,6 +474,31 @@ class viseo_rdv_mobile(models.Model):
 				'target': 'current'
 			}
 
+	def checkpanic(self):
+		conn = psycopg2.connect(database='mobile_101023',
+								user='etech',
+								password='3Nyy22Bv',
+								host='10.68.132.2',
+								port='5432')
+
+		cur = conn.cursor()
+		query = """SELECT pa.id ,vp.menu_panique, pa.owner_id FROM "viseoApi_paniquealert" pa INNER JOIN "viseoApi_panique" vp on vp.id = pa.panique_id 
+		 ORDER BY id DESC """
+		cur.execute(query)
+		rows=cur.fetchone()
+		panique_id =0
+
+		if panique_id == rows[0]:
+			print('pass')
+		else:
+			panique_id = rows[0]
+			mess = []
+			message = '''Votre alerte panique est belle et bien envoyé au responsable'''
+			mess.append(message)
+			send_notif('Panique',mess,4,rows[2])
+
+
+
 	def rdv_check(self):
 		print("Test")
 		conn = psycopg2.connect(database='mobile_101023',
@@ -687,21 +712,21 @@ class Repair_order_viseo(models.Model):
 	rdv_id = fields.Many2one('viseo_rdv_mobile.viseo_rdv_mobile', 'Ref RDV')
 
 
-	@api.model
-	def create(self, vals):
-		res = super(Repair_order_viseo, self).create(vals)
-		print(res.id,res.rdv_id.name ,res.name2, res.customer_id.id, res.vehicle_id.id)
-		curs, connex = dbconnex(self)
-		curs.execute("""
-					INSERT INTO public."viseoApi_suivisav"(
-	rendez_vous, owner_id, vehicle_id, reference,status_commande_reparation_id, status_contrat_id, status_devis_id, status_diagnostic_id, status_facturation_id, status_lavage_id,
-	 status_liste_des_pieces_id, status_livraison_id, status_reception_id, status_rendez_vous_id, status_sav_id, status_termine_id,
-	 reception, diagnostic, liste_des_pieces, devis, commande_reparation, contrat, facturation, lavage, livraison, termine,type_sav)
-	VALUES ( %s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s,%s, %s, %s,%s
-	);
-				""", ('Rendez-vous',  res.customer_id.id, res.vehicle_id.id,res.name2,1,1,1,1,1,1,1,1,3,3,1,1,'Réception','Diagnostic','Pièces','Devis','Réparation','Contrat','Facturation','Lavage','Livraison','Terminé',res.rdv_id.type_rendez_vous_id.name))
-		connex.commit()
-		curs.close()
-		connex.close()
-
-		return res
+	# @api.model
+	# def create(self, vals):
+	# 	res = super(Repair_order_viseo, self).create(vals)
+	# 	print(res.id,res.rdv_id.name ,res.name2, res.customer_id.id, res.vehicle_id.id)
+	# 	curs, connex = dbconnex(self)
+	# 	curs.execute("""
+	# 				INSERT INTO public."viseoApi_suivisav"(
+	# rendez_vous, owner_id, vehicle_id, reference,status_commande_reparation_id, status_contrat_id, status_devis_id, status_diagnostic_id, status_facturation_id, status_lavage_id,
+	#  status_liste_des_pieces_id, status_livraison_id, status_reception_id, status_rendez_vous_id, status_sav_id, status_termine_id,
+	#  reception, diagnostic, liste_des_pieces, devis, commande_reparation, contrat, facturation, lavage, livraison, termine,type_sav)
+	# VALUES ( %s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s,%s, %s, %s,%s
+	# );
+	# 			""", ('Rendez-vous',  res.customer_id.id, res.vehicle_id.id,res.name2,1,1,1,1,1,1,1,1,3,3,1,1,'Réception','Diagnostic','Pièces','Devis','Réparation','Contrat','Facturation','Lavage','Livraison','Terminé',res.rdv_id.type_rendez_vous_id.name))
+	# 	connex.commit()
+	# 	curs.close()
+	# 	connex.close()
+	#
+	# 	return res
