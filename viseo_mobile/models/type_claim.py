@@ -12,8 +12,8 @@ class TypeReclamation(models.Model):
     def create(self,vals):
         curs, connex = database.dbconnex(self)
         res = super(TypeReclamation, self).create(vals)
-        curs.execute("""INSERT INTO public.viseoApi_typereclamation(
-        	id, name)
+        curs.execute("""INSERT INTO public."viseoApi_typereclamation"(
+        	id, reclamation)
         	VALUES (%s, %s);
          """, (res.id, res.name))
         connex.commit()
@@ -29,9 +29,9 @@ class TypeReclamation(models.Model):
         id = self.id
         name = self.name
         curs.execute("""UPDATE
-                        public.viseoApi_typereclamation
+                        public."viseoApi_typereclamation"
                         SET
-                        id =%s, name =%s
+                        id =%s, reclamation =%s
                         WHERE id = %s;
                  """, (id, name,id))
         connex.commit()
@@ -43,7 +43,7 @@ class TypeReclamation(models.Model):
         id = self.id
         print(id)
         curs, connex = database.dbconnex(self)
-        curs.execute("""DELETE FROM public.viseoApi_typereclamation 
+        curs.execute("""DELETE FROM public."viseoApi_typereclamation" 
         WHERE id = %s
         """, (str(id)))
         connex.commit()

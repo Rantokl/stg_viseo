@@ -1,0 +1,73 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+<!--
+    <record model="ir.ui.view" id="login_sav.list">
+      <field name="name">login_sav list</field>
+      <field name="model">login_sav.login_sav</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+-->
+    <record id="login_apk_sav" model="ir.ui.view">
+            <field name="name">inherited_res_partner_login</field>
+            <field name="model">res.partner</field>
+
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='customer_classement']" position="after">
+                <field name="login" groups="base.group_no_one"/>
+                    <field name="passwd" groups="base.group_no_one"/>
+            </xpath>
+            </field>
+        </record>
+
+    <!-- actions opening views on models -->
+<!--
+    <record model="ir.actions.act_window" id="login_sav.action_window">
+      <field name="name">login_sav window</field>
+      <field name="res_model">login_sav.login_sav</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+-->
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="login_sav.action_server">
+      <field name="name">login_sav server</field>
+      <field name="model_id" ref="model_login_sav_login_sav"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="login_sav" id="login_sav.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="login_sav.menu_1" parent="login_sav.menu_root"/>
+    <menuitem name="Menu 2" id="login_sav.menu_2" parent="login_sav.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="login_sav.menu_1_list" parent="login_sav.menu_1"
+              action="login_sav.action_window"/>
+    <menuitem name="Server to list" id="login_sav" parent="login_sav.menu_2"
+              action="login_sav.action_server"/>
+-->
+  </data>
+</odoo>
