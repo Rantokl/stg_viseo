@@ -1,0 +1,148 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+    <record model="ir.ui.view" id="viseo_contact_apk.list">
+      <field name="name">viseo_contact_apk list</field>
+      <field name="model">viseo.contact.apk</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="email"/>
+          <field name="contact"/>
+          <field name="emplacement"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="viseo_contact_apk.form">
+      <field name="name">viseo_contact_apk form</field>
+      <field name="model">viseo.contact.apk</field>
+      <field name="arch" type="xml">
+        <form>
+          <group>
+            <field name="name"/>
+          <field name="email"/>
+          <field name="contact"/>
+          <field name="emplacement"/>
+              <field name="type_contact"/>
+
+          </group>
+
+        </form>
+      </field>
+    </record>
+
+    <record id="viseo_contact_apk_kanban" model="ir.ui.view">
+            <field name="name">viseo.contact.apk.kanban</field>
+            <field name="model">viseo.contact.apk</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="name"/>
+                    <field name="email"/>
+                    <field name="contact"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_global_click">
+                                <!--<div t-attf-class="#{!selection_mode ? 'text-center' : ''}">
+                                    <i class="fa fa-building" role="img" aria-label="Enterprise" title="Enterprise"></i> <strong><field name="name"/></strong>
+                                </div>-->
+                                <hr class="mt4 mb4"/>
+                                <div class="row" t-if="!selection_mode">
+                                    <div t-if="record.email.value" class="col-6 text-center">
+                                        <strong>Email:</strong>
+                                    </div>
+                                    <div t-if="record.contact.value" class="col-6 text-center">
+                                        <strong>Phone</strong>
+                                    </div>
+                                    <div t-if="record.email.value" class="col-6 text-center">
+                                        <field name="email"/>
+                                    </div>
+                                    <div t-if="record.contact.value" class="col-6 text-center o_force_ltr">
+                                        <field name="contact"/>
+                                    </div>
+                                </div>
+                                <div t-else="">
+                                    <div t-if="record.email.value">
+                                        <strong>Email:</strong>
+                                        <field name="email"/>
+                                    </div>
+                                    <div t-if="record.contact.value" class="o_force_ltr">
+                                        <strong>Phone:</strong>
+                                        <field name="contact"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+    <!-- actions opening views on models -->
+    <record model="ir.actions.act_window" id="viseo_contact_apk.action_window">
+      <field name="name">Contact application</field>
+      <field name="res_model">viseo.contact.apk</field>
+      <field name="view_mode">kanban,tree,form</field>
+    </record>
+
+
+      <record model="ir.ui.view" id="viseo_typecontact_apk.form">
+      <field name="name">viseo_typecontact_apk form</field>
+      <field name="model">type.contact.apk</field>
+      <field name="arch" type="xml">
+        <form>
+          <group>
+            <field name="name"/>
+
+
+          </group>
+
+        </form>
+      </field>
+    </record>
+
+      <record model="ir.actions.act_window" id="viseo_contact_apk.action_window">
+      <field name="name">Type Contact application</field>
+      <field name="res_model">type.contact.apk</field>
+      <field name="view_mode">form</field>
+    </record>
+
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="viseo_contact_apk.action_server">
+      <field name="name">viseo_contact_apk server</field>
+      <field name="model_id" ref="model_viseo_contact_apk_viseo_contact_apk"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="viseo_contact_apk" id="viseo_contact_apk.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="viseo_contact_apk.menu_1" parent="viseo_contact_apk.menu_root"/>
+    <menuitem name="Menu 2" id="viseo_contact_apk.menu_2" parent="viseo_contact_apk.menu_root"/>
+-->
+    <!-- actions -->
+      <menuitem action="viseo_contact_apk.action_window" string="Contact mobile"
+            id="menu_contact_apk"
+            parent="contacts.res_partner_menu_config"
+            sequence="5"/>
+<!--
+    <menuitem name="List" id="viseo_contact_apk.menu_1_list" parent="viseo_contact_apk.menu_1"
+              action="viseo_contact_apk.action_window"/>
+    <menuitem name="Server to list" id="viseo_contact_apk" parent="viseo_contact_apk.menu_2"
+              action="viseo_contact_apk.action_server"/>
+-->
+  </data>
+</odoo>

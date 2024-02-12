@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_viseo_contact_apk,viseo_contact_apk,model_viseo_contact_apk,base.group_user,1,1,1,1
