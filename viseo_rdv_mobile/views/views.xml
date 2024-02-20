@@ -92,18 +92,18 @@
 		</record>
 
 
-		<record id="rma_rdv_id" model="ir.ui.view">
-        <field name="name">rma.rdv.id2</field>
-        <field name="model">fleet.vehicle.log.services</field>
-        <field name="inherit_id" ref="fleet.fleet_vehicle_log_services_view_form"/>
-        <field name="arch" type="xml">
-            <!-- find field description and add the field
-                 idea_ids after it -->
-            <xpath expr="//field[@name='customer_id']" position="after">
-              <field name="rdv_id" string="Ref RDV"/>
-            </xpath>
-        </field>
-    </record>
+<!--		<record id="rma_rdv_id" model="ir.ui.view">-->
+<!--        <field name="name">rma.rdv.id2</field>-->
+<!--        <field name="model">fleet.vehicle.log.services</field>-->
+<!--        <field name="inherit_id" ref="fleet.fleet_vehicle_log_services_view_form"/>-->
+<!--        <field name="arch" type="xml">-->
+<!--&lt;!&ndash;             find field description and add the field&ndash;&gt;-->
+<!--&lt;!&ndash;                 idea_ids after it &ndash;&gt;-->
+<!--            <xpath expr="//field[@name='customer_id']" position="after">-->
+<!--              <field name="rdv_id" string="Ref RDV"/>-->
+<!--            </xpath>-->
+<!--        </field>-->
+<!--    </record>-->
 
 		<record id="viseo_mobile_rdv_form" model="ir.ui.view">
 			<field name="name">viseo_rdv_mobile_form</field>

@@ -211,7 +211,7 @@ class viseo_rdv_mobile(models.Model):
 						if record.mecanicien_id.id == mecano.id and record.date_start == date_start:
 							raise ValidationError(('Vous ne pouvez pas avoir la mécano à la même période'))
 						else:
-							print("Validé Mecano :", mecano.id)
+							# print("Validé Mecano :", mecano.id)
 							return self.write({'state': 'accepted', 'color': 4})
 				else:
 					self.message_post(
@@ -500,7 +500,7 @@ class viseo_rdv_mobile(models.Model):
 
 
 	def rdv_check(self):
-		print("Test")
+
 		conn = psycopg2.connect(database='mobile_101023',
 								user='etech',
 								password='3Nyy22Bv',
@@ -526,7 +526,7 @@ class viseo_rdv_mobile(models.Model):
 		print(rows)
 		if rows:
 			for row in rows:
-				print("date: ",row[5],"heure ", row[6])
+
 
 				existing_record = self.env['viseo_rdv_mobile.viseo_rdv_mobile'].search([('rdv_id', '=', row[0])])
 				if existing_record:
@@ -712,21 +712,51 @@ class Repair_order_viseo(models.Model):
 	rdv_id = fields.Many2one('viseo_rdv_mobile.viseo_rdv_mobile', 'Ref RDV')
 
 
-	# @api.model
-	# def create(self, vals):
-	# 	res = super(Repair_order_viseo, self).create(vals)
-	# 	print(res.id,res.rdv_id.name ,res.name2, res.customer_id.id, res.vehicle_id.id)
-	# 	curs, connex = dbconnex(self)
-	# 	curs.execute("""
-	# 				INSERT INTO public."viseoApi_suivisav"(
-	# rendez_vous, owner_id, vehicle_id, reference,status_commande_reparation_id, status_contrat_id, status_devis_id, status_diagnostic_id, status_facturation_id, status_lavage_id,
-	#  status_liste_des_pieces_id, status_livraison_id, status_reception_id, status_rendez_vous_id, status_sav_id, status_termine_id,
-	#  reception, diagnostic, liste_des_pieces, devis, commande_reparation, contrat, facturation, lavage, livraison, termine,type_sav)
-	# VALUES ( %s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s,%s, %s, %s,%s
-	# );
-	# 			""", ('Rendez-vous',  res.customer_id.id, res.vehicle_id.id,res.name2,1,1,1,1,1,1,1,1,3,3,1,1,'Réception','Diagnostic','Pièces','Devis','Réparation','Contrat','Facturation','Lavage','Livraison','Terminé',res.rdv_id.type_rendez_vous_id.name))
-	# 	connex.commit()
-	# 	curs.close()
-	# 	connex.close()
-	#
-	# 	return res
+	@api.model
+	def create(self, vals):
+		res = super(Repair_order_viseo, self).create(vals)
+		if res.rdv_id==' ':
+			print('No')
+		# print(res.id,res.rdv_id.name ,res.name2, res.customer_id.id, res.vehicle_id.id)
+		else:
+			curs, connex = dbconnex(self)
+			curs.execute("""
+						INSERT INTO public."viseoApi_suivisav"(
+		rendez_vous, owner_id, vehicle_id, reference,status_commande_reparation_id, status_contrat_id, status_devis_id, status_diagnostic_id, status_facturation_id, status_lavage_id,
+		 status_liste_des_pieces_id, status_livraison_id, status_reception_id, status_rendez_vous_id, status_sav_id, status_termine_id,
+		 reception, diagnostic, liste_des_pieces, devis, commande_reparation, contrat, facturation, lavage, livraison, termine,type_sav)
+		VALUES ( %s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s,%s, %s, %s,%s
+		);
+					""", ('Rendez-vous',  self.customer_id.id, self.vehicle_id.id,self.name2,1,1,1,1,1,1,1,1,3,3,1,1,'Réception','Diagnostic','Pièces','Devis','Réparation','Contrat','Facturation','Lavage','Livraison','Terminé',self.rdv_id.type_rendez_vous_id.name))
+			connex.commit()
+			curs.close()
+			connex.close()
+
+		return res
+
+class Writevehicleapk(models.Model):
+	_inherit = 'fleet.vehicle'
+
+	def write(self, vals):
+		curs, connex = dbconnex(self)
+
+		res = super(Writevehicleapk, self).write(vals)
+		print(vals)
+		curs.execute("""
+					SELECT * FROM public."viseoApi_vehicle" where id = %s
+		""",(self.id,))
+		data = curs.fetchall()
+		if data:
+			print('vehicle already here')
+		if self.tag_ids.name == 'CLIENT':
+			curs.execute("""INSERT INTO public."viseoApi_vehicle"(
+				id, number, model, owner_id)
+				VALUES (%s, %s, %s, %s);
+			""", (self.id, self.license_plate, self.lot_id.name,self.customer_id.id,))
+			print('Vehicle inserted')
+			connex.commit()
+			connex.close()
+
+		return res
+
+

@@ -4,7 +4,7 @@
         <record id="rdv_reservation_sequence" model="ir.sequence">
             <field name="name">Rendez-vous</field>
             <field name="code">viseo_rdv_mobile.viseo_rdv_mobile</field>
-            <field name="prefix">Rdv.23.</field>
+            <field name="prefix">Rdv.%(y)s.</field>
             <field name="number_increment">1</field>
             <field name="padding">4</field>
             <field eval="False" name="company_id"/>

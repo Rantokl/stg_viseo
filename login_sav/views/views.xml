@@ -18,12 +18,14 @@
             <field name="name">inherited_res_partner_login</field>
             <field name="model">res.partner</field>
 
-            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="inherit_id" ref="viseo_res.view_partner_form_perso"/>
             <field name="arch" type="xml">
 
                 <xpath expr="//field[@name='customer_classement']" position="after">
                 <field name="login" groups="base.group_no_one"/>
                     <field name="passwd" groups="base.group_no_one"/>
+                    <field name="contact_apk" groups="base.group_no_one"/>
+
             </xpath>
             </field>
         </record>
