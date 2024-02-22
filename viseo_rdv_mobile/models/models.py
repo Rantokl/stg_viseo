@@ -741,7 +741,7 @@ class Repair_order_viseo(models.Model):
 		 reception, diagnostic, liste_des_pieces, devis, commande_reparation, contrat, facturation, lavage, livraison, termine,type_sav,rma_id)
 		VALUES ( %s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s,%s, %s, %s,%s,%s
 		);
-					""", ('Rendez-vous',  vals['customer_id'], vals['vehicle_id'],vals['name2'],1,3,1,1,1,1,1,1,1,3,1,1,'Réception','Diagnostic','Pièces','Devis','Réparation','Contrat','Facturation','Lavage','Livraison','Terminé',self.rdv_id.type_rendez_vous_id.name, res.id))
+					""", ('Rendez-vous',  vals['customer_id'], self._context['active_id'],vals['name2'],1,3,1,1,1,1,1,1,1,3,1,1,'Réception','Diagnostic','Pièces','Devis','Réparation','Contrat','Facturation','Lavage','Livraison','Terminé',self.rdv_id.type_rendez_vous_id.name, res.id))
 
 		connex.commit()
 		curs.close()
