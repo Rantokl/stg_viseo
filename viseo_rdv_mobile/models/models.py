@@ -714,23 +714,88 @@ class Repair_order_viseo(models.Model):
 
 	@api.model
 	def create(self, vals):
+		curs, connex = dbconnex(self)
 		res = super(Repair_order_viseo, self).create(vals)
-		if res.rdv_id==' ':
+
+		if vals['rdv_id'] == False:
 			print('No')
 		# print(res.id,res.rdv_id.name ,res.name2, res.customer_id.id, res.vehicle_id.id)
+			curs.execute("""
+									INSERT INTO public."viseoApi_suivisav"(
+					rendez_vous, owner_id, vehicle_id, reference,status_commande_reparation_id, status_contrat_id, status_devis_id, status_diagnostic_id, status_facturation_id, status_lavage_id,
+					 status_liste_des_pieces_id, status_livraison_id, status_reception_id, status_rendez_vous_id, status_sav_id, status_termine_id,
+					 reception, diagnostic, liste_des_pieces, devis, commande_reparation, contrat, facturation, lavage, livraison, termine,rma_id)
+					VALUES ( %s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s,%s, %s, %s,%s
+					);
+								""", (
+			'Rendez-vous', vals['customer_id'], self._context['active_id'], vals['name2'], 1, 3, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1,
+			'Réception', 'Diagnostic', 'Pièces', 'Devis', 'Réparation', 'Contrat', 'Facturation', 'Lavage', 'Livraison',
+			'Terminé',res.id,))
 		else:
-			curs, connex = dbconnex(self)
+			print(vals,self.customer_id, self.vehicle_id)
+
 			curs.execute("""
 						INSERT INTO public."viseoApi_suivisav"(
 		rendez_vous, owner_id, vehicle_id, reference,status_commande_reparation_id, status_contrat_id, status_devis_id, status_diagnostic_id, status_facturation_id, status_lavage_id,
 		 status_liste_des_pieces_id, status_livraison_id, status_reception_id, status_rendez_vous_id, status_sav_id, status_termine_id,
-		 reception, diagnostic, liste_des_pieces, devis, commande_reparation, contrat, facturation, lavage, livraison, termine,type_sav)
-		VALUES ( %s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s,%s, %s, %s,%s
+		 reception, diagnostic, liste_des_pieces, devis, commande_reparation, contrat, facturation, lavage, livraison, termine,type_sav,rma_id)
+		VALUES ( %s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s,%s, %s, %s,%s,%s
 		);
-					""", ('Rendez-vous',  self.customer_id.id, self.vehicle_id.id,self.name2,1,1,1,1,1,1,1,1,3,3,1,1,'Réception','Diagnostic','Pièces','Devis','Réparation','Contrat','Facturation','Lavage','Livraison','Terminé',self.rdv_id.type_rendez_vous_id.name))
-			connex.commit()
-			curs.close()
-			connex.close()
+					""", ('Rendez-vous',  vals['customer_id'], vals['vehicle_id'],vals['name2'],1,3,1,1,1,1,1,1,1,3,1,1,'Réception','Diagnostic','Pièces','Devis','Réparation','Contrat','Facturation','Lavage','Livraison','Terminé',self.rdv_id.type_rendez_vous_id.name, res.id))
+
+		connex.commit()
+		curs.close()
+		connex.close()
+
+		return res
+
+
+	def write(self,vals):
+		curs, connex = dbconnex(self)
+		res = super(Repair_order_viseo, self).write(vals)
+		try:
+			if vals['state_ro']=='diag':
+				curs.execute("""
+					UPDATE public."viseoApi_suivisav"
+		SET   status_reception_id=%s
+		WHERE rma_id=%s;
+				""",(3,self.id,))
+			elif vals['state_ro'] == 'repair':
+				curs.execute("""
+						UPDATE public."viseoApi_suivisav"
+			SET   status_diagnostic_id=%s
+			WHERE rma_id=%s;
+					""", (3, self.id,))
+			elif vals['state_ro'] == 'trying':
+				curs.execute("""
+						UPDATE public."viseoApi_suivisav"
+			SET   status_commande_reparation_id=%s
+			WHERE rma_id=%s;
+					""", (3, self.id,))
+			elif vals['state_ro'] == 'invoice':
+				curs.execute("""
+							UPDATE public."viseoApi_suivisav"
+				SET   status_sav_id=%s
+				WHERE rma_id=%s;
+						""", (3, self.id,))
+			elif vals['is_washed'] == True:
+				curs.execute("""
+								UPDATE public."viseoApi_suivisav"
+					SET   status_lavage_id=%s
+					WHERE rma_id=%s;
+							""", (3, self.id,))
+				print('True')
+			elif vals['state_ro'] == 'done':
+				curs.execute("""
+							UPDATE public."viseoApi_suivisav"
+				SET   status_facturation_id=%s, status_termine_id=%s
+				WHERE rma_id=%s;
+						""", (3,3, self.id,))
+		except:
+			print('Nothing')
+		connex.commit()
+		curs.close()
+		connex.close()
 
 		return res
 
@@ -747,15 +812,31 @@ class Writevehicleapk(models.Model):
 		""",(self.id,))
 		data = curs.fetchall()
 		if data:
-			print('vehicle already here')
-		if self.tag_ids.name == 'CLIENT':
-			curs.execute("""INSERT INTO public."viseoApi_vehicle"(
-				id, number, model, owner_id)
-				VALUES (%s, %s, %s, %s);
-			""", (self.id, self.license_plate, self.lot_id.name,self.customer_id.id,))
-			print('Vehicle inserted')
-			connex.commit()
-			connex.close()
+			if 'driver_id' in vals:
+				curs.execute("""
+										UPDATE public."viseoApi_vehicle"
+										SET "number"=%s, model=%s, owner_id=%s
+										WHERE id=%s;
+								""", (self.license_plate, self.lot_id.name, vals['driver_id'], self.id))
+			else:
+				print('vehicle already here')
+				curs.execute("""
+						UPDATE public."viseoApi_vehicle"
+						SET "number"=%s, model=%s, owner_id=%s
+						WHERE id=%s;
+				""",(self.license_plate,self.lot_id.name,self.driver_id.id, self.id))
+
+		else:
+			tag_id = self.env['fleet.vehicle.tag'].search([('name', '=', 'CLIENT')])
+			if tag_id.id == vals['tag_ids']:
+				curs.execute("""INSERT INTO public."viseoApi_vehicle"(
+					id, number, model, owner_id)
+					VALUES (%s, %s, %s, %s);
+				""", (self.id, self.license_plate, self.lot_id.name,vals['driver_id'],))
+				print('Vehicle inserted')
+
+		connex.commit()
+		connex.close()
 
 		return res
 
