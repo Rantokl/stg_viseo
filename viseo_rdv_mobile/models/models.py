@@ -63,7 +63,7 @@ class viseo_rdv_mobile(models.Model):
 	current_user = fields.Many2one('res.users', string="Démandeur", readonly=True, default=lambda self: self.env.user.id)
 	@api.model
 	def create(self, sequence):
-		sequence['name'] = self.env['ir.sequence'].next_by_code('viseo_rdv_mobile.viseo_rdv_mobile') or '/' 
+		sequence['name'] = self.env['ir.sequence'].next_by_code('viseo_rdv_mobile.viseo_rdv_mobile') or '/'
 		# place_pont = f"Place: {sequence.get('place_id')}" if sequence['place_id'] else f"Pont: {sequence.get('pont_id')}"
 		sequence['name'] = f"{sequence['name']}"
 
@@ -132,7 +132,7 @@ class viseo_rdv_mobile(models.Model):
 	type_rendez_vous_id = fields.Many2one('type_rdv.type_rdv', string='Type de Rendez-vous', domain="[('atelier_id.id','=',atelier_id)]")
 
 	validator = fields.Boolean(compute='_check_validator')
-	rdv_id = fields.Integer()	
+	rdv_id = fields.Integer()
 
 
 	@api.model
@@ -410,11 +410,11 @@ class viseo_rdv_mobile(models.Model):
 					data['children'].append(children)
 		print()
 		print()
-		print()	
+		print()
 		print()
 		print()
 		for x in rdv_id:
-			print(x.name)	
+			print(x.name)
 			print(x.date_start)
 			print(x.date_stop)
 			print(x.atelier_id.name)
@@ -437,7 +437,7 @@ class viseo_rdv_mobile(models.Model):
 								place["actualEnd"] = x.date_stop
 
 		print()
-		pprint(datasets, sort_dicts=False)	
+		pprint(datasets, sort_dicts=False)
 		print()
 		print()
 		print()
@@ -712,37 +712,120 @@ class Repair_order_viseo(models.Model):
 	rdv_id = fields.Many2one('viseo_rdv_mobile.viseo_rdv_mobile', 'Ref RDV')
 
 
+
+
+
 	@api.model
 	def create(self, vals):
 		curs, connex = dbconnex(self)
 		res = super(Repair_order_viseo, self).create(vals)
 
-		if vals['rdv_id'] == False:
-			print('No')
-		# print(res.id,res.rdv_id.name ,res.name2, res.customer_id.id, res.vehicle_id.id)
-			curs.execute("""
-									INSERT INTO public."viseoApi_suivisav"(
-					rendez_vous, owner_id, vehicle_id, reference,status_commande_reparation_id, status_contrat_id, status_devis_id, status_diagnostic_id, status_facturation_id, status_lavage_id,
-					 status_liste_des_pieces_id, status_livraison_id, status_reception_id, status_rendez_vous_id, status_sav_id, status_termine_id,
-					 reception, diagnostic, liste_des_pieces, devis, commande_reparation, contrat, facturation, lavage, livraison, termine,rma_id)
-					VALUES ( %s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s,%s, %s, %s,%s
-					);
-								""", (
-			'Rendez-vous', vals['customer_id'], self._context['default_vehicle_id'], vals['name2'], 1, 3, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1,
-			'Réception', 'Diagnostic', 'Pièces', 'Devis', 'Réparation', 'Contrat', 'Facturation', 'Lavage', 'Livraison',
-			'Terminé',res.id,))
+		curs.execute("""
+					SELECT * FROM public."viseoApi_vehicle" where id=%s
+		""",(self._context['default_vehicle_id'],))
+		value = curs.fetchall()
+		if value:
+
+			if vals['rdv_id'] == False:
+				print('No')
+			# print(res.id,res.rdv_id.name ,res.name2, res.customer_id.id, res.vehicle_id.id)
+				curs.execute("""
+										INSERT INTO public."viseoApi_suivisav"(
+						rendez_vous, owner_id, vehicle_id, reference,status_commande_reparation_id, status_contrat_id, status_devis_id, status_diagnostic_id, status_facturation_id, status_lavage_id,
+						 status_liste_des_pieces_id, status_livraison_id, status_reception_id, status_rendez_vous_id, status_sav_id, status_termine_id,
+						 reception, diagnostic, liste_des_pieces, devis, commande_reparation, contrat, facturation, lavage, livraison, termine,rma_id)
+						VALUES ( %s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s,%s, %s, %s,%s
+						);
+									""", (
+				'Rendez-vous', vals['customer_id'], self._context['default_vehicle_id'], vals['name2'], 1, 3, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1,
+				'Réception', 'Diagnostic', 'Pièces', 'Devis', 'Réparation', 'Contrat', 'Facturation', 'Lavage', 'Livraison',
+				'Terminé',res.id,))
+			else:
+				print(vals,self.customer_id, self.vehicle_id)
+
+				curs.execute("""
+							INSERT INTO public."viseoApi_suivisav"(
+			rendez_vous, owner_id, vehicle_id, reference,status_commande_reparation_id, status_contrat_id, status_devis_id, status_diagnostic_id, status_facturation_id, status_lavage_id,
+			 status_liste_des_pieces_id, status_livraison_id, status_reception_id, status_rendez_vous_id, status_sav_id, status_termine_id,
+			 reception, diagnostic, liste_des_pieces, devis, commande_reparation, contrat, facturation, lavage, livraison, termine,type_sav,rma_id)
+			VALUES ( %s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s,%s, %s, %s,%s,%s
+			);
+						""", ('Rendez-vous',  vals['customer_id'], self._context['default_vehicle_id'],vals['name2'],1,3,1,1,1,1,1,1,1,3,1,1,'Réception','Diagnostic','Pièces','Devis','Réparation','Contrat','Facturation','Lavage','Livraison','Terminé',self.rdv_id.type_rendez_vous_id.name, res.id))
+
+			connex.commit()
+			curs.close()
+			connex.close()
+			print('Ram created')
+
+			return res
 		else:
-			print(vals,self.customer_id, self.vehicle_id)
+			return res
 
-			curs.execute("""
-						INSERT INTO public."viseoApi_suivisav"(
-		rendez_vous, owner_id, vehicle_id, reference,status_commande_reparation_id, status_contrat_id, status_devis_id, status_diagnostic_id, status_facturation_id, status_lavage_id,
-		 status_liste_des_pieces_id, status_livraison_id, status_reception_id, status_rendez_vous_id, status_sav_id, status_termine_id,
-		 reception, diagnostic, liste_des_pieces, devis, commande_reparation, contrat, facturation, lavage, livraison, termine,type_sav,rma_id)
-		VALUES ( %s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s,%s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s,%s, %s, %s,%s,%s
-		);
-					""", ('Rendez-vous',  vals['customer_id'], self._context['default_vehicle_id'],vals['name2'],1,3,1,1,1,1,1,1,1,3,1,1,'Réception','Diagnostic','Pièces','Devis','Réparation','Contrat','Facturation','Lavage','Livraison','Terminé',self.rdv_id.type_rendez_vous_id.name, res.id))
 
+	def write(self,vals):
+		curs, connex = dbconnex(self)
+		res = super(Repair_order_viseo, self).write(vals)
+
+		# try:
+		if 'state_ro' in vals :
+			if vals['state_ro'] == 'diag':
+				curs.execute("""
+					UPDATE public."viseoApi_suivisav"
+		SET   status_reception_id=%s
+		WHERE rma_id=%s;
+				""",(3,self.id,))
+			if vals['state_ro'] == 'repair':
+				curs.execute("""
+						UPDATE public."viseoApi_suivisav"
+			SET   status_diagnostic_id=%s
+			WHERE rma_id=%s;
+					""", (3, self.id,))
+			if vals['state_ro'] == 'trying':
+				curs.execute("""
+						UPDATE public."viseoApi_suivisav"
+			SET   status_commande_reparation_id=%s
+			WHERE rma_id=%s;
+					""", (3, self.id,))
+			if vals['state_ro'] == 'invoice':
+				curs.execute("""
+							UPDATE public."viseoApi_suivisav"
+				SET   status_sav_id=%s
+				WHERE rma_id=%s;
+						""", (3, self.id,))
+			if vals['state_ro'] == 'done':
+				curs.execute("""
+							UPDATE public."viseoApi_suivisav"
+				SET   status_facturation_id=%s
+				WHERE rma_id=%s;
+						""", [3, self.id, ])
+		if 'is_washed' in vals:
+			if vals['is_washed']:
+				curs.execute("""
+								UPDATE public."viseoApi_suivisav"
+					SET   status_lavage_id=%s
+					WHERE rma_id=%s;
+							""", (3, self.id,))
+				print('True')
+		if 'is_pieces_ok' in vals:
+			if vals['is_pieces_ok'] == True:
+				print('OK')
+				curs.execute("""
+									UPDATE public."viseoApi_suivisav"
+						SET   status_liste_des_pieces_id=%s
+						WHERE rma_id=%s;
+								""", (3, self.id,))
+				print('OK')
+		if 'is_delivered' in vals:
+			if vals['is_delivered'] == True:
+				print('OK')
+				curs.execute("""
+									UPDATE public."viseoApi_suivisav"
+						SET   status_livraison_id=%s, status_termine_id=%s
+						WHERE rma_id=%s;
+								""", (3,3, self.id,))
+				print('OK')
+		# except:
+		# 	print('Nothing')
 		connex.commit()
 		curs.close()
 		connex.close()
@@ -750,52 +833,24 @@ class Repair_order_viseo(models.Model):
 		return res
 
 
+class ConfirmSaleOrder(models.Model):
+	_inherit = 'sale.order'
+
+
 	def write(self,vals):
 		curs, connex = dbconnex(self)
-		res = super(Repair_order_viseo, self).write(vals)
-		try:
-			if vals['state_ro']=='diag':
-				curs.execute("""
-					UPDATE public."viseoApi_suivisav"
-		SET   status_reception_id=%s
-		WHERE rma_id=%s;
-				""",(3,self.id,))
-			elif vals['state_ro'] == 'repair':
-				curs.execute("""
-						UPDATE public."viseoApi_suivisav"
-			SET   status_diagnostic_id=%s
-			WHERE rma_id=%s;
-					""", (3, self.id,))
-			elif vals['state_ro'] == 'trying':
-				curs.execute("""
-						UPDATE public."viseoApi_suivisav"
-			SET   status_commande_reparation_id=%s
-			WHERE rma_id=%s;
-					""", (3, self.id,))
-			elif vals['state_ro'] == 'invoice':
-				curs.execute("""
-							UPDATE public."viseoApi_suivisav"
-				SET   status_sav_id=%s
-				WHERE rma_id=%s;
-						""", (3, self.id,))
-			elif vals['is_washed'] == True:
-				curs.execute("""
-								UPDATE public."viseoApi_suivisav"
-					SET   status_lavage_id=%s
-					WHERE rma_id=%s;
-							""", (3, self.id,))
-				print('True')
-			elif vals['state_ro'] == 'done':
-				curs.execute("""
-							UPDATE public."viseoApi_suivisav"
-				SET   status_facturation_id=%s, status_termine_id=%s
-				WHERE rma_id=%s;
-						""", (3,3, self.id,))
-		except:
-			print('Nothing')
-		connex.commit()
-		curs.close()
-		connex.close()
+		res = super(ConfirmSaleOrder, self).write(vals)
+		if self.repair_id:
+			if 'state' in vals:
+				if vals['state'] == 'sale':
+					curs.execute("""
+										UPDATE public."viseoApi_suivisav"
+										SET   status_devis_id=%s
+										WHERE rma_id=%s;
+										""", (3, self.repair_id.id,))
+			connex.commit()
+			curs.close()
+			connex.close()
 
 		return res
 
@@ -829,7 +884,7 @@ class Writevehicleapk(models.Model):
 		else:
 			tag_id = self.env['fleet.vehicle.tag'].search([('name', '=', 'CLIENT')])
 			if 'tag_ids' in vals:
-				if tag_id.id == vals['tag_ids']:
+				if tag_id.id == vals['tag_ids'] or self.tag_ids == tag_id.id:
 					curs.execute("""INSERT INTO public."viseoApi_vehicle"(
 						id, number, model, owner_id)
 						VALUES (%s, %s, %s, %s);
