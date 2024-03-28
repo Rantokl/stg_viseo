@@ -1,0 +1,18 @@
+<odoo>
+  <data>
+
+<record id="analytic_viseo_rapport" model="ir.ui.view">
+         <field name="name">analytique.report.test</field>
+         <field name="model">viseo_analytic.viseo_analytic</field>
+         <field name="arch" type="xml">
+             <pivot string="Invoices Analysis" disable_linking="True">
+                <field name="departement_id" type="row"/>
+                <!-- <field name="invoice_date" type="col"/> -->
+                <!-- <field name="journal_id" type="measure"/> -->
+                <field name="amount_total" type="measure"/>
+             </pivot>
+         </field>
+    </record>
+ 
+  </data>
+</odoo>

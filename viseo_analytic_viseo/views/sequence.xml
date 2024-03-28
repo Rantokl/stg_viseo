@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="analytique_sequence" model="ir.sequence">
+            <field name="name">Analytique</field>
+            <field name="code">viseo_analytic.viseo_analytic</field>
+            <field name="prefix">AL.%(y)s.</field>
+            <field name="number_increment">1</field>
+            <field name="padding">3</field>
+            <field eval="False" name="company_id"/>
+            <field name="implementation">standard</field>
+        </record>
+    </data>
+</odoo>

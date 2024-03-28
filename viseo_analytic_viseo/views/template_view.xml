@@ -1,0 +1,79 @@
+<odoo>
+    <record id="view_my_template" model="ir.ui.view">
+        <field name="name">mon.modele.template</field>
+        <field name="model">viseo.analytique.view</field>
+        <field name="arch" type="xml">
+            <form >
+                <header>
+
+                    <button name="read_depart_group" string="Test data" class="oe_highlight"  type="object" />
+                </header>
+                <sheet>
+
+                    <templates id="analytique_viseo">
+                        <t t-name="custom_html_template">
+                            <div class="pivot_table">
+                                <h2>Tableau analytique</h2>
+                                 <div class="container-lg">
+                            <table class="table table-bordered" id="tableanalytique">
+                                <thead>
+                                    <tr>
+                                        <th onclick="showModal('Header 1')">
+                                            <span>Département</span>
+                                            <hr/>
+                                            <span>Rubrique</span>
+                                        </th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                        <!--                <td onclick="showModal('Row 1, Col 1')">Data 1</td>-->
+
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                            </div>
+                            </div>
+
+
+                            </t>
+
+                </templates>
+
+                    <field name="html_content" widget="html" options="{'render': 'as-is'}">
+                            <templates>
+                                <div>
+                                    <!-- Your dynamic HTML template with a table goes here -->
+                                    <h1>Hello, ${object.name}!</h1>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Column 1</th>
+                                                <th>Column 2</th>
+                                                <!-- Add more columns as needed -->
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!--<t t-foreach="object.your_related_model_ids" t-as="record">
+                                                <tr>
+                                                    <td>${record.field1}</td>
+                                                    <td>${record.field2}</td>
+                                                    &lt;!&ndash; Add more columns as needed &ndash;&gt;
+                                                </tr>
+                                            </t>-->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </templates>
+                        </field>
+
+                </sheet>
+
+            </form>
+        </field>
+    </record>
+
+
+</odoo>

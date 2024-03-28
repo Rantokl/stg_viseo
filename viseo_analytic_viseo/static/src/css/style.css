@@ -1,0 +1,27 @@
+body{
+    overflow: auto;
+}
+.container-lg{
+    padding : 10px;
+    overflow: auto;
+
+}
+
+.cell-header{
+    width:200%;
+    margin:5px;
+}
+
+.head_table{
+    margin-left: 20px;
+}
+/*
+hr {
+    -moz-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+    width:160%;
+    margin-left:-15px;
+}*/

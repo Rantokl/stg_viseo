@@ -1,0 +1,45 @@
+<odoo>
+  <data>
+
+
+<record model="ir.ui.view" id="viseo_analytic_rubrique_form">
+      <field name="name">viseo_analytic rubrique form</field>
+      <field name="model">famille.analytique</field>
+        <field name="mode">primary</field>
+        <field name="priority">10</field>
+      <field name="arch" type="xml">
+        <form>
+            <group>
+                <field name="name"/>
+            </group>
+
+        </form>
+      </field>
+    </record>
+
+      <record model="ir.ui.view" id="viseo_analytic_rubrique_tree">
+      <field name="name">viseo_analytic rubrique tree</field>
+      <field name="model">famille.analytique</field>
+        <field name="mode">primary</field>
+        <field name="priority">10</field>
+      <field name="arch" type="xml">
+        <tree>
+
+                <field name="name"/>
+
+
+        </tree>
+      </field>
+    </record>
+
+      <record model="ir.actions.act_window" id="viseo_analytic_viseo_rubrique_action_window">
+      <field name="name">Analytique</field>
+      <field name="res_model">famille.analytique</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+      <menuitem name="Famille rubrique" id="viseo_analytic_viseo.menu_root4" parent="viseo_pca.root_account_menu_report"
+                action="viseo_analytic_viseo_rubrique_action_window" sequence="3"/>
+
+      </data>
+      </odoo>

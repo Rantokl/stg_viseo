@@ -1,0 +1,226 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+
+      <report
+          id="analytic_table"
+          model="viseo_analytic.viseo_analytic"
+          report_type="qweb-pdf"
+          string="Tableau analytique"
+          name="viseo_analytic_viseo.analytique_viseo"
+          file="viseo_analytic_viseo.analytique_viseo"
+        />
+
+    <record id="view_form_famille_analytique" model="ir.ui.view">
+        <field name="name">PO.analytique.form.inherit</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='fiscal_position_id']" position="after">
+                <field name="famille"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="viseo_analytic_list_test_list">
+      <field name="name">viseo_analytic list</field>
+      <field name="model">viseo_analytic.viseo_analytic</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="start_date"/>
+          <field name="end_date"/>
+          <field name="supplier_id"/>
+          <field name="amount_total"/>
+        </tree>
+      </field>
+    </record>
+
+     <record model="ir.ui.view" id="viseo_analytic_list_test_grid">
+      <field name="name">viseo_analytic grid</field>
+      <field name="model">viseo_analytic.viseo_analytic</field>
+      <field name="arch" type="xml">
+        <!-- <grid string="analytic_grid" adjustment="object" adjust_name="grid_analytic">
+          <field name="departement_id" type="col" section="1"/>
+          <field name="end_date" type="col">
+            <range name="week" string="Week" span="week" step="day"/>
+            <range name="month" string="Month" span="month" step="day"/>
+          </field>
+          <field name="supplier_id" type="row"/>
+          <field name="amount_total" type="measure"/>
+        </grid> -->
+        <grid js_class="analytic_enterprise_report_grid"
+                string="Analytic"
+                adjustment="object"
+                adjust_name="adjust_grid"
+                class="o_viseo_analytic">
+                <field name="supplier_id" type="row"/>
+                <field name="departement_id" type="row"/>
+                <field name="end_date" type="col">
+                    <range name="week" string="Week" span="week" step="day"/>
+                    <range name="month" string="Month" span="month" step="day"/>
+                </field>
+                <field name="amount_total" type="measure"/>
+            </grid>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="viseo_analytic_form_test_form">
+      <field name="name">viseo_analytic form</field>
+      <field name="model">viseo_analytic.viseo_analytic</field>
+        <field name="mode">primary</field>
+        <field name="priority">10</field>
+      <field name="arch" type="xml">
+        <form>
+        <header>
+            <button name="read_depart_group" string="Analytique viseo" class="oe_highlight"  type="object" />
+<!--          <button name="get_domain_room_for_reservation" string="Demande de réservation salle" class="oe_highlight" type="object"/>-->
+                   
+            <!--<button name="action_refuse" string="Refuser" class="oe_highlight" type="object" attrs="{'invisible':['|', ('can_validate','=',False), ('state', '!=', 'waiting')]}"/>-->
+                     
+           </header>
+          <sheet>
+          <div class="oe_button_box" name="button_box" groups="base.group_user">
+<!--                        <button  class="oe_stat_button" name="attachment_tree_view" type="object" icon="fa-file-text-o">-->
+<!--                            <field string="Documents" name="doc_count" widget="statinfo"/> action_pivot_view_test-->
+
+<!--                        </button>-->
+                        <button name="render_table" class="oe_stat_button" type="object"  icon="fa-tasks" >
+                            <field string="Analytiques" name="analytic_count" widget="statinfo" />
+                        </button>
+              <button name="table_analytic" class="oe_stat_button" type="object"  icon="fa-tasks" string="Test">
+
+                        </button>
+              <button name="action_afficher_template" class="oe_stat_button" type="object"  icon="fa-tasks" string="Afficher">
+
+                        </button>
+                     
+                    </div>
+
+              <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+            <group>
+              <field name="start_date"/>
+              <field name="end_date"/>
+              <field name="supplier_id"/>
+              <field name="amount_total"/>
+            </group>
+            <notebook>
+              <page id="repartition" string="Répartition" >
+                
+      
+                <field name="percent"/>
+                <!-- <field name="departement_id"/> -->
+          
+        
+      
+    
+              </page>
+
+            </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="analytic_viseo_rapport_test" model="ir.ui.view">
+         <field name="name">analytique.report.test</field>
+         <field name="model">viseo_analytic.viseo_analytic</field>
+         <field name="arch" type="xml">
+             <pivot string="Invoices Analysis" disable_linking="True">
+                <!-- <field name="departement_id" type="row"/> -->
+                <field name="start_date" type="col"/>
+                <!-- <field name="journal_id" type="measure"/> -->
+                <field name="amount_total" type="measure"/>
+             </pivot>
+         </field>
+    </record>
+
+
+    <!-- actions opening views on models -->
+
+    <record model="ir.actions.act_window" id="viseo_analytic_viseo.action_window">
+      <field name="name">Analytique</field>
+      <field name="res_model">viseo_analytic.viseo_analytic</field>
+      <field name="view_mode">tree,form,grid,pivot</field>
+    </record>
+
+
+    <record model="ir.actions.client" id="viseo_analytic_viseo_action_client">
+      <field name="name">Analytique window</field>
+      <field name="tag">viseo_analytic_viseo</field>
+        <field name="res_model">viseo_analytic.viseo_analytic</field>
+      <field name="target">main</field>
+    </record>
+
+ 
+<record id="view_account_move_line" model="ir.ui.view">
+            <field name="name">account_move_line.view.form</field>
+            <field name="model">account.move.line.view</field>
+            <field name="arch" type="xml">
+                <form string="Écriture">
+                    <group>
+                    <field name="ecriture" readonly="1"/>
+
+                    </group>
+                    <footer>
+                    <!--<button name="export_pdf" string="Devis" type="object" class="oe_highlight"/>
+                    <button special="cancel" string="Annuler" class="btn btn-sm btn-default"/>-->
+                    <button string="Spliter" type="object" class="oe_highlight" icon="fa-upload"
+                                    name="save_pdf_to_server"/>
+
+                </footer>
+                </form>
+            </field>
+        </record>
+
+      <record id="launch_devis_pdf_sav" model="ir.actions.act_window">
+        <field name="name">ecriture comptable</field>
+        <field name="res_model">account.move.line.view</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">form</field>
+
+      </record>
+
+    
+
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="viseo_analytic.action_server">
+      <field name="name">viseo_analytic server</field>
+      <field name="model_id" ref="model_viseo_analytic_viseo_analytic"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+    <menuitem name="Analytique viseo" id="viseo_analytic_viseo.menu_root3" parent="viseo_pca.root_account_menu_report"
+                action="viseo_analytic_viseo_action_client" sequence="1"/>
+
+    <menuitem name="viseo_analytic" id="viseo_analytic_viseo.menu_root" parent="viseo_pca.root_account_menu_report"
+                action="viseo_analytic_viseo.action_window" sequence="2"/>
+
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="viseo_analytic.menu_1" parent="viseo_analytic.menu_root"/>
+    <menuitem name="Menu 2" id="viseo_analytic.menu_2" parent="viseo_analytic.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="viseo_analytic.menu_1_list" parent="viseo_analytic.menu_1"
+              action="viseo_analytic.action_window"/>
+    <menuitem name="Server to list" id="viseo_analytic" parent="viseo_analytic.menu_2"
+              action="viseo_analytic.action_server"/>
+-->
+  </data>
+</odoo>

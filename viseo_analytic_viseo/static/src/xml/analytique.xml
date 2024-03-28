@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<template id="analytique_viseo">
+<t t-name="custom_html_template">
+
+    <div class="pivot_table">
+        <div class="head_table">
+            <h2 id="name">
+
+            </h2>
+        <button type="button" class="btn btn-primary">Sauvegarder</button>
+
+        </div>
+
+         <div class="container-lg">
+    <table class="table table-bordered" id="tableanalytique">
+        <thead>
+            <tr>
+                <th onclick="showModal('Header 1')">
+                    <span>Département</span>
+                    <hr/>
+                    <span>Rubrique</span>
+                    </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+<!--                <td onclick="showModal('Row 1, Col 1')">Data 1</td>-->
+<!--                <td onclick="showModal('Row 1, Col 2')">Data 2</td>-->
+<!--                <td onclick="showModal('Row 1, Col 3')">Data 3</td>-->
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+    </div>
+
+    <div class="modal" id="dataModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dataModalLabel">Contenu</h5>
+<!--                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+            </div>
+            <div class="modal-body">
+                <p id="modalContent"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+</t>
+
+</template>
