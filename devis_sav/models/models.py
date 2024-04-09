@@ -419,46 +419,10 @@ class DevisAPK(models.Model):
 
 
 
-class ContactApplication(models.Model):
-    _inherit = 'res.partner'
-
-    contact = fields.Boolean('Contact application', default=False)
-    contact_id = fields.Integer('')
 
 
-    def write(self,vals):
-        print('Test', vals)
-        res = super(ContactApplication, self).write(vals)
-        curs, connex = database.dbconnex(self)
-        curs.execute("""
-                            SELECT id, contact_id FROM public."viseoApi_contact" WHERE contact_id = %s
-                    """, (self.id,))
-        data = curs.fetchall()
-        if vals['contact'] == True:
 
 
-            if not data:
-                curs.execute("""
-                            INSERT INTO public."viseoApi_contact"(
-                                type_contact_id, site_web,email, mobile, name, seat, contact_id, created_at)
-                                VALUES (%s, %s, %s, %s,%s,%s, %s, %s);
-                                        """, (3, self.website,self.email, self.mobile, self.name, self.street2, self.id,datetime.datetime.now(),))
-
-                print('record created')
-
-
-        else:
-            if data:
-                curs.execute("""
-                    DELETE FROM public."viseoApi_contact"
-	WHERE contact_id = %s;
-                """,(self.id,))
-                print('record deleted')
-
-        connex.commit()
-        curs.close()
-        connex.close()
-        return res
 
 
 

@@ -22,9 +22,9 @@
             <field name="arch" type="xml">
 
                 <xpath expr="//field[@name='customer_classement']" position="after">
-                <field name="login" groups="base.group_no_one"/>
-                    <field name="passwd" groups="base.group_no_one"/>
-                    <field name="contact_apk" groups="base.group_no_one"/>
+                <field name="login" groups="devis_sav.group_login_apk"/>
+                    <field name="passwd" groups="devis_sav.group_login_apk"/>
+                    <field name="contact_apk" groups="devis_sav.group_login_apk"/>
 
             </xpath>
             </field>
