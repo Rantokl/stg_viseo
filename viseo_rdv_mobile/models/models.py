@@ -898,4 +898,16 @@ class Writevehicleapk(models.Model):
 
 		return res
 
+	def action_schedule_meeting2(self):
+		self.ensure_one()
+		return {
+			"type": "ir.actions.act_window",
+			"res_model": "viseo_rdv_mobile.viseo_rdv_mobile",
+			"name":"Mes rendez-vous",
+			"views": [[False, "gantt"]],
+			"context":{'default_customer_vehicle_id':self.id},
+			"domain":[('customer_vehicle_id','=',self.id)],
+			"target": "current",
+		}
+
 

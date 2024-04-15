@@ -51,6 +51,7 @@
 						<filter string="Validé" name="refused" domain="[('state', '=', 'refused')]"/>
 						<filter string="Refusée" name="refused" domain="[('state', '=', 'refused')]"/>
 						<filter string="Annuler" name="cancelled" domain="[('state','in', ['canceled','refused'])]"/>
+<!--						<filter string="Mes Rendez-vous" name="myrdv" domain="[]"/>-->
 						<!-- <filter string="En cours" name="active_rdv" domain="[('state','!=', ('refused','canceled'))]"/> -->
 					</search>
 				</field>
@@ -263,6 +264,29 @@
 		<menuitem name="Rendez-vous véhicules" id="viseo_rdv_mobile.menu_1_list" parent="viseo_rdv_mobile.menu_root" action="viseo_rdv_mobile.action_window"/>
 		<menuitem name="Recupérer rendez-vous" id="viseo_rdv_mobile.rdv_1_list" parent="viseo_rdv_mobile.menu_root" 
 		action="action_list_rdv_from_database"/>
+
+		<record id="rendezvous_button_add" model="ir.ui.view">
+        <field name="name">rendezvous.button.add</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_schedule_meeting']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_schedule_meeting']" position="after">
+                <button name="action_schedule_meeting2" type="object"
+                    class="oe_stat_button"
+                    icon="fa-calendar" >
+					<div class="o_stat_info">
+                        <field name="meeting_count" class="o_stat_value"/>
+                        <span class="o_stat_text" attrs="{'invisible': [('meeting_count', '&lt;', 2)]}"> Rendez-vous</span>
+                        <span class="o_stat_text" attrs="{'invisible': [('meeting_count', '&gt;', 1)]}"> Rendez-vous</span>
+                    </div>
+				</button>
+
+            </xpath>
+        </field>
+    </record>
 	</data>
 </odoo>
 
