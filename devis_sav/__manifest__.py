@@ -20,7 +20,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','viseo_parc_auto','sale','viseo_hide_cost','sale_stock','sale_management','sale_crm','sale_margin'],
+    'depends': ['base','viseo_parc_auto','sale','viseo_hide_cost','sale_stock','sale_management','sale_crm','sale_margin','viseo_sale_refund'],
 
     # always loaded
     'data': [
