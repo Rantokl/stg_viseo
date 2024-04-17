@@ -32,9 +32,9 @@
                     <button name="export_pdf" string="Envoi apk" type="object" class="oe_stat_button" icon="fa-globe icon"> 
                 </xpath> -->
 
-                <xpath expr="//button[@name='preview_sale_order']" position="before">
+                <xpath expr="//button[@name='action_open_request_refund']" position="before">
                     <!-- <button name="export_pdf" type="object" string="Envoi apk"  class="oe_highlight"/> -->
-                    <button name="export_pdf" string="Envoi apk" type="object" class="oe_stat_button" icon="fa-globe icon"/>
+                    <button name="export_pdf" string="Envoyer à l'appli" type="object" class="oe_stat_button" />
                 </xpath> 
 
                 <!-- <xpath expr="//field[@name='family_group']" position="after">
@@ -67,8 +67,7 @@
                     <button special="cancel" string="Annuler" class="btn btn-sm btn-default"/>-->
                     <button string="Envoyer au client" type="object" class="oe_highlight" icon="fa-upload"
                                     name="save_pdf_to_server"/>
-                        <button string="Test" type="object" class="oe_highlight"
-                                    name="test_info"/>
+
                 </footer>
                 </form>
             </field>
