@@ -8,6 +8,9 @@ import requests
 import time
 import psycopg2
 
+from odoo.odoo.exceptions import UserError
+
+
 def dbconnex(self):
     connex = psycopg2.connect(database='mobile_101023',
                                user='etech',
@@ -71,8 +74,73 @@ class viseo_rdv_mobile(models.Model):
 		date = datetime.strptime(sequence['date_start'],"%Y-%m-%d %H:%M:%S").date()
 		print(date)
 		sequence['date_rdv'] = date
-		return super(viseo_rdv_mobile,self).create(sequence)
+		return super(viseo_rdv_mobile, self).create(sequence)
 
+
+
+	def insertData(self,query,value):
+		curs,conn = dbconnex(self)
+		try:
+			# Exécuter la requête SQL pour insérer un nouvel enregistrement
+			curs.execute(query, value)
+			# Récupérer l'ID du nouvel enregistrement
+			record_id = curs.fetchone()
+			print(record_id)
+			# Valider la transaction
+			conn.commit()
+			return record_id
+		except Exception as error:
+			# En cas d'erreur, annuler la transaction
+			conn.rollback()
+			print("Erreur lors de l'insertion de l'enregistrement :", error)
+
+
+	@api.model
+	def create(self,vals):
+		vals['name'] = self.env['ir.sequence'].next_by_code('viseo_rdv_mobile.viseo_rdv_mobile') or '/'
+		# place_pont = f"Place: {sequence.get('place_id')}" if sequence['place_id'] else f"Pont: {sequence.get('pont_id')}"
+		vals['name'] = f"{vals['name']}"
+
+		# sequence['date_rdv'] = time.strptime(sequence['date_start'],"%Y-%m-%d %H:%M:%S").date()
+		date = datetime.strptime(vals['date_start'], "%Y-%m-%d %H:%M:%S").date()
+		print(date)
+		vals['date_rdv'] = date
+		date = datetime.strptime(vals['date_start'], "%Y-%m-%d %H:%M:%S").date()
+		car = self.env['fleet.vehicle'].search([('id','=',vals['customer_vehicle_id'])])
+
+		if car.tag_ids.id == 11:
+			curs, connex = dbconnex(self)
+
+			query = """
+					INSERT INTO public."viseoApi_daterendezvous"(
+			 type_rendez_vous_id, is_take, date_rendez_vous, heure_rendez_vous, owner_id, vehicle_id, is_take_by_date)
+			VALUES ( %s, %s, %s, %s, %s, %s, %s) RETURNING id;
+					"""
+			value = (1, 'false', date, datetime.strptime(vals['date_start'], "%Y-%m-%d %H:%M:%S").time(), vals['customer_id'],
+			vals['customer_vehicle_id'], 'false',)
+			# curs.execute("""
+			# 		INSERT INTO public."viseoApi_daterendezvous"(
+			#  type_rendez_vous_id, is_take, date_rendez_vous, heure_rendez_vous, owner_id, vehicle_id, is_take_by_date)
+			# VALUES ( %s, %s, %s, %s, %s, %s, %s) RETURNING id;
+			# 		""", (
+			# 1, 'false', date, datetime.strptime(vals['date_start'], "%Y-%m-%d %H:%M:%S").time(), vals['customer_id'],
+			# vals['customer_vehicle_id'], 'false'))
+			record_id = self.insertData(query,value)
+			query="""INSERT INTO public."viseoApi_rendezvous"(
+			 message, owner_id, status_rendez_vous_id, vehicle_id, date_rendez_vous_id)
+			VALUES ( %s, %s, %s, %s, %s) RETURNING id;
+								"""
+			value=(vals['note'], vals['customer_id'], 1, vals['customer_vehicle_id'], record_id[0],)
+
+
+			record_id = self.insertData(query,value)
+			connex.commit()
+
+			vals['rdv_id'] = record_id[0]
+			return super(viseo_rdv_mobile, self).create(vals)
+
+		else:
+			return super(viseo_rdv_mobile, self).create(vals)
 
 
 
@@ -106,7 +174,7 @@ class viseo_rdv_mobile(models.Model):
 
 	# fleet.vehicle.model
 	customer_id = fields.Many2one('res.partner', string="Client", related="customer_vehicle_id.driver_id")
-	customer_vehicle_id = fields.Many2one('fleet.vehicle', 'Vehicules')
+	customer_vehicle_id = fields.Many2one('fleet.vehicle', 'Vehicules',required=True)
 
 	customer_vehicle_tag = fields.Many2one('viseo.tag.rfid', string='Tag rfid', related='customer_vehicle_id.tag_rfid')
 	customer_vehicle_model = fields.Many2one('fleet.vehicle.model', string='Modèle du vehicule', related='customer_vehicle_id.model_id')
@@ -239,15 +307,23 @@ class viseo_rdv_mobile(models.Model):
 
 
 	def action_not_validate_rdv(self):
-		# if not self.validator:
-		# 	raise UserError("Vous ne pouvez pas valider cette rendez-vous")
-		# else:
-		self.message_post(
-			body="Votre demande de rendez-vous du {} pour {} a été refusée".format(self.date_start, self.type_rendez_vous_id.name),
-			subject="Demande de rendez-vous pour {}".format(self.type_rendez_vous_id),
-			partner_ids=self.current_user.ids
-		)
-		return self.write({'state': 'refused', 'color': 1})
+		if not self.validator:
+			raise UserError("Vous ne pouvez pas refuser cette rendez-vous")
+		else:
+
+
+		# self.write({'state': 'refused', 'color': 1})
+			return {
+
+			'type': 'ir.actions.act_window',
+			'res_model': 'date.propose',
+			'view_mode': 'form',
+			# 'views':[(False,'form')],
+			'target': 'new',
+			'context': {'default_rdv_id':self.id,
+						},
+
+		}
 
 	def action_cancel_rdv(self):
 		# if not self.validator:
@@ -408,16 +484,9 @@ class viseo_rdv_mobile(models.Model):
 					children["id"] = y.id
 					children["name"] = y.name
 					data['children'].append(children)
-		print()
-		print()
-		print()
-		print()
-		print()
+
 		for x in rdv_id:
-			print(x.name)
-			print(x.date_start)
-			print(x.date_stop)
-			print(x.atelier_id.name)
+
 			if x.place_id:
 				print(x.place_id.name)
 			if x.pont_id:
@@ -438,10 +507,6 @@ class viseo_rdv_mobile(models.Model):
 
 		print()
 		pprint(datasets, sort_dicts=False)
-		print()
-		print()
-		print()
-		print()
 
 
 		return datasets
@@ -567,6 +632,28 @@ class viseo_rdv_mobile(models.Model):
 				if mail:
 					print("Create success")
 
+class DatePropose(models.Model):
+	_name ="date.propose"
+
+	rdv_id = fields.Many2one('viseo_rdv_mobile.viseo_rdv_mobile', string="Ref rendez-vous")
+	future_date = fields.Datetime('Proposition de date')
+	note = fields.Text('Motif')
+
+	def action_propose_date(self):
+
+		self.rdv_id.message_post(
+			body="""<p>Votre demande de rendez-vous du {} pour {} a été refusée</p>
+					<p>Date proposée {} </p>""".format(self.rdv_id.date_start,self.rdv_id.type_rendez_vous_id.name, self.future_date),
+			subject="Demande de rendez-vous pour {}".format(self.rdv_id.type_rendez_vous_id),
+			partner_ids=self.rdv_id.current_user.ids
+		)
+		self.rdv_id.write({'state': 'refused', 'color': 1})
+		message = '''Votre demande de rendez-vous du {} pour {} a été refusée, nous proposons la date {}'''.format(self.rdv_id.date_start,
+																									   self.rdv_id.type_rendez_vous_id.name,
+																												   self.future_date),
+		title = "Rendez-vous"
+		send_notif(title, message, 3, self.customer_id.id)
+		return
 
 
 

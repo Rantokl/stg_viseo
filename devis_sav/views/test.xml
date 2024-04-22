@@ -18,29 +18,14 @@
             <!-- <field name="mode">primary</field> -->
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
-            <!-- <xpath expr="//notebook/page[@name='customer_signature']" position="after">
-                    
-                    <page string="APK" name="export_pdf" >
 
-                      <button name="export_pdf" type="object" string="Envoi apk"  class="oe_highlight"/>
-
-                    </page>
-
-                    </xpath>
-                 <xpath expr="//button[@name='428']" position="before">
-                    <button name="export_pdf" type="object" string="Envoi apk"  class="oe_highlight"/>
-                    <button name="export_pdf" string="Envoi apk" type="object" class="oe_stat_button" icon="fa-globe icon"> 
-                </xpath> -->
 
                 <xpath expr="//button[@name='action_open_request_refund']" position="before">
                     <!-- <button name="export_pdf" type="object" string="Envoi apk"  class="oe_highlight"/> -->
-                    <button name="export_pdf" string="Envoyer à l'appli" type="object" class="oe_stat_button" />
+                    <button name="export_pdf" string="Application" type="object" class="oe_stat_button" />
                 </xpath> 
 
-                <!-- <xpath expr="//field[@name='family_group']" position="after">
-                   <field name="test1">
-                </xpath>  -->
-                
+
             </field>
         </record>
 

@@ -142,7 +142,7 @@
 							]}"/>
 						<button
 							name="action_validate_rdv" 
-							string="Autoriser" 
+							string="Valider"
 							class="oe_highlight" 
 							type="object"
 							attrs="{'invisible':[
@@ -152,7 +152,7 @@
 							]}"/>
 						<button
 							name="action_not_validate_rdv" 
-							string="Refuser" 
+							string="Proposer une date"
 							class="oe_highlight"
 							type="object"
 							attrs="{'invisible':[
@@ -287,6 +287,37 @@
             </xpath>
         </field>
     </record>
+		<record id="view_date_proposition" model="ir.ui.view">
+            <field name="name">date.proposition.form</field>
+            <field name="model">date.propose</field>
+            <field name="arch" type="xml">
+                <form string="Proposition de date de rendez-vous">
+                    <group>
+                    <field name="rdv_id" readonly="1"/>
+                    <field name="future_date" />
+                    <field name="note"/>
+
+                    <!-- <field name="datas" filename="name"/> -->
+                    </group>
+                    <footer>
+                    <!--<button name="export_pdf" string="Devis" type="object" class="oe_highlight"/>
+                    <button special="cancel" string="Annuler" class="btn btn-sm btn-default"/>-->
+                    <button string="Confirmer" type="object" class="oe_highlight"
+                                    name="action_propose_date"/>
+					<button string="Annulé" class="btn-default" special="cancel" />
+
+                </footer>
+                </form>
+            </field>
+        </record>
+
+
+		<record model="ir.actions.act_window" id="viseo_rdv_mobile.action_window">
+			<field name="name">RDV Vehicule</field>
+			<field name="res_model">viseo_rdv_mobile.viseo_rdv_mobile</field>
+			<field name="context">{'search_default_active_rdv':1}</field>
+			<field name="view_mode">gantt,tree,form,calendar</field>
+		</record>
 	</data>
 </odoo>
 

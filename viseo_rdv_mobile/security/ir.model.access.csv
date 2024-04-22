@@ -3,3 +3,5 @@ access_viseo_rdv_mobile_viseo_rdv_mobile,viseo_rdv_mobile.viseo_rdv_mobile,model
 access_viseo_place_vehicle,viseo_place_vehicle.viseo_place_vehicle,model_place_vehicle_place_vehicle,base.group_user,1,1,1,1
 access_viseo_pont_vehicle,viseo_pont_vehicle.viseo_pont_vehicle,model_pont_vehicle_pont_vehicle,base.group_user,1,1,1,1
 access_type_rdv,viseo.type_rdv.type_rdv,model_type_rdv_type_rdv,base.group_user,1,1,1,1
+access_date_propose,date.propose,model_date_propose,base.group_user,1,1,1,1
+
