@@ -22,8 +22,8 @@
             <field name="arch" type="xml">
 
                 <xpath expr="//field[@name='customer_classement']" position="after">
-                <field name="login" groups="devis_sav.group_login_apk"/>
-                    <field name="passwd" groups="devis_sav.group_login_apk"/>
+                <field name="login" groups="devis_sav.group_login_apk" readonly="1"/>
+                    <field name="passwd" groups="devis_sav.group_login_apk" readonly="1"/>
                     <field name="contact_apk" groups="devis_sav.group_login_apk"/>
 
             </xpath>
