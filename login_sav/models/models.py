@@ -23,33 +23,34 @@ class login_sav(models.Model):
 
         curs = connex.cursor()
         res = super(login_sav, self).write(vals)
-
-        if self.contact_apk == True:
-            curs.execute("""
-                    SELECT * FROM public."viseoApi_contact" WHERE id = %s
-            """, (self.id,))
-            data = curs.fetchone()
-            if data:
+        if 'contact_apk' in vals:
+            if vals['contact_apk'] == True:
                 curs.execute("""
-                        UPDATE public."viseoApi_contact"
-                        SET id=%s, site_web=%s, created_at=%s, type_contact_id=%s, email=%s, mobile=%s, name=%s, seat=%s
-                        WHERE id=%s;
-                """, (self.id,self.website,datetime.datetime.now(),3,self.email,self.mobile,self.name,self.street2, self.id))
-            else:
-                curs.execute("""
-                                    INSERT INTO public."viseoApi_contact"(id, site_web,type_contact_id,email,mobile, name,seat, created_at ) VALUES (%s, %s,%s,%s,%s,%s,%s, %s);
-                                """, (self.id, self.website, 3, self.email, self.mobile, self.name, self.street2, datetime.datetime.now(),))
+                        SELECT * FROM public."viseoApi_contact" WHERE id = %s
+                """, (self.id,))
+                data = curs.fetchone()
+                if data:
+                    curs.execute("""
+                            UPDATE public."viseoApi_contact"
+                            SET id=%s, site_web=%s, created_at=%s, type_contact_id=%s, email=%s, mobile=%s, name=%s, seat=%s
+                            WHERE id=%s;
+                    """, (self.id,self.website,datetime.datetime.now(),3,self.email,self.mobile,self.name,self.street2, self.id))
+                else:
+                    curs.execute("""
+                                        INSERT INTO public."viseoApi_contact"(id, site_web,type_contact_id,email,mobile, name,seat, created_at ) VALUES (%s, %s,%s,%s,%s,%s,%s, %s);
+                                    """, (self.id, self.website, 3, self.email, self.mobile, self.name, self.street2, datetime.datetime.now(),))
 
 
-        elif self.contact_apk == False :
-            curs.execute("""
-                        DELETE FROM public."viseoApi_contact" WHERE id = %s
-            """, (self.id,))
+            else :
+                if vals['contact_apk']== False :
+                    curs.execute("""
+                                DELETE FROM public."viseoApi_contact" WHERE id = %s
+                    """, (self.id,))
 
-        connex.commit()
-        connex.close()
+            connex.commit()
+            connex.close()
 
-        return res
+            return res
 
 #     name = fields.Char()
 #     value = fields.Integer()
