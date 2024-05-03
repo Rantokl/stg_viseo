@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "305101916457",
+    "project_id": "viseo-sav",
+    "storage_bucket": "viseo-sav.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:305101916457:android:4cf75249f9b40165dd4f38",
+        "android_client_info": {
+          "package_name": "mg.viseo.sav"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "305101916457-6dope68ut819qj3isb1gt1igpk6d392s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCy7sBFy7G0Uu6qmcC6QqWjzErOQs9ep0E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "305101916457-6dope68ut819qj3isb1gt1igpk6d392s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
