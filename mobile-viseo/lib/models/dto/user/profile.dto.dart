@@ -36,7 +36,7 @@ class ProfileDto {
 
   @override
   ProfileDto copy() =>
-      ProfileDto(mobile: this.mobile, email: this.email, username: this.username, isAdmin: this.isAdmin, owner_id: this.owner_id, firstname=this.firstname)..bind(this);
+      ProfileDto(mobile: this.mobile, email: this.email, username: this.username, isAdmin: this.isAdmin, owner_id: this.owner_id, firstname: this.firstname)..bind(this);
 
   @override
   Map<String, dynamic> toJsonLocal() => _$ProfileDtoToJson(this);
