@@ -17,7 +17,7 @@ class ProfileDto {
     required this.username,
     required this.isAdmin,
     required this.owner_id,
-    this.firstname,
+    required this.firstname,
   });
 
   factory ProfileDto.fromJson(dynamic json) {
