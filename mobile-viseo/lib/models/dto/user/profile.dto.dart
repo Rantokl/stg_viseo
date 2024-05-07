@@ -6,18 +6,19 @@ part 'profile.dto.g.dart';
 class ProfileDto {
   String? mobile;
   String? email;
+  String? first_name;
   String username;
-  String firstname;
   bool isAdmin;
   int owner_id;
 
   ProfileDto({
     this.mobile,
     this.email,
+    this.first_name,
     required this.username,
     required this.isAdmin,
     required this.owner_id,
-    required this.firstname,
+    
   });
 
   factory ProfileDto.fromJson(dynamic json) {
@@ -31,12 +32,12 @@ class ProfileDto {
     this.username = serializable.username;
     this.isAdmin = serializable.isAdmin;
     this.owner_id = serializable.owner_id;
-    this.firstname = serializable.firstname;
+    this.first_name = serializable.first_name;
   }
 
   @override
   ProfileDto copy() =>
-      ProfileDto(mobile: this.mobile, email: this.email, username: this.username, isAdmin: this.isAdmin, owner_id: this.owner_id, firstname: this.firstname)..bind(this);
+      ProfileDto(mobile: this.mobile, email: this.email, username: this.username, isAdmin: this.isAdmin, owner_id: this.owner_id, first_name: this.first_name)..bind(this);
 
   @override
   Map<String, dynamic> toJsonLocal() => _$ProfileDtoToJson(this);
