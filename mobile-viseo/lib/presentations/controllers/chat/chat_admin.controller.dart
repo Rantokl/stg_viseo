@@ -49,7 +49,7 @@ class ChatAdminController extends BaseController {
               discussions.add({
                 "lastMessage": msg.messages.last.message_text,
                 "time" : formattedDate,
-                "username": profileResponse.value!.data.first_name,
+                "username": profileResponse.value!.data.firstname,
                 "roomId": msg.room_id
               });
             });
