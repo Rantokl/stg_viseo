@@ -18,6 +18,23 @@
 					<field name="atelier_id"/>
 					<field name="pont_id"/>
 					<field name="customer_vehicle_id"/>
+					<field name="customer_id"/>
+
+					<templates>
+                    <div t-name="gantt-popover" class="container-fluid">
+                        <div class="row no-gutters">
+                            <div class="col">
+                                <ul class="pl-1 mb-0 list-unstyled">
+									<li><strong>Véhicule: </strong> <t t-esc="customer_vehicle_id[1]"/></li>
+									<li><strong>Propretaire: </strong> <t t-esc="customer_id[1]"/></li>
+                                    <li><strong>Start Date: </strong> <t t-esc="date_start.format('YYYY-MM-DD HH:mm:ss')"/></li>
+                                    <li><strong>Stop Date: </strong> <t t-esc="date_stop.format('YYYY-MM-DD HH:mm:ss')"/></li>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </templates>
 				</gantt>
 			</field>
 		</record>
