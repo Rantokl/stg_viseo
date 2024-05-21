@@ -10,7 +10,7 @@ import requests
 import time
 import psycopg2
 
-from odoo.odoo.exceptions import UserError
+from odoo.exceptions import UserError
 
 
 def dbconnex(self):
@@ -102,44 +102,41 @@ class viseo_rdv_mobile(models.Model):
         vals['name'] = self.env['ir.sequence'].next_by_code('viseo_rdv_mobile.viseo_rdv_mobile') or '/'
         # place_pont = f"Place: {sequence.get('place_id')}" if sequence['place_id'] else f"Pont: {sequence.get('pont_id')}"
         vals['name'] = f"{vals['name']}"
-
+        curs, connex = dbconnex(self)
         # sequence['date_rdv'] = time.strptime(sequence['date_start'],"%Y-%m-%d %H:%M:%S").date()
-        date = datetime.strptime(vals['date_start'], "%Y-%m-%d %H:%M:%S").date()
+        date = datetime.strptime(str(vals['date_start']), "%Y-%m-%d %H:%M:%S").date()
         print(date)
         vals['date_rdv'] = date
-        date = datetime.strptime(vals['date_start'], "%Y-%m-%d %H:%M:%S").date()
+        date = datetime.strptime(str(vals['date_start']), "%Y-%m-%d %H:%M:%S").date()
         car = self.env['fleet.vehicle'].search([('id', '=', vals['customer_vehicle_id'])])
-
         if car.tag_ids.id == 11:
-            curs, connex = dbconnex(self)
+            if 'rdv_id' in vals:
+                query = """SELECT * FROM public."viseoApi_rendezvous" WHERE id = %s"""
+                curs.execute(query, (vals['rdv_id'],))
+                datas = curs.fetchall()
+                if datas:
+                    return super(viseo_rdv_mobile, self).create(vals)
+                    pass
+                    # if car.tag_ids.id == 11:
+            else:
+                query = """INSERT INTO public."viseoApi_daterendezvous"(
+                 type_rendez_vous_id, is_take, date_rendez_vous, heure_rendez_vous, owner_id, vehicle_id, is_take_by_date)
+                VALUES ( %s, %s, %s, %s, %s, %s, %s) RETURNING id;
+                        """
+                value = (1, 'false', date, datetime.strptime(vals['date_start'], "%Y-%m-%d %H:%M:%S").time(), vals['customer_id'],
+                vals['customer_vehicle_id'], 'false',)
+                record_id = self.insertData(query, value)
+                query = """INSERT INTO public."viseoApi_rendezvous"(
+                 message, owner_id, status_rendez_vous_id, vehicle_id, date_rendez_vous_id)
+                VALUES ( %s, %s, %s, %s, %s) RETURNING id;
+                                    """
+                value = (vals['note'], vals['customer_id'], 1, vals['customer_vehicle_id'], record_id[0],)
 
-            query = """
-					INSERT INTO public."viseoApi_daterendezvous"(
-			 type_rendez_vous_id, is_take, date_rendez_vous, heure_rendez_vous, owner_id, vehicle_id, is_take_by_date)
-			VALUES ( %s, %s, %s, %s, %s, %s, %s) RETURNING id;
-					"""
-            value = (
-            1, 'false', date, datetime.strptime(vals['date_start'], "%Y-%m-%d %H:%M:%S").time(), vals['customer_id'],
-            vals['customer_vehicle_id'], 'false',)
-            # curs.execute("""
-            # 		INSERT INTO public."viseoApi_daterendezvous"(
-            #  type_rendez_vous_id, is_take, date_rendez_vous, heure_rendez_vous, owner_id, vehicle_id, is_take_by_date)
-            # VALUES ( %s, %s, %s, %s, %s, %s, %s) RETURNING id;
-            # 		""", (
-            # 1, 'false', date, datetime.strptime(vals['date_start'], "%Y-%m-%d %H:%M:%S").time(), vals['customer_id'],
-            # vals['customer_vehicle_id'], 'false'))
-            record_id = self.insertData(query, value)
-            query = """INSERT INTO public."viseoApi_rendezvous"(
-			 message, owner_id, status_rendez_vous_id, vehicle_id, date_rendez_vous_id)
-			VALUES ( %s, %s, %s, %s, %s) RETURNING id;
-								"""
-            value = (vals['note'], vals['customer_id'], 1, vals['customer_vehicle_id'], record_id[0],)
+                record_id = self.insertData(query, value)
+                connex.commit()
 
-            record_id = self.insertData(query, value)
-            connex.commit()
-
-            vals['rdv_id'] = record_id[0]
-            return super(viseo_rdv_mobile, self).create(vals)
+                vals['rdv_id'] = record_id[0]
+                return super(viseo_rdv_mobile, self).create(vals)
 
         else:
             return super(viseo_rdv_mobile, self).create(vals)
@@ -591,13 +588,13 @@ class viseo_rdv_mobile(models.Model):
 		""")
 
         rows = cur.fetchall()
-        print(rows)
+        # print(rows)
         if rows:
             for row in rows:
 
                 existing_record = self.env['viseo_rdv_mobile.viseo_rdv_mobile'].search([('rdv_id', '=', row[0])])
                 if existing_record:
-                    print("pass")
+                    # print("pass")
                     continue
 
                 type_rdv_id = self.env['type_rdv.type_rdv'].search([('id', '=', int(row[4]))])
@@ -625,12 +622,14 @@ class viseo_rdv_mobile(models.Model):
                 }
 
                 rdv = self.env['viseo_rdv_mobile.viseo_rdv_mobile'].create(record)
-
-                rdv1, rdv2 = rdv.action_ask_rdv()
-                rdv2 = self.env['mail.mail'].sudo().search([('mail_message_id', '=', rdv2.id)])
-                mail = rdv2.send()
-                if mail:
-                    print("Create success")
+                if rdv:
+                    rdv1, rdv2 = rdv.action_ask_rdv()
+                    rdv2 = self.env['mail.mail'].sudo().search([('mail_message_id', '=', rdv2.id)])
+                    mail = rdv2.send()
+                    if mail:
+                        print("Create success")
+                else:
+                    pass
 
 
 class DatePropose(models.Model):
