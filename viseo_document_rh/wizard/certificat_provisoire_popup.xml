@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+	<odoo>
+		<record id="viseo_popup_certificat_provisoire" model="ir.ui.view">
+			<field name="name">form.view.certificat.provisoire</field>
+			<field name="model">provisoire.docrh</field>
+			<field name="arch" type="xml">
+				<form string="Form Title">
+					<sheet>
+						<!-- Define fields to display and edit -->
+						<h3>Information complémentaire</h3>
+						<group>
+							<field name="partner_id"/>
+							<field name="num_sequence"/>
+							<field name="titre"/>
+						</group>
+						<h3>l'Interessé(e)</h3>
+						<group>
+							<field name="gender"/>
+						</group>
+
+						<button name="print_certificat_provisoire" string="Impression PDF" type="object" class="oe_highlight"/>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		<act_window id="action_certificat_provisoire_rh"
+            name="Certificat de Travail Provisoire"
+            res_model="provisoire.docrh"
+            binding_model="hr.contract"
+            binding_type="report"
+			groups="product.group_product_pricelist"
+			context="{'default_partner_id': active_id}"
+            view_mode="form" target="new"
+		/>
+	</odoo>
