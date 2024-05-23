@@ -7,7 +7,15 @@ import psycopg2
 
 from odoo import models, fields, api
 
+def dbconnex(self):
+    connex = psycopg2.connect(database='mobile_101023',
+                               user='etech',
+                               password='3Nyy22Bv',
+                               host='10.68.132.2',
+                               port='5432')
+    curs = connex.cursor()
 
+    return curs, connex
 class login_sav(models.Model):
     # _name = 'login.sav'
 #     _description = 'login_sav.login_sav'
@@ -91,3 +99,6 @@ class login_sav(models.Model):
 #     def _value_pc(self):
 #         for record in self:
 #             record.value2 = float(record.value) / 100
+
+
+

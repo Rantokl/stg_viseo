@@ -985,3 +985,36 @@ class Writevehicleapk(models.Model):
         }
 
 
+class ValidateFacture(models.Model):
+    _inherit = 'account.move'
+
+    def insertData(self, query, value):
+        curs, conn = dbconnex(self)
+
+        curs.execute(query, value)
+
+        record_id = curs.fetchone()
+        print(record_id)
+
+        conn.commit()
+        return record_id
+
+    def action_post(self):
+        partner_id = self.partner_id
+        if self.type == 'out_invoice':
+            stock = self.env['stock.picking'].search([('origin', '=', self.invoice_origin)])
+            if stock:
+                vehicles = self.env['stock.move.line'].search([('picking_id', '=', stock.id)])
+                for vehicle in vehicles:
+                    car = vehicle.lot_id.vehicle_id
+                    if car:
+                        query = """INSERT INTO public."viseoApi_vehicle" (id, number, model,owner_id) VALUES (%s,%s,%s,%s) RETURNING id;"""
+                        value = (car.id, car.license_plate, car.model_id.name, partner_id.id)
+                        try:
+                            result = self.insertData(query, value)
+                            if result:
+                                car.write({'driver_id': partner_id.id})
+                        except:
+                            print('Error')
+
+        return super(ValidateFacture, self).action_post()
