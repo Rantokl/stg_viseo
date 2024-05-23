@@ -18,6 +18,7 @@ class login_sav(models.Model):
 
     @api.model
     def create(self, vals):
+        res = super(login_sav, self).create(vals)
         connex = psycopg2.connect(database='mobile_101023',
                                   user='etech',
                                   password='3Nyy22Bv',
@@ -25,18 +26,24 @@ class login_sav(models.Model):
                                   port='5432')
 
         curs = connex.cursor()
-        
+
         characters = string.ascii_letters + string.digits
         password = ''.join(random.choice(characters) for i in range(8))
-        vals['login'] = self.id
-        vals['passwd'] = password
-
-        res = super(login_sav, self).create(vals)
+        res.login = res.id
+        res.passwd = password
+        # vals['name'] = 'Test'
+        try:
+            curs.execute("""INSERT INTO public."viseoAccount_user"(
+                                id,first_name,email,mobile,is_active,date_joined,"isAdmin", username, password)
+                                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                             """, (
+                res.id, res.name, res.email, res.mobile, True, datetime.datetime.now(), False, res.id,
+                password))
+            connex.commit()
+        except:
+            print('Error')
+        connex.close()
         return res
-
-        
-
-
     def write(self, vals):
         connex = psycopg2.connect(database='mobile_101023',
                                   user='etech',
