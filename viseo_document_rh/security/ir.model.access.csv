@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_attestation_travail1,attestation.travail1 user,model_attestation_travail1,base.group_user,1,1,1,1
+access_provisoire_docrh,provisoire.docrh user,model_provisoire_docrh,base.group_user,1,1,1,1
+access_certificat_travail,certificat.travail user,model_certificat_travail,base.group_user,1,1,1,1
+access_suivi_print,suivi.print user,model_suivi_print,base.group_user,1,1,1,1

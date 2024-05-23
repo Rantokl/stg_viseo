@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="viseo_suivi_attesation_template">
+            <t t-call="web.layout">
+                <table class="table table-bordered">
+                    <thead>
+                            <th>Index</th>
+							<th>Nombre</th>
+                            <th>Sequence</th>
+							<th>Genre</th>
+                            <th>Date Impression</th>
+							<th>Année</th>
+                            <th>Champ Inconnu</th>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="docs" t-as="doc"> 
+                        <t t-foreach="doc.list_champ" t-as="i">
+                            <tr>
+                                    <td><t t-esc="i[0]"/></td>
+                                    <td><t t-esc="i[1]"/></td>
+                                    <td><t t-esc="i[2]"/></td>
+                                    <td><t t-esc="i[3]"/></td>
+                                    <td><t t-esc="i[4]"/></td>
+                                    <td><t t-esc="i[5]"/></td>
+                                    <td><t t-esc="i[6]"/></td>
+                                    <td><t t-esc="i[7]"/></td>
+                            </tr>
+                        </t>
+                        </t>
+                    </tbody>
+                </table>
+            </t>
+            </template>
+                    <report
+                id="rh_attestation_suivi"
+                model="suivi.print"
+                string="Suivi Attestation "
+                name="viseo_document_rh.viseo_suivi_attesation_template"
+                file="viseo_document_rh.viseo_suivi_attesation_template"
+                report_type="qweb-html"
+            />	
+    </data>
+</odoo>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+	<template id="viseo_atestation_template">
+		<t t-call="web.html_container">
+		<t t-call="web.basic_layout">		
+			<t t-foreach="docs" t-as="doc">
+				<t t-set="stylesheet" t-value="'/viseo_raport_vn/static/src/bootstrap/css/bootstrap.css'" />
+				<div class="page">
+						<style>
+							@page {
+								size: A4;
+								/* Remove the width and height properties from here */
+							}
+							/* Set the width and height of the content area */
+							.page {
+								width: 100%;
+								height: 100%;
+							}
+						</style>	
+						<div class='header' style='margin-bottom:40px;'><t t-esc="data"/>
+								<t t-if="doc.partner_id.company_id.name.lower() == 'havamad'">
+									<img src="/viseo_document_rh/static/src/img/havamad.png" alt="image non importé" style="width: 270px; height: 140px;"/>
+								</t>
+								<t t-elif="doc.partner_id.company_id.name.lower() == 'ocean trade' or doc.partner_id.company_id.name.lower() == 'ocean trade corporation'">
+									<img src="/viseo_document_rh/static/src/img/oceantrade.png" alt="image non importé" style="width: 270px; height: 140px;"/>
+								</t>
+								<t t-elif="doc.partner_id.company_id.name.lower() == 'continental auto'">
+									<img src="/viseo_document_rh/static/src/img/continental_auto.png" alt="image non importé" style="width: 270px; height: 140px;"/>
+								</t>
+								<t t-elif="doc.partner_id.company_id.name.lower()  == 'izy rent'">
+									<img src="/viseo_document_rh/static/src/img/izy_rent.png" alt="image non importé" style="width: 270px; height: 140px;"/>
+								</t>
+								<t t-elif="doc.partner_id.company_id.name.lower()  == 'fondation viseo'">
+									<img src="/viseo_document_rh/static/src/img/LOGO Fondation Viseo.png" alt="image non importé" style="width: 270px; height: 140px;"/>
+								</t>
+					</div><br/><br/><br/><br/>
+					<div style="width: 80%; margin-top: 70px; margin-left: auto; margin-right: auto; font-style: sans-serif, helvetica;">
+						<p style='text-align:right;'>Antananarivo, le <t t-esc="doc.actual_year.strftime('%d %b %Y')"/></p>
+							<div style="font-size: 14px; margin-bottom: 10px;text-align: left;">
+								Réf : N° <strong><t t-esc="doc.num_sequence"/>  - <t t-esc="doc.formatted_year"/></strong>/RH
+							</div><br/><br/><br/><br/>
+							<div style="font-size: 18px; font-weight: bold; margin-bottom: 20px;text-decoration: underline; text-align: center;">
+								ATTESTATION DE TRAVAIL
+							</div>
+							<div style="font-size: 14px; margin-bottom: 10px;">
+								Nous soussignées, Société <strong><t t-esc="doc.partner_id.company_id.name"/>, <t t-if="doc.partner_id.company_id.name.lower()== 'havamad'">Société à responsabilité limitée</t><t t-else="">Société anonyme</t></strong> au capital de <t t-esc="doc.partner_id.company_id.capital"/> Ariary, ayant son siège social à <strong><t t-esc="doc.partner_id.company_id.street"/> <t t-esc="doc.partner_id.company_id.city"/> <t t-esc="doc.partner_id.company_id.country_id.name,"/></strong>.<br/>
+								Certifions avoir employé : 
+							</div>
+
+						<div style="font-size: 14px; margin-bottom: 10px;">
+							<p style='text-align: center;'>
+								<strong><t t-esc='doc.gender'/></strong><br/>
+								<strong> <t t-esc='doc.partner_id.employee_id.name'/>  </strong><br/>
+								<strong>Matricule : <t t-esc='doc.partner_id.employee_id.matricule'/> </strong><br/><br/>
+							</p>
+							<p>
+								Est employé, sous contrat à durée indéterminée, au sein de notre Société en qualité de <strong><t t-esc='doc.partner_id.job_id.name'/> </strong> du Département <strong> <t t-esc='doc.partner_id.department_id.name'/> </strong>.<br/>
+								Classification Professionnelle : <strong><t t-esc='doc.partner_id.type_id.name'/> </strong>, depuis le <strong><t t-esc='doc.partner_id.date_start.strftime("%d %b %Y")'/></strong> j usqu’à ce jour.
+							</p>
+						</div>
+						<div style="font-size: 14px; margin-top: 10px;">
+							En foi de quoi, cette attestation lui est délivrée pour servir et valoir ce que de droit.
+						</div>
+						<div style="font-size:14px;font-style: sans-serif, helvetica"><br/>
+							</div><br/><br/>
+							<table style="width:100%; text-align:center;">
+								<style>
+										table, th{
+													border: 1px solid white;
+													border-collapse: collapse;
+													margin-left:0px;
+													margin-top:3px;
+													font-size:14px;
+													}
+											td {
+												border: 1px solid white;
+												border-collapse: collapse;
+												margin-left:0px;
+												margin-top:3px;
+												font-size:14px;
+												height:20px;
+											}
+												
+												
+								</style>
+								<tr>
+									<td>L'employé(e)</td>
+								</tr>
+								<tr>
+									<td><br/></td>
+								</tr>
+								<tr>
+									<td><br/></td>
+								</tr>
+								<tr>
+									<td><br/></td>
+								</tr>
+								<tr>
+									<td><br/></td>
+								</tr>
+
+								<tr>
+									<td><t t-esc="doc.titre.name"/></td>
+								</tr>
+								
+							</table>
+
+
+
+							<div class="footer o_standard_footer" style="text-align:center; font-style: sans-serif, helvetica;">
+							<p style="margin-bottom:4px;">-------------------------------------------------------------------------------------------------------------------------------------------</p>
+							<p style="font-size:14px;font-style: sans-serif, helvetica; margin-bottom:1px;"><t t-esc="doc.partner_id.company_id.name"/>  <t t-esc="doc.partner_id.company_id.country_id.name"/>   / NIF: <t t-esc="doc.partner_id.company_id.nif"/>   / STAT: <t t-esc="doc.partner_id.company_id.stat"/></p>
+							<p style="font-size:14px;font-style: sans-serif, helvetica; margin-top:1px;">Adresse:  <t t-esc="doc.partner_id.company_id.street"/> <t t-esc="doc.partner_id.company_id.city"/>  <t t-esc="doc.partner_id.company_id.country_id.name"/> - Téléphone:  <t t-esc="doc.partner_id.company_id.phone"/></p>
+							</div>
+					</div>
+				</div>	
+			</t>
+			</t>
+		</t>
+	</template>
+
+	<report
+            id="vn_atestation_report"
+            model="attestation.travail1"
+            string="Attestation de travail"
+            name="viseo_document_rh.viseo_atestation_template"
+            file="viseo_document_rh.viseo_atestation_template"
+            report_type="qweb-pdf"/>
+</odoo>
