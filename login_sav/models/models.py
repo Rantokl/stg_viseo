@@ -1,11 +1,21 @@
 # -*- coding: utf-8 -*-
 import datetime
+import random
+import string
 
 import psycopg2
 
 from odoo import models, fields, api
 
+def dbconnex(self):
+    connex = psycopg2.connect(database='mobile_101023',
+                               user='etech',
+                               password='3Nyy22Bv',
+                               host='10.68.132.2',
+                               port='5432')
+    curs = connex.cursor()
 
+    return curs, connex
 class login_sav(models.Model):
     # _name = 'login.sav'
 #     _description = 'login_sav.login_sav'
@@ -14,6 +24,34 @@ class login_sav(models.Model):
     passwd = fields.Char('Password')
     contact_apk = fields.Boolean(string='Contact')
 
+    @api.model
+    def create(self, vals):
+        res = super(login_sav, self).create(vals)
+        connex = psycopg2.connect(database='mobile_101023',
+                                  user='etech',
+                                  password='3Nyy22Bv',
+                                  host='10.68.132.2',
+                                  port='5432')
+
+        curs = connex.cursor()
+
+        characters = string.ascii_letters + string.digits
+        password = ''.join(random.choice(characters) for i in range(8))
+        res.login = res.id
+        res.passwd = password
+        # vals['name'] = 'Test'
+        try:
+            curs.execute("""INSERT INTO public."viseoAccount_user"(
+                                id,first_name,email,mobile,is_active,date_joined,"isAdmin", username, password)
+                                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                             """, (
+                res.id, res.name, res.email, res.mobile, True, datetime.datetime.now(), False, res.id,
+                password))
+            connex.commit()
+        except:
+            print('Error')
+        connex.close()
+        return res
     def write(self, vals):
         connex = psycopg2.connect(database='mobile_101023',
                                   user='etech',
@@ -61,3 +99,6 @@ class login_sav(models.Model):
 #     def _value_pc(self):
 #         for record in self:
 #             record.value2 = float(record.value) / 100
+
+
+
