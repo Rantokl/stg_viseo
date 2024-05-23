@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
+import random
+import string
 
 import psycopg2
 
@@ -13,6 +15,27 @@ class login_sav(models.Model):
     login = fields.Char('Login')
     passwd = fields.Char('Password')
     contact_apk = fields.Boolean(string='Contact')
+
+    @api.model
+    def create(self, vals):
+        connex = psycopg2.connect(database='mobile_101023',
+                                  user='etech',
+                                  password='3Nyy22Bv',
+                                  host='10.68.132.2',
+                                  port='5432')
+
+        curs = connex.cursor()
+        
+        characters = string.ascii_letters + string.digits
+        password = ''.join(random.choice(characters) for i in range(8))
+        vals['login'] = self.id
+        vals['passwd'] = password
+
+        res = super(login_sav, self).create(vals)
+        return res
+
+        
+
 
     def write(self, vals):
         connex = psycopg2.connect(database='mobile_101023',
