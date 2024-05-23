@@ -40,7 +40,7 @@ class Attestation_travail(models.Model):
 	get_data = fields.Char(
 		string='Data to print',
 	)
-	titre = fields.Many2one('hr.employee', string='Le signataire', required=True)
+	titre = fields.Many2one('hr.employee', string='Le signataire')
 
 	get_date_end = []
 

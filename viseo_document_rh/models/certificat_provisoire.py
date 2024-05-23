@@ -36,7 +36,7 @@ class Provisoire_RH(models.Model):
 	get_data = fields.Char(
 		string='Data to print',
 	)
-	titre = fields.Many2one('hr.employee', string='Le signataire', required=True)
+	titre = fields.Many2one('hr.employee', string='Le signataire')
 
 	get_date_end = []
 
@@ -210,8 +210,8 @@ class Provisoire_RH(models.Model):
 
 
 	def print_certificat_provisoire(self):
-		self.get_contract_job_titles()
 		self.check_date_end()
+		self.get_contract_job_titles()
 		return {
 			'type': 'ir.actions.report',
 			'report_name': 'viseo_document_rh.viseo_certificat_provisoire_template',

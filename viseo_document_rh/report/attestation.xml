@@ -19,19 +19,19 @@
 						</style>	
 						<div class='header' style='margin-bottom:40px;'><t t-esc="data"/>
 								<t t-if="doc.partner_id.company_id.name.lower() == 'havamad'">
-									<img src="/viseo_document_rh/static/src/img/havamad.png" alt="image non importé" style="width: 270px; height: 140px;"/>
+									<img src="/viseo_document_rh/static/src/img/havamad.png" alt="image non importé" style="width: 230px; height: 120px;"/>
 								</t>
 								<t t-elif="doc.partner_id.company_id.name.lower() == 'ocean trade' or doc.partner_id.company_id.name.lower() == 'ocean trade corporation'">
-									<img src="/viseo_document_rh/static/src/img/oceantrade.png" alt="image non importé" style="width: 270px; height: 140px;"/>
+									<img src="/viseo_document_rh/static/src/img/oceantrade.png" alt="image non importé" style="width: 270px; height: 80px;margin-left: 65px;"/>
 								</t>
 								<t t-elif="doc.partner_id.company_id.name.lower() == 'continental auto'">
-									<img src="/viseo_document_rh/static/src/img/continental_auto.png" alt="image non importé" style="width: 270px; height: 140px;"/>
+									<img src="/viseo_document_rh/static/src/img/continental_auto.png" alt="image non importé" style="width: 230px; height: 120px;margin-left: 65px;"/>
 								</t>
 								<t t-elif="doc.partner_id.company_id.name.lower()  == 'izy rent'">
-									<img src="/viseo_document_rh/static/src/img/izy_rent.png" alt="image non importé" style="width: 270px; height: 140px;"/>
+									<img src="/viseo_document_rh/static/src/img/izy_rent.png" alt="image non importé" style="width: 230px; height: 120px;"/>
 								</t>
 								<t t-elif="doc.partner_id.company_id.name.lower()  == 'fondation viseo'">
-									<img src="/viseo_document_rh/static/src/img/LOGO Fondation Viseo.png" alt="image non importé" style="width: 270px; height: 140px;"/>
+									<img src="/viseo_document_rh/static/src/img/LOGO Fondation Viseo.png" alt="image non importé" style="width: 230px; height: 120px;margin-left: 65px;"/>
 								</t>
 					</div><br/><br/><br/><br/>
 					<div style="width: 80%; margin-top: 70px; margin-left: auto; margin-right: auto; font-style: sans-serif, helvetica;">
@@ -54,8 +54,8 @@
 								<strong>Matricule : <t t-esc='doc.partner_id.employee_id.matricule'/> </strong><br/><br/>
 							</p>
 							<p>
-								Est employé, sous contrat à durée indéterminée, au sein de notre Société en qualité de <strong><t t-esc='doc.partner_id.job_id.name'/> </strong> du Département <strong> <t t-esc='doc.partner_id.department_id.name'/> </strong>.<br/>
-								Classification Professionnelle : <strong><t t-esc='doc.partner_id.type_id.name'/> </strong>, depuis le <strong><t t-esc='doc.partner_id.date_start.strftime("%d %b %Y")'/></strong> j usqu’à ce jour.
+								Est employé, sous contrat à durée indéterminée, au sein de notre Société en qualité de <strong><t t-esc='doc.partner_id.job_id.name'/> </strong> du département <strong> <t t-esc='doc.partner_id.department_id.name'/> </strong>.<br/>
+								Classification Professionnelle : <strong><t t-esc='doc.partner_id.type_id.name'/> </strong>, depuis le <strong><t t-esc='doc.partner_id.date_start.strftime("%d %b %Y")'/></strong> jusqu’à ce jour.
 							</p>
 						</div>
 						<div style="font-size: 14px; margin-top: 10px;">
@@ -84,7 +84,7 @@
 												
 								</style>
 								<tr>
-									<td>L'employé(e)</td>
+									<td>Le Responsable</td>
 								</tr>
 								<tr>
 									<td><br/></td>
@@ -100,7 +100,7 @@
 								</tr>
 
 								<tr>
-									<td><t t-esc="doc.titre.name"/></td>
+									<td></td>
 								</tr>
 								
 							</table>
