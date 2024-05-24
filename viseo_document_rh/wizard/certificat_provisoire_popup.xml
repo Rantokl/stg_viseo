@@ -11,7 +11,6 @@
 						<group>
 							<field name="partner_id"/>
 							<field name="num_sequence"/>
-							<field name="titre"/>
 						</group>
 						<h3>l'Interessé(e)</h3>
 						<group>

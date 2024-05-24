@@ -30,7 +30,7 @@ class Attestation_travail1(models.Model):
 			compute='_compute_formatted_year',
 			store=True)
 
-	titre = fields.Many2one('hr.employee', string='Le signataire', required=True)
+	titre = fields.Many2one('hr.employee', string='Le signataire')
 
 
 	def _get_formatted_year(self):
