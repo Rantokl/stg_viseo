@@ -87,7 +87,7 @@ odoo.define('viseo_analytic_viseo.analytic', function (require) {
                 }),
 
                 rpc.query({
-                    model: 'famille.analytique',
+                    model: 'analytic.section',
                     method: 'calcul_value_rebrique',
                     args: [1],
                     }).then(function(output){

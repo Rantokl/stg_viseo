@@ -27,7 +27,7 @@
         'security/ir.model.access.csv',
         'views/views.xml',
         'views/sequence.xml',
-        'views/rubrique.xml',
+        # 'views/rubrique.xml',
         'views/template_view.xml',
         #'views/table.xml',
         'views/templates.xml',
