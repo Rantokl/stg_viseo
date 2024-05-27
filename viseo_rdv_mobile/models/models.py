@@ -1005,34 +1005,31 @@ class ValidateFacture(models.Model):
         veh_qty =0
         if self.type == 'out_invoice':
             sale_order = self.env['sale.order'].search([('name','=',self.invoice_origin)])
-            sale_veh = sale_order.order_line.filter(lambda x : x.product_id.model_id)
-
-            for sales in sale_veh: veh_qty += sales.product_uom_qty
-            for sale in sale_order.order_line:
-
-                if sale.product_id.model_id:
-
-                    if sale_order.vehicle_ids is None:
-                        raise ValidationError(('Ajouter le(s) VIN de véhicule(s) dans la vente'))
+            for sales in filter(lambda x : x.product_id.model_id, sale_order.order_line): veh_qty += sales.product_uom_qty
+            if veh_qty >=1 :
+                if sale_order.vehicle_ids is None:
+                    raise ValidationError(('Ajouter le(s) VIN de véhicule(s) dans la vente'))
+                else:
+                    if veh_qty != len(sale_order.vehicle_ids):
+                        raise ValidationError(('Ajuster le nombre de véhicule suivant la vente'))
                     else:
-                        if veh_qty != len(sale_order.vehicle_ids):
-                            raise ValidationError(('Ajuster le nombre de véhicule suivant les quantités dans la vente'))
-                        else:
-                            stock = self.env['stock.picking'].search([('origin', '=', self.invoice_origin)])
-                            if stock:
-                                vehicles = self.env['stock.move.line'].search([('picking_id', '=', stock.id)])
-                                # for cars in vehicles: veh = sum(cars.product_uom_)
-                                for vehicle in vehicles:
-                                    car = vehicle.lot_id.vehicle_id
+                        for car in sale_order.vehicle_ids:
+                            query = """INSERT INTO public."viseoApi_vehicle" (id, number, model,owner_id) VALUES (%s,%s,%s,%s) RETURNING id;"""
+                            value = (car.id, car.license_plate, car.model_id.name, partner_id.id)
+                            try:
+                                result = self.insertData(query, value)
+                                if result:
+                                    car.write({'driver_id': partner_id.id})
+                            except:
+                                print('Error')
+                        # stock = self.env['stock.picking'].search([('origin', '=', self.invoice_origin)])
+                        # if stock:
+                        #     vehicles = self.env['stock.move.line'].search([('picking_id', '=', stock.id)])
+                        #     # for cars in vehicles: veh = sum(cars.product_uom_)
+                        #     for vehicle in vehicles:
+                        #         car = vehicle.lot_id.vehicle_id
+                        #
+                        #         if car:
 
-                                    if car:
-                                        query = """INSERT INTO public."viseoApi_vehicle" (id, number, model,owner_id) VALUES (%s,%s,%s,%s) RETURNING id;"""
-                                        value = (car.id, car.license_plate, car.model_id.name, partner_id.id)
-                                        try:
-                                            result = self.insertData(query, value)
-                                            if result:
-                                                car.write({'driver_id': partner_id.id})
-                                        except:
-                                            print('Error')
 
         return super(ValidateFacture, self).action_post()
