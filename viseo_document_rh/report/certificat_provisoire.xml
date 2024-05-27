@@ -98,7 +98,7 @@
 												
 								</style>
 								<tr>
-									<td>L'employé(e)</td>
+									<td>Le Responsable</td>
 								</tr>
 								<tr>
 									<td><br/></td>
@@ -114,7 +114,7 @@
 								</tr>
 
 								<tr>
-									<td><t t-esc="doc.titre.name"/></td>
+									<td></td>
 								</tr>
 								
 							</table>
