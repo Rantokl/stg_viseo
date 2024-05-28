@@ -55,7 +55,7 @@
 							</p>
 							<p>
 								Est employé, sous contrat à durée indéterminée, au sein de notre Société en qualité de <strong><t t-esc='doc.partner_id.job_id.name'/> </strong> du département <strong> <t t-esc='doc.partner_id.department_id.name'/> </strong>.<br/>
-								Classification Professionnelle : <strong><t t-esc='doc.partner_id.type_id.name'/> </strong>, depuis le <strong><t t-esc='doc.partner_id.date_start.strftime("%d %b %Y")'/></strong> jusqu’à ce jour.
+								Classification Professionnelle : <strong><t t-esc='doc.partner_id.type_id.name'/> </strong>, depuis le <strong><t t-esc="doc.date_begin.strftime('%d %B %Y')"/></strong> jusqu’à ce jour.
 							</p>
 						</div>
 						<div style="font-size: 14px; margin-top: 10px;">
