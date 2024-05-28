@@ -1,0 +1,108 @@
+<odoo>
+  <data>
+        <record id="viseo_credit_application.credit_application_form" model="ir.ui.view">
+            <field name="name">Formulaire de demande de crédit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page name="DemandeCredit" string="Demande de crédit">
+                           <group>
+                                <field name="plafond_credit"/>
+                                <field name="blocage_type"/>
+                                <field name="company"/>
+                                <field name="payment_condition"/>
+                                <button string="test" 
+                                        type="object" 
+                                        name="test" 
+                                        class="oe_highlight" 
+                                       />
+                                <field name="state_application_credit" readonly="1"/>
+                                <field name="visibility_button_chief" invisible="1"/>
+                                <field name="visibility_button_commercial" invisible="1"/>
+                            </group>
+                            <group>
+                                <button string="Valider" 
+                                        type="object" 
+                                        name="chief_confirm_boutton" 
+                                        class="oe_highlight" 
+                                        attrs="{'invisible': [('visibility_button_chief', '=', False)]}"/>
+                                <button string="Refuser" 
+                                        type="object" 
+                                        name="chief_rejected_boutton" 
+                                        class="oe_highlight" attrs="{'invisible': [('visibility_button_chief', '=', False)]}"/>
+                                 
+                                <button string="Confirmer" 
+                                        type="object" 
+                                        name="commercial_confirm_boutton" 
+                                        class="oe_highlight" 
+                                        groups="viseo_credit_application.credit_application_commercial"
+                                        attrs="{'invisible': [('visibility_button_commercial','=', False)]}"/>
+                                        
+                                <button string="Refuser" 
+                                        type="object" 
+                                        name="commercial_rejected_boutton" 
+                                        class="oe_highlight" 
+                                        groups="viseo_credit_application.credit_application_commercial"
+                                        attrs="{'invisible': [('visibility_button_commercial','=', False)]}"/>
+                            </group>
+                    </page> 
+                </notebook>
+            </field>
+        </record>
+
+<record id="view_report_viseo_kpi_legal_wizard_form" model="ir.ui.view">
+    <field name="name">report.viseo.kpi.legal.wizard.form</field>
+    <field name="model">credit_application.wizard</field>
+    <field name="arch" type="xml">
+        <!-- Vue du formulaire du wizard -->
+        <form string="Wizard pour demande de credit">
+            <group>
+                <field name="plafond_credit_wizard" required="1"/>
+                <field name="blocage_type_wizard" required="1"/>
+                <field name="payment_condition_wizard" 
+                       required="1" 
+                       options='{"no_create":True,"no_create_edit":True}'/>
+                <field name='company_wizard' required="1"/>
+            </group>
+            <footer>
+                <button string="Annuler" special="cancel"/>
+                <button string="Demander"
+                        type="object" 
+                        name="send_application_credit_from_wizard" 
+                        class="oe_highlight"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+<record model="ir.actions.act_window" id="viseo_credit_application.action_wizard_report_legal_kpi">
+    <field name="name">Demande de credit</field>
+    <field name="res_model">credit_application.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="view_id" ref="view_report_viseo_kpi_legal_wizard_form"/>
+    <field name="target">new</field>
+</record>
+
+
+
+<!-- <record id="action_server_application_credit" model="ir.actions.server">
+    <field name="name">Demande de credit</field>
+    <field name="model_id" ref="contacts.model_res_partner"/>
+    <field name="binding_model_id" ref="contacts.model_res_partner"/>
+    <field name="binding_view_types">form</field>
+    <field name="state">code</field>
+    <field name="python_code">self.send_application_credit()</field>
+</record> -->
+
+<record id="action_server_application_credit" model="ir.actions.server">
+    <field name="name">Demande de credit</field>
+    <field name="model_id" ref="model_res_partner"/>
+    <field name="binding_model_id" ref="model_res_partner"/>
+    <field name="binding_view_types">form</field>
+    <field name="state">code</field>
+    <field name="code">action = records.send_application_credit()</field>
+</record>
+
+  </data>
+</odoo>
