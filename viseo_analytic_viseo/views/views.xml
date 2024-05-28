@@ -108,15 +108,14 @@
               <field name="amount_total"/>
             </group>
             <notebook>
-              <page id="repartition" string="Répartition" >
-                
-      
+              <page id="ecriture" string="Ecriture" >
+                  <field name="ecriture" />
+              </page>
+                <page id="repartition" string="Répartition" >
+
                 <field name="percent"/>
-                <!-- <field name="departement_id"/> -->
-          
-        
-      
-    
+
+
               </page>
 
             </notebook>

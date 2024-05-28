@@ -5,8 +5,8 @@ from odoo import models, fields, api
 
 class viseo_analytic(models.Model):
     _name = 'viseo_analytic.viseo_analytic'
-#     _description = 'viseo_analytic.viseo_analytic'
-    #_inherit = 'account.move'
+    #     _description = 'viseo_analytic.viseo_analytic'
+    # _inherit = 'account.move'
     name = fields.Char(default='Nouveau')
     start_date = fields.Date('Date de début')
     end_date = fields.Date('Date de fin')
@@ -21,8 +21,8 @@ class viseo_analytic(models.Model):
     )
     analytic_count = fields.Integer('Analytique', default=0)
     html_content = fields.Html('Contenu html')
-    famille = fields.Many2one('famille.analytique', string="Famille analytique")
-
+    famille = fields.Many2one('analytic.section', string="Famille analytique")
+    ecriture = fields.One2many('analytic.move.line', 'analytique_id', string='Ecriture analytique')
 
     def read_depart_group(self):
         tabData = []
@@ -32,20 +32,18 @@ class viseo_analytic(models.Model):
             tabData.append(data)
         # print(tabData)
         return tabData
-        #self.env['viseo_analytic.viseo_analytic'].render('viseo_analytic_viseo.analytique_template', docargs)
-
+        # self.env['viseo_analytic.viseo_analytic'].render('viseo_analytic_viseo.analytique_template', docargs)
 
     def takedata(self):
         print(self.id)
-        data = self.env['viseo_analytic.viseo_analytic'].sudo().search([('id','=',self.id)])
-        print('test1',data)
+        data = self.env['viseo_analytic.viseo_analytic'].sudo().search([('id', '=', self.id)])
+        print('test1', data)
         # return
         return {
-            'name2':self.id,
-            'name':data.name,
+            'name2': self.id,
+            'name': data.name,
             'value': data.amount_total
         }
-
 
     def table_analytic(self):
         print(self.name)
@@ -53,7 +51,6 @@ class viseo_analytic(models.Model):
         data1 = self.env.ref('viseo_analytic_viseo.viseo_analytic_viseo_action_client').read()
         print(data1)
         return self.env.ref('viseo_analytic_viseo.viseo_analytic_viseo_action_client').read()[0]
-
 
     def action_afficher_template(self):
         return {
@@ -65,6 +62,7 @@ class viseo_analytic(models.Model):
             # Remplacez 'my_module.view_my_template' par l'ID de votre vue template
             'target': 'current',
         }
+
     def openWizard(self):
         self.ensure_one()
         return {
@@ -72,13 +70,8 @@ class viseo_analytic(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'account.move.line.view',
             'view_mode': 'form',
-            'views':[(False,'form')],
+            'views': [(False, 'form')],
             'target': 'new',
-            # 'context': {'default_sale_order_id': sale_order,
-            #             'default_ir_attach': attachment.id,
-            #             'default_name': attachment.name,
-            #             'default_quotation_pdf': _report
-            #             },
 
         }
 
@@ -88,37 +81,32 @@ class viseo_analytic(models.Model):
         return {
             'departements': departments
         }
+
     @api.model
     def create(self, sequence):
         sequence['name'] = self.env['ir.sequence'].next_by_code('viseo_analytic.viseo_analytic') or '/'
 
         return super(viseo_analytic, self).create(sequence)
-    
+
     def action_pivot_view_test(self):
         print('TEst')
         self.ensure_one()
         return {
-             'type': 'ir.actions.act_window',
-             'name': 'Analytique viseo',
-             'view_mode': 'pivot',
-             'res_model': 'viseo_analytic.viseo_analytic',
-             #'domain': [('vehicle_id', '=', self.id)],
-             #'context': {'default_driver_company': self.true_driver.id, 'default_driver_other': self.other_driver, 'default_vehicle_id': self.id}
-         }
-        
+            'type': 'ir.actions.act_window',
+            'name': 'Analytique viseo',
+            'view_mode': 'pivot',
+            'res_model': 'viseo_analytic.viseo_analytic',
+            # 'domain': [('vehicle_id', '=', self.id)],
+            # 'context': {'default_driver_company': self.true_driver.id, 'default_driver_other': self.other_driver, 'default_vehicle_id': self.id}
+        }
+
     def read_group_department_ids(self, department, domain, order):
         if self._context.get('restrict_rdv'):
             return department
         all_atelier = department.search(['account_department'], order='name desc')
-        print('atelier: ',all_atelier)
+        print('atelier: ', all_atelier)
         return all_atelier
 
-
-
-
-        
-
-    
     @api.onchange('supplier_id')
     def compute_invoice_total(self):
         # Recherche des factures du fournisseur dans la période spécifiée
@@ -133,10 +121,25 @@ class viseo_analytic(models.Model):
         # Calcul de la somme totale des factures
         total_amount = sum(invoice.amount_total for invoice in invoices)
 
-        
-        self.amount_total= total_amount
+        self.amount_total = total_amount
 
+    @api.onchange('end_date')
+    def take_analytique(self):
+        ecriture = self.env['analytic.move.line'].search([
+            ('date', '>=', self.start_date),
+            ('date', '<=', self.end_date),
+            ('section_id', '!=', False)
+        ])
 
+        results = {}
+        for record in ecriture:
+            if record.section_id.name in results:
+                results[record.section_id.name] += record.amount
+            else:
+                results[record.section_id.name] = record.amount
+
+        summary_list = [{'rubrique': name, 'total_amount': total_amount} for name, total_amount in results.items()]
+        self.ecriture = ecriture
 
 
 class viewAnalytique(models.Model):
@@ -145,29 +148,34 @@ class viewAnalytique(models.Model):
     html_content = fields.Html('Contenu html')
 
 
-
 class AccountMoveLineView(models.TransientModel):
     _name = 'account.move.line.view'
 
-    name= fields.Char('Nouveau')
+    name = fields.Char('Nouveau')
     ecriture = fields.Many2one('account.move.line', "Écriture comptable")
 
+
 class AnalytiqueFamille(models.Model):
-    _name = 'famille.analytique'
-    
-    
+    _name = 'analytic.section'
+
     name = fields.Char('Famille')
 
     def calcul_value_rebrique(self):
-        # invoices = self.env['account.move'].search([
-        #     ('partner_id', '=', self.supplier_id.id),
-        #     ('invoice_date', '>=', self.start_date),
-        #     ('invoice_date', '<=', self.end_date),
-        #     ('type', '=', 'in_invoice'),
+        # rubrique = self.env['analytic.section'].search([])
+
+        departements = self.env['account.department'].search()
+        users = self.env['res.users'].search()
+        user_dep = []
+
+        for departement in departements:
+            user = self.env['res.users'].search([('account_department_id', '=', departement.id)])
+            user = len(user) / len(users)
+            user_dep.append(user)
         # ])
         tabData = []
         # Calcul de la somme totale des factures
-        rubriques = self.env['famille.analytique'].sudo().search([])
+        rubriques = self.env['analytic.section'].sudo().search([])
+
         tab = [[23, 25, 36, 14, 13, 12, 13, 14, ], [23, 25, 36, 14, 13, 12, 13, 14, ],
                [23, 25, 36, 14, 13, 12, 13, 14, ]]
         for i in rubriques:
@@ -189,25 +197,22 @@ class AnalytiqueFamille(models.Model):
         #         ('type', '=', 'in_invoice'),
         #     ])
 
-
         return {
             # 'content': tab,
             'famille': resultat
         }
-    
+
+
 class Analytiquefamille(models.Model):
     _inherit = 'purchase.order'
-    
-    
-    famille = fields.Many2one('famille.analytique')
-        
-   
-    
-    
-    
-    
-    
-    
+
+    famille = fields.Many2one('analytic.section')
+
+
+class AnalytiqueEcriture(models.Model):
+    _inherit = 'analytic.move.line'
+
+    analytique_id = fields.Many2one('viseo_analytic.viseo_analytic', string="analytique_id")
 
 #     name = fields.Char()
 #     value = fields.Integer()
@@ -233,6 +238,3 @@ class Analytiquefamille(models.Model):
 #     def _value_pc(self):
 #         for record in self:
 #             record.value2 = float(record.value) / 100
-
-    
-        
