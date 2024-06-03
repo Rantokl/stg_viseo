@@ -36,7 +36,7 @@ class WizardCreditApplication(models.TransientModel):
 class ViseoCreditApplication(models.Model):
     _inherit = 'res.partner'
 
-    plafond_credit = fields.Float(string='plafond de crédit', required=True)
+    plafond_credit = fields.Float(string='Plafond de crédit', required=True)
     blocage_type = fields.Selection([
         ('none', 'Aucun'),
         ('blocked', 'Bloque'),
@@ -45,7 +45,7 @@ class ViseoCreditApplication(models.Model):
         ('all', 'Tous')],
         string='Type de Blocage', required=True, copy=False, default='none', track_visibility=True
     )
-    payment_condition = fields.Many2one('account.payment.term', string='durée de payement')
+    payment_condition = fields.Many2one('account.payment.term', string='Condition de payement')
     company= fields.Many2one('res.company', string='Société')
     state_application_credit = fields.Selection([
         ('draft', 'Brouillon'),
@@ -140,66 +140,25 @@ class ViseoCreditApplication(models.Model):
             self.visibility_button_chief=False
 
     def commercial_confirm_boutton(self):
-        self.message_post(body=f"La Demandé de credit pour {self.name} de montant {self.plafond_credit} est VALIDE par {self.env.user.name} ")
+        self.message_post(body=f"La Demande de credit pour {self.name} de montant {self.plafond_credit} est VALIDE par {self.env.user.name} ")
         self.state_application_credit='done'
         self.visibility_button_commercial = False
         self.confirm_chief=True
         self.credit_limit = self.plafond_credit
         self.warning_type = self.blocage_type
-        self.property_payment_term_id = self.payment_condition.id
+        property_payment_term_id = self.payment_condition.id
 
         # Recherche d'enregistrements dans ir.property
-        self.env.cr.execute("""SELECT * FROM ir_property WHERE 
-                                res_id = %s AND name = 'property_payment_term_id' AND company_id = %s""", 
-                                (f'res.partner,{self.id}', self.company.id))
-
-        is_property = self.env.cr.fetchall()
-        print('=====================================================================================================================')
-        print(is_property)
-       
-        if is_property:
-            self.env.cr.execute(""" UPDATE ir_property SET value_reference = %s WHERE 
-                                    res_id = %s AND name = 'property_payment_term_id' AND 
-                                    company_id = %s""", 
-                                    (f'account.payment.term,{self.property_payment_term_id.id}', f'res.partner,{self.id}', self.company.id))
-            print(self.company.id)
-
-            self.env.cr.execute("""SELECT * FROM ir_property WHERE 
-                                res_id = %s AND value_reference = %s AND name = 'property_payment_term_id' AND company_id = %s""", 
-                                (f'res.partner,{self.id}',f'account.payment.term,{self.property_payment_term_id.id}', self.company.id))
-
-            up = self.env.cr.fetchall()
-            print('=====================================================================================================================')
-            print(up)
-            print('§§§§§§§§§§§§§§§§§§§§§§§§§§§§UPDATED§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§')
-
-        else:
-
-            self.env.cr.execute("""SELECT id FROM ir_model_fields WHERE model = 'res.partner' AND name = 'property_payment_term_id'""")
-            payment_term_field_id = self.env.cr.fetchone()
-
-            self.env.cr.execute("""
-                INSERT INTO ir_property (res_id, name, company_id, value_reference, fields_id, type)
-                VALUES (%s, 'property_payment_term_id', %s, %s, %s,'many2one')
-            """, (f'res.partner,{self.id}', self.company.id, f'account.payment.term,{self.property_payment_term_id.id}', payment_term_field_id[0]))
-            print(self.company.id)
-            print('§§§§§§§§§§§§§§§§§§§§§§§§§§§§CREATED§§§§§§§§§§§')
-
-    def test(self):
-        self.credit_limit = self.plafond_credit
-        self.warning_type = self.blocage_type
-        self.property_payment_term_id = self.payment_condition
-
         self.env.cr.execute("""SELECT res_id, name, company_id ,id FROM ir_property WHERE 
-                                res_id = %s AND name = 'property_payment_term_id' AND company_id = %s""", 
-                                (f'res.partner,{self.id}', self.company.id))
+                                    res_id = %s AND name = 'property_payment_term_id' AND company_id = %s""", 
+                                    (f'res.partner,{self.id}', self.company.id))
 
         is_property = self.env.cr.fetchall()
-        print('=====================================================================================================================')
-        print(is_property)
+        # print('=====================================================================================================================')
+        # print(is_property)
 
         if is_property:
-            # property_id = is_property[0][3]  
+            property_id = is_property[0][3]  
             # property_record = self.env['ir.property'].search([('id','=',property_id),('company_id','!=',1)])
             # print(property_record)
             # property_record.sudo().update({
@@ -208,19 +167,15 @@ class ViseoCreditApplication(models.Model):
             query_update = """
                             UPDATE ir_property
                             SET value_reference = %s
-                            WHERE id = (
-                                SELECT id 
-                                FROM ir_property 
-                                WHERE res_id = %s AND name = 'property_payment_term_id' AND company_id = %s
-                            )"""
+                            WHERE id = %s
+                            """
             self.env.cr.execute(query_update, (
-                f'account.payment.term,{self.property_payment_term_id.id}', 
-                f'res.partner,{self.id}', 
-                self.company.id
+                f'account.payment.term,{property_payment_term_id}', 
+                property_id
             ))
-            print(self.company.id)
+            # print(self.company.id)
 
-            print('§§§§§§§§§§§§§§§§§§§§§§§§§§§§UPDATED§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§')
+            # print('§§§§§§§§§§§§§§§§§§§§§§§§§§§§UPDATED§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§')
 
 
         else:
@@ -228,17 +183,69 @@ class ViseoCreditApplication(models.Model):
             # print(self.property_payment_term_id.company_id.id)
             # print(f'account.payment.term,{self.property_payment_term_id.id}')
             payment_term_field = self.env['ir.model.fields'].search([('model', '=', 'res.partner'), ('name', '=', 'property_payment_term_id')])
-            print(payment_term_field.id)
-            print(payment_term_field)
+            # print(payment_term_field.id)
+            # print(payment_term_field)
             self.env['ir.property'].sudo().create({
                 'res_id': f'res.partner,{self.id}',
                 'name': 'property_payment_term_id',
                 'company_id': self.company.id,
-                'value_reference':f'account.payment.term,{self.property_payment_term_id.id}',
+                'value_reference':f'account.payment.term,{property_payment_term_id}',
                 'fields_id': payment_term_field.id
                 })
-            print(self.company.id)
-            print('§§§§§§§§§§§§§§§§§§§§§§§§§§§§CREATED§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§')
+            # print(self.company.id)
+            # print('§§§§§§§§§§§§§§§§§§§§§§§§§§§§CREATED§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§')
+
+
+    # def test(self):
+    #     self.credit_limit = self.plafond_credit
+    #     self.warning_type = self.blocage_type
+    #     property_payment_term_id = self.payment_condition.id
+
+    #     self.env.cr.execute("""SELECT res_id, name, company_id ,id FROM ir_property WHERE 
+    #                             res_id = %s AND name = 'property_payment_term_id' AND company_id = %s""", 
+    #                             (f'res.partner,{self.id}', self.company.id))
+
+    #     is_property = self.env.cr.fetchall()
+    #     print('=====================================================================================================================')
+    #     print(is_property)
+
+    #     if is_property:
+    #         property_id = is_property[0][3]  
+    #         # property_record = self.env['ir.property'].search([('id','=',property_id),('company_id','!=',1)])
+    #         # print(property_record)
+    #         # property_record.sudo().update({
+    #         #     'value_reference': f'account.payment.term,{self.property_payment_term_id.id}'
+    #         # })
+    #         query_update = """
+    #                         UPDATE ir_property
+    #                         SET value_reference = %s
+    #                         WHERE id = %s
+    #                         """
+    #         self.env.cr.execute(query_update, (
+    #             f'account.payment.term,{property_payment_term_id.id}', 
+    #             property_id
+    #         ))
+    #         print(self.company.id)
+
+    #         print('§§§§§§§§§§§§§§§§§§§§§§§§§§§§UPDATED§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§')
+
+
+    #     else:
+    #         # print(f'res.partner,{self.id}')
+    #         # print(self.property_payment_term_id.company_id.id)
+    #         # print(f'account.payment.term,{self.property_payment_term_id.id}')
+    #         payment_term_field = self.env['ir.model.fields'].search([('model', '=', 'res.partner'), ('name', '=', 'property_payment_term_id')])
+    #         print(payment_term_field.id)
+    #         print(payment_term_field)
+    #         self.env['ir.property'].sudo().create({
+    #             'res_id': f'res.partner,{self.id}',
+    #             'name': 'property_payment_term_id',
+    #             'company_id': self.company.id,
+    #             'value_reference':f'account.payment.term,{property_payment_term_id}',
+    #             'fields_id': payment_term_field.id
+    #             })
+    #         print(self.company.id)
+    #         print('§§§§§§§§§§§§§§§§§§§§§§§§§§§§CREATED§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§')
 
     def commercial_rejected_boutton(self):
         self.message_post(body=f"La Demandé de credit pour {self.name} de montant {self.plafond_credit} est été REFUSEE par {self.env.user.name}")
@@ -375,7 +382,7 @@ class ViseoCreditApplication(models.Model):
                                 else:
                                     self.notifications_to_chief(is_mh)
                             else :
-                                raise exceptions.UserError(f"Mh n'est pas dans la règle {id_rule_user_parent_of_parent[0]}")
+                                raise exceptions.UserError(f"MH n'est pas dans la règle {id_rule_user_parent_of_parent[0]}")
                 else:
                     is_mh=self.env['sale.validation'].search([('rule_id','=',id_rule_user_parent[0]),('is_to_mh','=',True)])
                     if is_mh :
@@ -387,7 +394,7 @@ class ViseoCreditApplication(models.Model):
                         else :
                             self.notifications_to_chief(is_mh)
                     else :
-                        raise exceptions.UserError(f"Mh n'est pas dans la règle {id_rule_user_parent[0]}")
+                        raise exceptions.UserError(f"MH n'est pas dans la règle {id_rule_user_parent[0]}")
 
             else :
                 is_mh=self.env['sale.validation'].search([('rule_id','=',id_rule_of_user[0]),('is_to_mh','=',True)])
@@ -400,7 +407,7 @@ class ViseoCreditApplication(models.Model):
                     else :
                         self.notifications_to_chief(is_mh)
                 else :
-                    raise exceptions.UserError(f"Mh n'est pas dans la règle {id_rule_of_user[0]}")
+                    raise exceptions.UserError(f"MH n'est pas dans la règle {id_rule_of_user[0]}")
                     
         elif len(id_rule_of_user) > 1 :
             id_many_rule_of_user=[]
@@ -435,27 +442,27 @@ class ViseoCreditApplication(models.Model):
                     else :
                         raise exceptions.UserError(f"MH n'est pas dans la règle {mh_rule[0]}")
                 else :
-                    raise exceptions.UserError(f"MH n'est pas dans les règles ")
+                    raise exceptions.UserError(f"MH ne figure dans aucune règle. ")
         else :
-            raise exceptions.UserError("Vous n'avez pas le droit de demander un crédit")           
+            raise exceptions.UserError("Vous n'êtes pas autorisé à solliciter un crédit.")           
 
     def send_application_credit(self):
         if self.state_application_credit !='request':
             user_id = self.env.user.id
             model_id = self.env['ir.model'].search([('model', '=', 'sale.order')]).ids
             rules = self.env['rule.rule'].with_context(active_test=False).search([('model_id', 'in', model_id)])
-            print('=====================================gbgb============================================')
-            print(rules)
+            # print('=====================================gbgb============================================')
+            # print(rules)
             rule_of_user=[]
             for rule in rules:          
                 for user in rule.sale_validation_ids:
                     if user_id == user.name.id:
-                        print("Règle:", rule.ids)
-                        print("Règle:", rule.name)
-                        print("Utilisateurs associés:")
-                        print(user.name.name)
+                        # print("Règle:", rule.ids)
+                        # print("Règle:", rule.name)
+                        # print("Utilisateurs associés:")
+                        # print(user.name.name)
                         rule_of_user.append(rule.name)
-                print('*************************************************************************')     
+                # print('*************************************************************************')     
             if len(rule_of_user) > 0:
                 #------------------------------------------------------------------------------------------------------------------------------------
                 return{
@@ -468,6 +475,6 @@ class ViseoCreditApplication(models.Model):
                     }
                 #------------------------------------------------------------------------------------------------------------------------------------
             else:
-                raise exceptions.UserError("Vous n'avez pas le droit de Demander un credit")
+                raise exceptions.UserError("Vous n'êtes pas autorisé à solliciter un crédit.")
         else:
-            raise exceptions.UserError("Une demande est déja en cour")
+            raise exceptions.UserError("Une demande de crédit est déjà en cours.")

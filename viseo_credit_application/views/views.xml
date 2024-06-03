@@ -12,11 +12,11 @@
                                 <field name="blocage_type"/>
                                 <field name="company"/>
                                 <field name="payment_condition"/>
-                                <button string="test" 
+                                <!-- <button string="test" 
                                         type="object" 
                                         name="test" 
                                         class="oe_highlight" 
-                                       />
+                                       /> -->
                                 <field name="state_application_credit" readonly="1"/>
                                 <field name="visibility_button_chief" invisible="1"/>
                                 <field name="visibility_button_commercial" invisible="1"/>
