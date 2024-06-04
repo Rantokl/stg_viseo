@@ -117,6 +117,17 @@
 
 
               </page>
+                <page id="Store" string="Total" >
+
+                <field name="store_analytique">
+                    <tree>
+                        <field name="name"/>
+                        <field name="amount"/>
+                    </tree>
+                        </field>
+
+
+              </page>
 
             </notebook>
           </sheet>
