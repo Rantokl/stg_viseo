@@ -1,0 +1,123 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+    <record model="ir.ui.view" id="viseo_whatsapp_form">
+      <field name="name">viseo_whatsapp form</field>
+      <field name="model">whatsapp.viseo</field>
+      <field name="arch" type="xml">
+        <form>
+            <group>
+                <field name="current_user"/>
+                <field name="id_model" invisible="1"/>
+
+                <field name="model_name" invisible="1"/>
+                <field name="users" invisible="1"/>
+                <field name="choice" widget='radio' options="{'horizontal': true}"/>
+                <field name="group_name" invisible="1"/>
+                 <field name="receiver" widget="many2many_tags" attrs="{
+										'invisible':[('choice', 'in', ['interne','wclient'])]}"/>
+                <field name="group_id" attrs="{
+										'invisible':[('choice', '=', 'uclient')]}"/>
+                <field name="body"/>
+
+            </group>
+            <group>
+                        <field name="attachment_ids" widget="many2many_binary"/>
+                      </group>
+         <footer>
+              <button string="Envoyer" type="object" class="oe_highlight" icon="fa-send"  name="action_send_whats"/>
+             <button string="Cancel" class="btn-secondary" special="cancel"/>
+<!--             <button string="Test" type="object" class="oe_highlight"   name="TestGroup"/>-->
+         </footer>
+
+        </form>
+      </field>
+    </record>
+
+    <record id="viseo_whatsapp_id" model="ir.ui.view">
+        <field name="name">viseo_whatsapp</field>
+        <field name="model">mail.compose.message</field>
+        <field name="inherit_id" ref="mail.email_compose_message_wizard_form"/>
+        <field name="arch" type="xml">
+<!--             find field description and add the field-->
+<!--                 idea_ids after it -->
+            <xpath expr="//field[@name='subject']" position="after">
+              <field name="whats" string="Envoyé par Whatsapp"/>
+                 <field name="receiver2" string="Client(s)" attrs="{
+										'invisible':[('whats', '=', False)],
+										}" widget="many2many_tags"/>
+            </xpath>
+        </field>
+    </record>
+
+      <!--<record id="view_extend_chatter_topbar" model="ir.ui.view">
+            <field name="name">model.chatter_topbar_extended</field>
+            <field name="model">mail.chatter</field>
+            <field name="inherit_id" ref="mail.mail_chatter_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@class='o_chatter_topbar']/button[@name='schedule_activity']" position="after">
+                    &lt;!&ndash; Ajoutez votre bouton personnalisé ici &ndash;&gt;
+                    <button class="oe_stat_button" type="object" name="custom_button_action" string="Mon Bouton" />
+                </xpath>
+            </field>
+        </record>-->
+    <!-- actions opening views on models -->
+    <record model="ir.actions.act_window" id="viseo_whatsapp.action_window">
+      <field name="name">viseo_whatsapp window</field>
+      <field name="res_model">whatsapp.viseo</field>
+      <field name="view_mode">form</field>
+    </record>
+
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="viseo_whatsapp.action_server">
+      <field name="name">viseo_whatsapp server</field>
+      <field name="model_id" ref="model_viseo_whatsapp_viseo_whatsapp"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="viseo_whatsapp" id="viseo_whatsapp.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="viseo_whatsapp.menu_1" parent="viseo_whatsapp.menu_root"/>
+    <menuitem name="Menu 2" id="viseo_whatsapp.menu_2" parent="viseo_whatsapp.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="viseo_whatsapp.menu_1_list" parent="viseo_whatsapp.menu_1"
+              action="viseo_whatsapp.action_window"/>
+    <menuitem name="Server to list" id="viseo_whatsapp" parent="viseo_whatsapp.menu_2"
+              action="viseo_whatsapp.action_server"/>
+-->
+      <record id="view_crm_button_whatsapp" model="ir.ui.view">
+        <field name="name">crm.button.whatsapp.inherit</field>
+        <field name="model">mailing.mailing</field>
+        <field name="inherit_id" ref="mass_mailing_sale.mailing_mailing_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_send_now_sms']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_send_now_sms']" position="after">
+                <button name="action_send_now_whatsapp" type="object" string="Envoyer maintenant" attrs="{'invisible': ['|', ('mailing_type', '=', 'mail'), ('state', 'in', ('done'))]}"
+                        confirm="This will send Whatsapp to all recipients now. Do you still want to proceed ?"/>
+            </xpath>
+        </field>
+    </record>
+
+      <record id="viseo_marketing.mass_mailing_sms_menu_mass_sms_crm" model="ir.ui.menu">
+    <field name="name">Envoie Whatsapp</field>
+</record>
+  </data>
+</odoo>

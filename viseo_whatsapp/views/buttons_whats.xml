@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-extend="mail.chatter.Buttons">
+
+    <t t-jquery=".o_chatter_button_schedule_activity" t-operation="after">
+
+        <button class="btn btn-link o_chatter_button_whatsapp" title="To send via Whatsapp" name="openWhatsapp">
+            <i class="fa fa-whatsapp" title="Dates"/> Whatsapp2
+        </button>
+
+    </t>
+
+</t>
+</templates>
+

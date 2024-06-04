@@ -1,0 +1,17 @@
+
+ <odoo>
+    <data>
+        <!-- Vue form -->
+        <record id="view_import_followup_form_inherit" model="ir.ui.view">
+            <field name="name">import.followup.form</field>
+            <field name="model">import.followup</field>
+            <field name="inherit_id" ref="viseo_import_followup.view_import_followup_form"/>
+            <field name="arch" type="xml">
+                <!-- Ajouter le champ d'affectation du responsable -->
+                <xpath expr="//field[@name='picking_ids']" position="before">
+                    <field name="assigned_users_ids" widget="many2many_tags"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

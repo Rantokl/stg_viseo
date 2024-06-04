@@ -1,0 +1,16 @@
+<odoo>
+    <data>
+        <record id="import_followup_view_inherit" model="ir.ui.view">
+            <field name="name">import.followup.form</field>
+            <field name="model">import.followup</field>
+            <field name="inherit_id" ref="viseo_import_followup.view_import_followup_form" />
+            <field name="arch" type="xml">
+                <xpath expr='//field[@name="import_followup_line_ids"]//tree//field[@name="dau_date_bank"]' position='after'>
+                    <field name="etd_field"/>
+                    <field name="eta_field"/>
+                </xpath>
+                
+            </field>
+        </record>
+    </data>
+</odoo>
