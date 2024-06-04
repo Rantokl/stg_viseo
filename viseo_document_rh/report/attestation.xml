@@ -44,7 +44,7 @@
 							</div>
 							<div style="font-size: 14px; margin-bottom: 10px;">
 								Nous soussignées, Société <strong><t t-esc="doc.partner_id.company_id.name"/>, <t t-if="doc.partner_id.company_id.name.lower()== 'havamad'">Société à responsabilité limitée</t><t t-else="">Société anonyme</t></strong> au capital de <t t-esc="doc.partner_id.company_id.capital"/> Ariary, ayant son siège social à <strong><t t-esc="doc.partner_id.company_id.street"/> <t t-esc="doc.partner_id.company_id.city"/> <t t-esc="doc.partner_id.company_id.country_id.name,"/></strong>.<br/>
-								Certifions avoir employé : 
+								Attestons par la présente que :
 							</div>
 
 						<div style="font-size: 14px; margin-bottom: 10px;">
