@@ -957,15 +957,15 @@ class Writevehicleapk(models.Model):
 
         else:
             tag_id = self.env['fleet.vehicle.tag'].search([('name', '=', 'CLIENT')])
-            if 'tag_ids' in vals:
+            if 'tag_ids' in vals :
                 if tag_id.id == vals['tag_ids'] or self.tag_ids == tag_id.id:
                     curs.execute("""INSERT INTO public."viseoApi_vehicle"(
 						id, number, model, owner_id)
 						VALUES (%s, %s, %s, %s);
-					""", (self.id, self.license_plate, self.lot_id.name, vals['driver_id'],))
+					""", (self.id, self.license_plate, self.lot_id.name, self.driver_id.id,))
                     print('Vehicle inserted')
                 else:
-                    print('passs')
+                    print('Pass')
 
         connex.commit()
         connex.close()

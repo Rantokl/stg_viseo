@@ -43,7 +43,7 @@
 								ATTESTATION DE TRAVAIL
 							</div>
 							<div style="font-size: 14px; margin-bottom: 10px;">
-								Nous soussignées, Société <strong><t t-esc="doc.partner_id.company_id.name"/>, <t t-if="doc.partner_id.company_id.name.lower()== 'havamad'">Société à responsabilité limitée</t><t t-else="">Société anonyme</t></strong> au capital de <t t-esc="doc.partner_id.company_id.capital"/> Ariary, ayant son siège social à <strong><t t-esc="doc.partner_id.company_id.street"/> <t t-esc="doc.partner_id.company_id.city"/> <t t-esc="doc.partner_id.company_id.country_id.name,"/></strong>.<br/>
+								Nous soussignées, Société <strong><t t-esc="doc.partner_id.company_id.name"/>, <t t-if="doc.partner_id.company_id.name.lower()== 'havamad'">Société à responsabilité limitée</t><t t-else="">Société anonyme</t></strong> au capital de <t t-esc="doc.partner_id.company_id.capital"/> Ariary, ayant son siège social à <strong>Rue Docteur Raseta Andraharo, Galaxy Village</strong>.<br/>
 								Attestons par la présente que :
 							</div>
 
@@ -110,7 +110,7 @@
 							<div class="footer o_standard_footer" style="text-align:center; font-style: sans-serif, helvetica;">
 							<p style="margin-bottom:4px;">-------------------------------------------------------------------------------------------------------------------------------------------</p>
 							<p style="font-size:14px;font-style: sans-serif, helvetica; margin-bottom:1px;"><t t-esc="doc.partner_id.company_id.name"/>  <t t-esc="doc.partner_id.company_id.country_id.name"/>   / NIF: <t t-esc="doc.partner_id.company_id.nif"/>   / STAT: <t t-esc="doc.partner_id.company_id.stat"/></p>
-							<p style="font-size:14px;font-style: sans-serif, helvetica; margin-top:1px;">Adresse:  <t t-esc="doc.partner_id.company_id.street"/> <t t-esc="doc.partner_id.company_id.city"/>  <t t-esc="doc.partner_id.company_id.country_id.name"/> - Téléphone:  <t t-esc="doc.partner_id.company_id.phone"/></p>
+							<p style="font-size:14px;font-style: sans-serif, helvetica; margin-top:1px;">Adresse: Rue Docteur Raseta Andraharo, Galaxy Village - Téléphone:  <t t-esc="doc.partner_id.company_id.phone"/></p>
 							</div>
 					</div>
 				</div>	
