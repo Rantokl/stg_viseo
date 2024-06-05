@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="bypass_vin_sale_group" model="res.groups">
+        <field name="name">Bypass VIN devis</field>
+        <field name="category_id" ref="base.module_category_sales_sales"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <record id="sale_order_bypass_vin_form" model="ir.ui.view">
+        <field name="name">sale_order_bypass_vin_form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="viseo_repair_order.add_vehicle_sale_order_form"/>
+        <field name="arch" type="xml">
+            <field name="vehicle_ids" position="before">
+                <field name="bypass_vin_sale" invisible="1"/>
+                <button name="action_bypass_vin" string="Bypass VIN" type="object" class="oe_highlight"
+                        attrs="{'invisible':[('bypass_vin_sale','=',True)]}" groups="viseo_rdv_mobile.bypass_vin_sale_group"/>
+            </field>
+        </field>
+    </record>
+</odoo>
