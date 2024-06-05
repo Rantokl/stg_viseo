@@ -1,3 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_viseo_analytic_viseo_analytic,viseo_analytic.viseo_analytic,model_viseo_analytic_viseo_analytic,base.group_user,1,1,1,1
 access_viseo_analytique_view,viseo.analytique.view,model_viseo_analytique_view,base.group_user,1,1,1,1
+access_store_analytique,store.analytique,model_store_analytique,base.group_user,1,1,1,1
+

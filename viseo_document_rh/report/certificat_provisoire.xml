@@ -67,14 +67,14 @@
 											du département <strong><t t-esc="doc.titre_post[i]['Department']"/></strong>, 
 											classification Professionnelle: <strong><t t-esc="doc.titre_post[i]['Category']"/></strong>, 
 											durant la période allant du 
-											<strong><t t-esc="doc.get_date_end[i]['Date Start'].strftime('%d %b %Y')"/></strong> 
-											au <strong><t t-esc="doc.titre_post[i]['Date End'].strftime('%d %b %Y')"/></strong>
+											<strong><t t-esc="doc.get_date_end[i]['Date Start'].strftime('%d %B %Y')"/></strong>
+											au <strong><t t-esc="doc.titre_post[i]['Date End'].strftime('%d %B %Y')"/></strong>
 										</li>
 									</t>
 								</ul>
 							</div>
 							<div style="font-size: 14px; margin-top: 10px;">
-								En foi de quoi, cette attestation lui est délivrée pour servir et valoir ce que de droit.<br/>
+								En foi de quoi, cette certificat lui est délivrée pour servir et valoir ce que de droit.<br/>
 							</div>
 							<div style="font-size:14px;font-style: sans-serif, helvetica"><br/>
 							</div><br/><br/>

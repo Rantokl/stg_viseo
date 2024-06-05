@@ -23,6 +23,7 @@ class viseo_analytic(models.Model):
     html_content = fields.Html('Contenu html')
     famille = fields.Many2one('analytic.section', string="Famille analytique")
     ecriture = fields.One2many('analytic.move.line', 'analytique_id', string='Ecriture analytique')
+    store_analytique = fields.One2many('store.analytique','analytique_id')
 
     def read_depart_group(self):
         tabData = []
@@ -139,8 +140,23 @@ class viseo_analytic(models.Model):
                 results[record.section_id.name] = record.amount
 
         summary_list = [{'rubrique': name, 'total_amount': total_amount} for name, total_amount in results.items()]
+
+        for list in summary_list:
+            store = {'name':list['rubrique'],
+                     'amount':list['total_amount'],
+                     'analytique_id': self.id}
+
+            store_id = self.env['store.analytique'].create(store)
+
+            self.store_analytique = store_id
         self.ecriture = ecriture
 
+class StoreAnalytique(models.Model):
+    _name = 'store.analytique'
+
+    name = fields.Char('Rubrique(s)')
+    amount= fields.Float('Total')
+    analytique_id = fields.Many2one('viseo_analytic.viseo_analytic', 'Analytique')
 
 class viewAnalytique(models.Model):
     _name = 'viseo.analytique.view'

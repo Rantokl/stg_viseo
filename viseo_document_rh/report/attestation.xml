@@ -44,7 +44,7 @@
 							</div>
 							<div style="font-size: 14px; margin-bottom: 10px;">
 								Nous soussignées, Société <strong><t t-esc="doc.partner_id.company_id.name"/>, <t t-if="doc.partner_id.company_id.name.lower()== 'havamad'">Société à responsabilité limitée</t><t t-else="">Société anonyme</t></strong> au capital de <t t-esc="doc.partner_id.company_id.capital"/> Ariary, ayant son siège social à <strong><t t-esc="doc.partner_id.company_id.street"/> <t t-esc="doc.partner_id.company_id.city"/> <t t-esc="doc.partner_id.company_id.country_id.name,"/></strong>.<br/>
-								Certifions avoir employé : 
+								Attestons par la présente que :
 							</div>
 
 						<div style="font-size: 14px; margin-bottom: 10px;">
@@ -55,7 +55,7 @@
 							</p>
 							<p>
 								Est employé, sous contrat à durée indéterminée, au sein de notre Société en qualité de <strong><t t-esc='doc.partner_id.job_id.name'/> </strong> du département <strong> <t t-esc='doc.partner_id.department_id.name'/> </strong>.<br/>
-								Classification Professionnelle : <strong><t t-esc='doc.partner_id.type_id.name'/> </strong>, depuis le <strong><t t-esc='doc.partner_id.date_start.strftime("%d %b %Y")'/></strong> jusqu’à ce jour.
+								Classification Professionnelle : <strong><t t-esc='doc.partner_id.type_id.name'/> </strong>, depuis le <strong><t t-esc="doc.date_begin.strftime('%d %B %Y')"/></strong> jusqu’à ce jour.
 							</p>
 						</div>
 						<div style="font-size: 14px; margin-top: 10px;">

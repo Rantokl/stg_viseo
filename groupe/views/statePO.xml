@@ -1,0 +1,24 @@
+<odoo>
+    <data>
+        <record id="view_import_followup_tree" model="ir.ui.view">
+            <field name="name">import.followup.tree</field>
+            <field name="model">import.followup</field>
+            <field name="priority">2</field>
+            <field name="arch" type="xml">
+                <tree decoration-danger="state == 'open'" decoration-success="state == 'done'">
+                    <field name="name"/>
+                    <field name="purchase_order_in_id"/>
+                    <field name="date_approve"/>
+                    <field name="supplier_id"/>
+                    <field name="merchandise"/>
+                    <field name="amount_total"/>
+                    <field name="currency_id"/>
+                    <field name="incoterm_id"/>
+                    <field name="supplier_city"/>
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+    </data>
+</odoo>
+

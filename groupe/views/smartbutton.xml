@@ -1,0 +1,27 @@
+<odoo>
+    <data>
+        <record id="purchase_order_form_view_inherit" model="ir.ui.view">
+            <field name="name">purchase.order.form.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="inside">
+                    <!-- Champ invisible pour utiliser dans les attrs -->
+                    <group>
+                        <field name="import_followup_created" invisible="1"/>
+                    </group>
+                </xpath>
+
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <!-- Smart button -->
+                    <button class="oe_read_only" type="object" name="redirect_to_import_followup"
+                        icon="fa-file-import" attrs="{'invisible': [('import_followup_created', '=', False)]}">
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Suivi Import</span>
+                        </div>
+                    </button>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
