@@ -33,13 +33,13 @@ def get_api_group(name):
                         print(f"ID: {data['id']['_serialized']}")
                     group = data['id']['_serialized']
                     group_name = data['name']
-                else:
-                    print('NOthing')
-                    group = None
-                    group_name = None
-            return group, group_name
 
-
+                    if group:
+                        return group, group_name
+                    else:
+                        print('NOthing')
+                        group = None
+                        group_name = None
 
         else:
             print(f"Échec de la requête GET. Code d'erreur: {response.status_code}")
@@ -51,7 +51,7 @@ def get_api_group(name):
         print(f"Une erreur s'est produite: {e}")
 
 
-def send_whatsapp_message(self, id, message):
+def send_whatsapp_message(id, message):
 
     api_url = "http://10.68.132.2:3000/api/sendText/"
 
@@ -130,18 +130,52 @@ class WhhatsAppViseo(models.Model):
     model_name = fields.Char('Model')
     group_id = fields.Many2one('whatsapp.group', string="Groupe")
     group_name = fields.Char('Groupe')
-    choice = fields.Selection([('interne', 'Interne'), ('wclient', 'Interne avec client')], 'Envoyer en', default='interne')
+    choice = fields.Selection([('interne', 'Interne'), ('wclient', 'Interne avec client')], 'Envoyer en', default='inte')
 
 
 
 
     @api.onchange('choice')
     def compute_group(self):
+
         data = self.env[self.model_name].search([('id', '=', self.id_model)])
         if self.choice == 'interne':
-            groups, group_name = get_api_group(data.name)
-        users = self.env[self.model_name].search([('id', '=', self.id_model)])
-        return users.message_follower_ids.partner_id
+            if self.model_name == 'fleet.vehicle':
+                group_name1 = 'INT_'+data.vin_sn[-7:]
+            else:
+                if self.model_name == 'res.partner':
+                    group_name1 = 'INT_' + 'PARTNER_' + data.id
+                else:
+                    group_name1 = 'INT_' + data.name
+            groups, group_name = get_api_group(group_name1)
+            if not group_name:
+                self.createGroup(group_name1)
+                self.group_name = group_name1
+            else:
+                self.group_name = group_name
+        else:
+            if self.choice == 'wclient':
+                if self.model_name == 'fleet.vehicle':
+                    group_name1 = data.vin_sn[-7:]
+                else:
+                    if self.model_name == 'res.partner':
+                        group_name1 = 'PARTNER_' + data.id
+                    else:
+                        group_name1 = data.name
+                groups, group_name = get_api_group(group_name1)
+
+
+
+
+                if not group_name:
+                    self.createGroup(group_name1)
+                    self.group_name = group_name1
+                else:
+                    self.group_name = group_name
+
+
+        # users = self.env[self.model_name].search([('id', '=', self.id_model)])
+        # return users.message_follower_ids.partner_id
     def filter_by_type(self, data, type):
         filtered_data = [entry for entry in data if entry.get('type') == type]
         return filtered_data
@@ -159,26 +193,62 @@ class WhhatsAppViseo(models.Model):
             number.append(numb.mobile)
         return number
 
+    def format_numero_telephone(self,numero):
+        numero_numerique = ''.join(filter(str.isdigit, numero))
 
-    def createGroup(self):
+        if numero_numerique.startswith('261'):
+            numero = numero_numerique[3:12]
+
+        else:
+            numero = numero_numerique[:10]
+            if numero.startswith('0'):
+                numero = numero[1:]
+
+        numero = '261' + numero
+
+        numero += '@c.us'
+
+        return numero
+
+    def createGroup(self, group):
 
         url = "http://10.68.132.2:3000/api/default/groups"
+        users = self.env[self.model_name].search([('id', '=', self.id_model)])
+        user_followers = users.message_follower_ids.partner_id
 
+        numbers = []
+
+        for user in user_followers:
+            numb = user.mobile
+            number = self.format_numero_telephone(numb)
+            numbers.append(number)
+
+
+        participant_numbers = numbers
+        # if self.choice == 'interne':
+        #     if self.model_name == 'fleet.vehicle':
+        #         group_name = 'INT_'+users.vin_sn[-7:]
+        #     else:
+        #         if self.model_name == 'res.partner':
+        #             group_name = 'INT_' + 'PARTNER_' + users.id
+        #         else:
+        #             group_name = 'INT_' + users.name
+        #
+        # else:
+        #     group_name = users.name
+
+
+        # Créer la liste des participants
+        participants = [
+            {
+                "id": f"{num}"
+            } for num in participant_numbers
+        ]
         # Données pour la création du groupe
         data = {
-            "name": "Test group",
-            "participants": [
-                {
-                    "id": "261344903318@c.us"
-
-                },
-                {
-
-                    "id": "261384900555@c.us"
-                }
-            ]
+            "name": group,
+            "participants": participants
         }
-
         # Conversion des données en format JSON
         json_data = json.dumps(data)
 
@@ -195,6 +265,8 @@ class WhhatsAppViseo(models.Model):
             print("Le groupe a été créé avec succès !")
         else:
             print("Erreur lors de la création du groupe. Code de réponse :", response.status_code)
+
+        # return group
 
     def groupTest(self):
         url = "https://api.green-api.com/waInstance7103851220/getContacts/a7e6700873bb44bb91f191ee2abffff09050a9b71ed84850a8"
@@ -215,7 +287,7 @@ class WhhatsAppViseo(models.Model):
 
         data = self.env[self.model_name].search([('id', '=', self.id_model)])
 
-        groups, group_name = get_api_group(data.name)
+        groups, group_name = get_api_group(self.group_name)
         number = ""
         group = ""
 
@@ -226,7 +298,7 @@ class WhhatsAppViseo(models.Model):
             data.message_post(
                 body=bodyValue)
 
-        self.createGroup()
+        # self.createGroup()
 
         #  return {
         #     'view_mode' : 'form',
@@ -247,9 +319,35 @@ class WhhatsAppViseo(models.Model):
     def take_group_whatsapp(self, model_name, id_model):
         data = self.env[model_name].search([('id', '=', id_model)])
 
-        group_id, group_name = get_api_group(data.name)
-        return {'group':group_name,
-                'name':data.name}
+        # if self.choice == 'interne':
+        #     if self.model_name == 'fleet.vehicle':
+        #         group_name1 = 'INT_' + data.vin_sn[-7:]
+        #     else:
+        #         if self.model_name == 'res.partner':
+        #             group_name1 = 'INT_' + 'PARTNER_' + data.id
+        #         else:
+        #             group_name1 = 'INT_' + data.name
+        #
+        # else:
+        if self.model_name == 'fleet.vehicle':
+            group_name1 = data.vin_sn[-7:]
+        else:
+            if self.model_name == 'res.partner':
+                group_name1 = 'PARTNER_' + data.id
+            else:
+                group_name1 = data.name
+        #
+        # groups, group_name = get_api_group(group_name1)
+        # if not group_name:
+        #     self.createGroup(group_name1)
+        #     self.group_name = group_name1
+        #     return {'group': groups,
+        #             'name': group_name1}
+        # else:
+        #     self.group_name = group_name
+
+        return {'group':'Test',
+                    'name':group_name1}
 
 
 class MassWhatsapp(models.Model):
