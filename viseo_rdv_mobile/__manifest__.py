@@ -31,6 +31,7 @@
         'views/sequence.xml',
         'views/table.xml',
         'views/typerdv.xml',
+        'views/sale_order.xml'
         # 'views/tag_rfid.xml',
     ],
     # only loaded in demonstration mode
