@@ -14,10 +14,10 @@
                 <field name="users" invisible="1"/>
                 <field name="choice" widget='radio' options="{'horizontal': true}"/>
 
-                 <field name="receiver" widget="many2many_tags" attrs="{
-										'invisible':[('choice', 'in', ['interne','wclient'])]}"/>
-                <field name="group_id" attrs="{
-										'invisible':[('choice', '=', 'uclient')]}"/>
+                 <field name="receiver"  attrs="{
+										'invisible':[('choice', 'in', ['interne'])]}"/>
+<!--                <field name="group_id" attrs="{-->
+<!--										'invisible':[('choice', '=', 'uclient')]}"/>-->
                 <field name="group_name" />
                 <field name="body"/>
 
