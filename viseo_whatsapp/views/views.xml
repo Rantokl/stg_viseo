@@ -35,18 +35,55 @@
       </field>
     </record>
 
-    <record id="viseo_whatsapp_id" model="ir.ui.view">
+      <record model="ir.ui.view" id="viseo_whatsapp_group_form">
+      <field name="name">viseo_whatsapp group form</field>
+      <field name="model">whatsapp.group</field>
+      <field name="arch" type="xml">
+        <form>
+            <sheet>
+                <group>
+                    <field name="name"/>
+                    <field name="chat_ids"/>
+                    <field name="body"/>
+                    <field name="users"/>
+                </group>
+
+            </sheet>
+
+            <div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+						<field name="message_ids" widget="mail_thread" options='{"thread_level": 1}'/>
+					</div>
+        </form>
+      </field>
+    </record>
+
+      <record model="ir.ui.view" id="viseo_whatsapp_group_list">
+      <field name="name">viseo_whatsapp group list</field>
+      <field name="model">whatsapp.group</field>
+      <field name="arch" type="xml">
+        <tree>
+            <field name="name"/>
+            <field name="chat_ids"/>
+            <field name="body"/>
+            <field name="users"/>
+
+        </tree>
+      </field>
+    </record>
+
+
+
+      <record id="viseo_whatsapp_id" model="ir.ui.view">
         <field name="name">viseo_whatsapp</field>
-        <field name="model">mail.compose.message</field>
-        <field name="inherit_id" ref="mail.email_compose_message_wizard_form"/>
+        <field name="model">mail.wizard.invite</field>
+        <field name="inherit_id" ref="mail.mail_wizard_invite_form"/>
         <field name="arch" type="xml">
 <!--             find field description and add the field-->
 <!--                 idea_ids after it -->
-            <xpath expr="//field[@name='subject']" position="after">
-              <field name="whats" string="Envoyé par Whatsapp"/>
-                 <field name="receiver2" string="Client(s)" attrs="{
-										'invisible':[('whats', '=', False)],
-										}" widget="many2many_tags"/>
+            <xpath expr="//field[@name='send_mail']" position="after">
+              <field name="whatsapp" string="Ajouter au groupe Whatsapp"/>
+
             </xpath>
         </field>
     </record>
@@ -69,6 +106,12 @@
       <field name="view_mode">form</field>
     </record>
 
+      <record model="ir.actions.act_window" id="viseo_whatsapp_group_action_window">
+      <field name="name">viseo_whatsapp window group</field>
+      <field name="res_model">whatsapp.group</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
 
     <!-- server action to the one above -->
 <!--
@@ -86,15 +129,14 @@
     </record>
 -->
 
+
     <!-- Top menu item -->
 <!--
     <menuitem name="viseo_whatsapp" id="viseo_whatsapp.menu_root"/>
 -->
     <!-- menu categories -->
-<!--
-    <menuitem name="Menu 1" id="viseo_whatsapp.menu_1" parent="viseo_whatsapp.menu_root"/>
-    <menuitem name="Menu 2" id="viseo_whatsapp.menu_2" parent="viseo_whatsapp.menu_root"/>
--->
+    <menuitem name="Whatsapp" id="viseo_whatsapp.whatsapp" parent="mail.menu_root_discuss" action="viseo_whatsapp.viseo_whatsapp_group_action_window"/>
+    <!--<menuitem name="Menu 2" id="viseo_whatsapp.menu_2" parent="viseo_whatsapp.menu_root"/>-->
     <!-- actions -->
 <!--
     <menuitem name="List" id="viseo_whatsapp.menu_1_list" parent="viseo_whatsapp.menu_1"
