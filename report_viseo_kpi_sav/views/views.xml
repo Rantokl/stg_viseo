@@ -1,0 +1,31 @@
+<odoo>
+  <data>  
+   <record model="ir.ui.view" id="wizard_report_kpi_sav_form">
+      <field name="name">Rapport KPI SAV</field>
+      <field name="model">report_kpi_sav.wizard</field>
+      <field name="arch" type="xml">
+          <form string="Wizard for Report KPI SAV">
+              <group>
+                  <field name="du" required="1"/>
+                  <field name="au" required="1"/>
+                  <field name="name" invisible="1"/>
+                  <field name="report" filename="name"/>
+              </group>
+              <footer>
+                  <button string="Annuler" special="cancel"/>
+                  <button string="Generer le rapport" type="object" name="get_report_kpi_sav_xlsx" class="oe_highlight"/>
+              </footer>
+          </form>
+      </field>
+    </record>
+    <record model="ir.actions.act_window" id="action_wizard_report_kpi_sav">
+      <field name="name">Rapport KPI SAV</field>
+      <field name="res_model">report_kpi_sav.wizard</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="wizard_report_kpi_sav_form"/>
+      <field name="target">new</field>
+    </record> 
+
+  <menuitem name="SAV" id="report_kpi_sav" parent="viseo_report_xlsx.report_kpi_main" action="action_wizard_report_kpi_sav"/>
+  </data>
+</odoo>
