@@ -1,0 +1,55 @@
+<odoo>
+  <data>
+        <record id="partner_info_form" model="ir.ui.view">
+            <field name="name">Formulaire d'informations sur le partenaire</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page name="document" string="Document">
+                        <group>
+                            <field name="cin_document_partner" filename="cin_document_partner_filename" attrs="{'invisible': [('company_type','=', 'company')]}"/>
+                            <field name="cin_document_partner_filename" invisible="1"/>
+
+                            <field name="cif_document_partner" filename="cif_document_partner_filename" attrs="{'invisible': [('company_type','=', 'person')]}"/>
+                            <field name="cif_document_partner_filename" invisible="1"/>
+
+                            <field name="nif_document_partner" filename="nif_document_partner_filename" attrs="{'invisible': [('company_type','=', 'person')]}"/>
+                            <field name="nif_document_partner_filename" invisible="1"/>
+
+                            <field name="rcs_document_partner" filename="rcs_document_partner_filename" attrs="{'invisible': [('company_type','=', 'person')]}"/>
+                            <field name="rcs_document_partner_filename" invisible="1"/>
+
+                            <field name="stat_document_partner" filename="stat_document_partner_filename" attrs="{'invisible': [('company_type','=', 'person')]}"/>
+                            <field name="stat_document_partner_filename" invisible="1"/>
+                        </group>
+                    </page> 
+                </notebook>
+            </field>
+        </record>
+        <record id="view_other_model_tree" model="ir.ui.view">
+            <field name="name">viseo_partner_info.create_config_model.tree</field>
+            <field name="model">viseo_partner_info.create_config_model</field>
+            <field name="arch" type="xml">
+                <tree string="Other Model" editable="bottom">
+                    <field name='selection_company_type'/>
+                    <field name="create_config_cin_partner"/>
+                    <field name="create_config_cif_partner"/>
+                    <field name="create_config_nif_partner"/>
+                    <field name="create_config_rcs_partner"/>
+                    <field name="create_config_stat_partner"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_creation_config" model="ir.actions.act_window">
+            <field name="name">Other Model</field>
+            <field name="res_model">viseo_partner_info.create_config_model</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_other_model_tree"/>
+            <field name="target">current</field>
+        </record>
+
+        <menuitem id="creation_config" name="Configuration de creation" parent="contacts.res_partner_menu_config" action="action_creation_config"/>
+  </data>
+</odoo>
