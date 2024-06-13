@@ -5,6 +5,50 @@ from whatsapp_api_client_python import API
 import requests, json
 
 
+def format_numero_telephone(numero):
+    numero_numerique = ''.join(filter(str.isdigit, numero))
+
+    if numero_numerique.startswith('261'):
+        numero = numero_numerique[3:12]
+
+    else:
+        numero = numero_numerique[:10]
+        if numero.startswith('0'):
+            numero = numero[1:]
+
+    numero = '261' + numero
+
+    numero += '@c.us'
+
+    return numero
+
+def add_participant_to_group(group_id, participant_id):
+    api_url = f"http://10.68.132.2:3000/api/default/groups/{group_id}/participants/add"
+
+    headers = {
+        "accept": "*/*",
+        "Content-Type": "application/json",
+    }
+
+    payload = {
+        "participants": [
+            {
+                "id": participant_id
+            }
+        ]
+    }
+
+    try:
+        response = requests.post(api_url, headers=headers, json=payload)
+
+        if response.status_code // 100 == 2:
+            print(f"Participant {participant_id} ajouté au groupe {group_id} avec succès.")
+        else:
+            print(f"Échec de l'ajout du participant {participant_id} au groupe {group_id}. Code d'erreur : {response.status_code}")
+            print("Réponse du serveur:", response.text)
+
+    except Exception as e:
+        print(f"Une erreur s'est produite lors de l'ajout du participant {participant_id} au groupe {group_id} : {e}")
 def get_api_group(name):
     api_url = "http://10.68.132.2:3000/api/default/groups"
 
@@ -23,8 +67,7 @@ def get_api_group(name):
 
             json_data = response.json()
 
-            # Afficher chaque paire clé-valeur du JSON
-
+            # Parcourir les données JSON
             for data in json_data:
                 if isinstance(data, dict) and data.get('name') == name and 'name' in data:
                     print("----")
@@ -33,25 +76,25 @@ def get_api_group(name):
                         print(f"ID: {data['id']['_serialized']}")
                     group = data['id']['_serialized']
                     group_name = data['name']
-                else:
-                    print('NOthing')
-                    group = None
-                    group_name = None
-            return group, group_name
 
-
+                    if group and group_name:
+                        return group, group_name
+                    else:
+                        print('Nothing')
+                        return None, None
 
         else:
             print(f"Échec de la requête GET. Code d'erreur: {response.status_code}")
             print("Réponse du serveur:", response.text)
-
-
+            return None, None
 
     except Exception as e:
         print(f"Une erreur s'est produite: {e}")
 
+    return None, None
 
-def send_whatsapp_message(self, id, message):
+
+def send_whatsapp_message(id, message):
 
     api_url = "http://10.68.132.2:3000/api/sendText/"
 
@@ -112,9 +155,14 @@ class viseo_whatsapp(models.TransientModel):
 
 class groupWhatsapp(models.Model):
     _name = 'whatsapp.group'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char('Nom du groupe')
     chat_ids = fields.Char('Numero du groupe')
+    users = fields.Char('Sender')
+    body = fields.Text('Message(s)')
+    model_id = fields.Char()
+    id_model = fields.Char()
 
 
 class WhhatsAppViseo(models.Model):
@@ -124,7 +172,7 @@ class WhhatsAppViseo(models.Model):
 
     body = fields.Text('Message(s)')
     current_user = fields.Many2one('res.users', string="Emetteur", readonly=True, default=lambda self: self.env.user.id)
-    receiver = fields.Many2many('res.partner', string='Destinataires')
+    receiver = fields.Many2one('res.partner', string='Client')
     attachment_ids = fields.Many2many('ir.attachment', string='Pièce(s) jointes(s)')
     id_model = fields.Char('Id')
     model_name = fields.Char('Model')
@@ -132,16 +180,57 @@ class WhhatsAppViseo(models.Model):
     group_name = fields.Char('Groupe')
     choice = fields.Selection([('interne', 'Interne'), ('wclient', 'Interne avec client')], 'Envoyer en', default='interne')
 
+    @api.onchange('receiver')
+    def addCustomer(self):
+        client = self.receiver
+        if client:
 
+            group, group_name = get_api_group(self.group_name)
+            number = format_numero_telephone(client.mobile)
+            add_participant_to_group(group, number)
 
 
     @api.onchange('choice')
     def compute_group(self):
+
         data = self.env[self.model_name].search([('id', '=', self.id_model)])
         if self.choice == 'interne':
-            groups, group_name = get_api_group(data.name)
-        users = self.env[self.model_name].search([('id', '=', self.id_model)])
-        return users.message_follower_ids.partner_id
+            if self.model_name == 'fleet.vehicle':
+                group_name1 = 'INT_'+data.vin_sn[-7:]
+            else:
+                if self.model_name == 'res.partner':
+                    group_name1 = 'INT_' + 'PARTNER_' + str(data.id)
+                else:
+                    group_name1 = 'INT_' + data.name
+            groups, group_name = get_api_group(group_name1)
+            if group_name is None:
+                self.createGroup(group_name1)
+                self.group_name = group_name1
+            else:
+                self.group_name = group_name
+        else:
+            if self.choice == 'wclient':
+                if self.model_name == 'fleet.vehicle':
+                    group_name1 = data.vin_sn[-7:]
+                else:
+                    if self.model_name == 'res.partner':
+                        group_name1 = 'PARTNER_' + str(data.id)
+                    else:
+                        group_name1 = data.name
+                groups, group_name = get_api_group(group_name1)
+
+
+
+
+                if not group_name:
+                    self.createGroup(group_name1)
+                    self.group_name = group_name1
+                else:
+                    self.group_name = group_name
+
+
+        # users = self.env[self.model_name].search([('id', '=', self.id_model)])
+        # return users.message_follower_ids.partner_id
     def filter_by_type(self, data, type):
         filtered_data = [entry for entry in data if entry.get('type') == type]
         return filtered_data
@@ -159,26 +248,52 @@ class WhhatsAppViseo(models.Model):
             number.append(numb.mobile)
         return number
 
+    def format_numero_telephone(self,numero):
+        numero_numerique = ''.join(filter(str.isdigit, numero))
 
-    def createGroup(self):
+        if numero_numerique.startswith('261'):
+            numero = numero_numerique[3:12]
+
+        else:
+            numero = numero_numerique[:10]
+            if numero.startswith('0'):
+                numero = numero[1:]
+
+        numero = '261' + numero
+
+        numero += '@c.us'
+
+        return numero
+
+    def createGroup(self, group):
 
         url = "http://10.68.132.2:3000/api/default/groups"
+        users = self.env[self.model_name].search([('id', '=', self.id_model)])
+        user_followers = users.message_follower_ids.partner_id
 
+        numbers = []
+
+        for user in user_followers:
+            numb = user.mobile
+            number = self.format_numero_telephone(numb)
+            numbers.append(number)
+
+
+        participant_numbers = numbers
+
+
+
+        # Créer la liste des participants
+        participants = [
+            {
+                "id": f"{num}"
+            } for num in participant_numbers
+        ]
         # Données pour la création du groupe
         data = {
-            "name": "Test group",
-            "participants": [
-                {
-                    "id": "261344903318@c.us"
-
-                },
-                {
-
-                    "id": "261384900555@c.us"
-                }
-            ]
+            "name": group,
+            "participants": participants
         }
-
         # Conversion des données en format JSON
         json_data = json.dumps(data)
 
@@ -190,12 +305,100 @@ class WhhatsAppViseo(models.Model):
         # Envoi de la requête POST
         response = requests.post(url, data=json_data, headers=headers)
 
+
         # Vérification du code de réponse
-        if response.status_code == 200:
+        if response.status_code == 201:
             print("Le groupe a été créé avec succès !")
+            response_data = json.loads(response.text)
+            serialized_id = response_data["gid"]["_serialized"]
+            # print(f"Valeur de _serialized : {serialized_id}")
+            groups = {
+                'name': group,
+                'chat_ids':serialized_id,
+                'users': '261341130307@c.us',
+                'body': 'Group created',
+                'model_id':self.model_name,
+                'id_model':self.id_model
+
+            }
+            self.env['whatsapp.group'].sudo().create(groups)
         else:
             print("Erreur lors de la création du groupe. Code de réponse :", response.status_code)
 
+        # return group
+    def takeallgroup(self):
+
+        # Endpoint de l'API
+        url = "http://10.68.132.2:3000/api/default/groups"
+
+        # Faire la requête GET
+        response = requests.get(url, headers={"accept": "*/*"})
+
+        # Vérifier le statut de la réponse
+        if response.status_code == 200:
+            # Récupérer les données JSON
+            data = json.loads(response.text)
+
+            # Extraire les valeurs de 'subject' et '_serialized' dans des tableaux séparés
+            subjects = []
+            serialized_ids = []
+            for group in data:
+                if 'subject' in group['groupMetadata']:
+                    subjects.append(group['groupMetadata']['subject'])
+                    serialized_ids.append(group['groupMetadata']['id']['_serialized'])
+
+            # print("Sujets :")
+            # print(subjects)
+            # print("\nID sérialisés :")
+            # print(serialized_ids)
+            return serialized_ids
+        else:
+            print(f"Erreur lors de la requête : {response.status_code}")
+            return None
+
+
+
+    def checkMessage(self):
+
+        chat_ids = self.takeallgroup()
+
+        for chat_id in chat_ids:
+            url = f'http://10.68.132.2:3000/api/messages?chatId={chat_id}&downloadMedia=true&limit=10&session=default'
+            headers = {'accept': '*/*'}
+
+            response = requests.get(url, headers=headers)
+            data = response.json()
+
+            if data:
+                message_data = data[-1  ]
+                message = message_data['body']
+                group = self.env['whatsapp.group'].search([('chat_ids', '=', chat_id)])
+                if group.body == message:
+                    pass
+                else:
+                    if 'author' in message_data['_data']:
+                        author = message_data['_data']['author']['_serialized']
+                    else:
+                        author = message_data['from']
+
+                    local = '0'+author[3:-5]
+                    interna = '+261'+author[3:-5]
+
+                    partner = self.env['res.partner'].search(['|',('mobile','=',local),('mobile','=',interna)])
+                    if partner:
+                        group.write({
+                            'body':message
+                        })
+                        data = self.env[group.model_id].search([('id','=',group.id_model)])
+                        bodyValue = (("<p>%s</p>"
+                                      '<p style="color:blue;">Envoyé par Whatsapp</p>') % (message))
+                        data.message_post(
+                            body=bodyValue,
+                            author_id=partner.id)
+                # print(f"Message pour le chat_id {chat_id}: {message}")
+            else:
+                print(f"Pas de message pour le chat_id {chat_id}")
+        return True
     def groupTest(self):
         url = "https://api.green-api.com/waInstance7103851220/getContacts/a7e6700873bb44bb91f191ee2abffff09050a9b71ed84850a8"
 
@@ -211,14 +414,19 @@ class WhhatsAppViseo(models.Model):
 
         return filtered_data
 
+
+
     def action_send_whats(self):
 
         data = self.env[self.model_name].search([('id', '=', self.id_model)])
 
-        groups, group_name = get_api_group(data.name)
-        number = ""
-        group = ""
-
+        groups, group_name = get_api_group(self.group_name)
+        group = self.env['whatsapp.group'].search([('name','=',group_name)])
+        if group:
+            group.write({
+                'users':'261341130307@c.us',
+                'body':self.body
+            })
         if groups:
             response = send_whatsapp_message(groups, self.body)
             bodyValue = (("<p>%s</p>"
@@ -226,7 +434,13 @@ class WhhatsAppViseo(models.Model):
             data.message_post(
                 body=bodyValue)
 
-        self.createGroup()
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload',
+        }
+
+        # self.createGroup()
 
         #  return {
         #     'view_mode' : 'form',
@@ -247,9 +461,35 @@ class WhhatsAppViseo(models.Model):
     def take_group_whatsapp(self, model_name, id_model):
         data = self.env[model_name].search([('id', '=', id_model)])
 
-        group_id, group_name = get_api_group(data.name)
-        return {'group':group_name,
-                'name':data.name}
+        if self.choice == 'interne':
+            if self.model_name == 'fleet.vehicle':
+                group_name1 = 'INT_' + data.vin_sn[-7:]
+            else:
+                if self.model_name == 'res.partner':
+                    group_name1 = 'INT_' + 'PARTNER_' + str(data.id)
+                else:
+                    group_name1 = 'INT_' + data.name
+
+        else:
+            if self.model_name == 'fleet.vehicle':
+                group_name1 = data.vin_sn[-7:]
+            else:
+                if self.model_name == 'res.partner':
+                    group_name1 = 'PARTNER_' + str(data.id)
+                else:
+                    group_name1 = data.name
+        #
+        # groups, group_name = get_api_group(group_name1)
+        # if not group_name:
+        #     self.createGroup(group_name1)
+        #     self.group_name = group_name1
+        #     return {'group': groups,
+        #             'name': group_name1}
+        # else:
+        #     self.group_name = group_name
+
+        return {'group':'Test',
+                'name':group_name1}
 
 
 class MassWhatsapp(models.Model):
@@ -316,3 +556,15 @@ class MassWhatsapp(models.Model):
 
         except Exception as e:
             print(f"Une erreur s'est produite: {e}")
+
+
+class InviteWhatsapp(models.TransientModel):
+    """ Wizard to invite partners (or channels) and make them followers. """
+    _inherit = 'mail.wizard.invite'
+    whatsapp = fields.Boolean('Invite whatsapp', default=True, help="If checked, the partners will add in whatsapp group, they have been added in the document's followers.")
+
+    def add_followers(self):
+
+
+        return super(InviteWhatsapp, self).add_followers()
+

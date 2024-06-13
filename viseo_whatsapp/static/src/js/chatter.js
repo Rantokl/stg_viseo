@@ -86,7 +86,7 @@ var KanbanColumn = require("mail.Chatter");
                        views: [[false, 'form']],
                        context:{'default_id_model':idValue,
                                  'default_model_name': modelValue,
-                                 'default_group_name':output['name']
+//                                 'default_group_name':output['name']
                                  },
                        target: 'new',
                         });
