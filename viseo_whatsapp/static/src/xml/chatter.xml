@@ -5,7 +5,7 @@
         <t t-jquery=".o_chatter_button_log_note" t-operation="after">
 <!--            <div class="col-lg-4">-->
                 <button class="btn btn-link o_chatter_button_whatsapp" title="To send via Whatsapp" name="openWhatsapp">
-                <i class="fa fa-whatsapp" title="Dates"/> Whatsapp
+                <i class="fa fa-whatsapp" title="Dates" /> Whatsapp
             </button>
 <!--            </div>-->
 
