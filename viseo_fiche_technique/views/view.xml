@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <!-- Inherit form view of res.partner -->
+        <record model="ir.ui.view" id="view_partner_form_inherit">
+            <field name="name">res.partner.form.inherit</field>
+            <field name="model">fleet.vehicle.model</field>
+            <field name="inherit_id" ref="viseo_parc_auto.fleet_model_add_technical_fiche"/>
+            <field name="arch" type="xml">
+                <!-- Add a new field to the form view -->
+                <xpath expr="//field[@name='vehicle_type']" position="replace">
+                    <field name="vehicle_type_corrected"/>
+                </xpath>
+				<xpath expr="//field[@name='truck_type']" position="replace">
+                    <field name="truck_type_corrected"/>
+                </xpath>
+				<xpath expr="//field[@name='fuel_type_1']" position="replace">
+                    <field name="fuel_type_corrected"/>
+                </xpath>
+				<xpath expr="//field[@name='loudspeaker']" position="replace">
+                    <field name="loudspeaker_corrected"/>
+                </xpath>
+				<xpath expr="//field[@name='transmission_mode']" position="replace">
+                    <field name="transmission_mode_corrected"/>
+                </xpath>
+				<xpath expr="//field[@name='jantes']" position="replace">
+                    <field name="jantes_corrected"/>
+                </xpath>
+				<xpath expr="//field[@name='antibrouillard']" position="replace">
+                    <field name="antibrouillard_corrected"/>
+                </xpath>
+				<xpath expr="//field[@name='power_steering']" position="replace">
+                    <field name="power_steering_corrected"/>
+                </xpath>
+				<xpath expr="//field[@name='abs']" position="replace">
+                	<field name="abs_corrected"/>
+                </xpath>
+				<xpath expr="//field[@name='reversing_radar']" position="replace">
+                    <field name="reversing_radar_corrected"/>
+                </xpath>
+				<xpath expr="//field[@name='reversing_cam']" position="replace">
+                    <field name="reversing_cam_corrected"/>
+                </xpath>
+				<xpath expr="//field[@name='antivol']" position="replace">
+                    <field name="anti_vol_corrected"/>
+                </xpath>
+				<xpath expr="//field[@name='image_128']" position="before">
+                    <field name="image_vehicle_corrected"  widget="image" class="oe_avatar" options="{&quot;zoom&quot;: true, &quot;preview_image&quot;:&quot;image_vehicle_corrected&quot;}"/>
+                </xpath>
+				<xpath expr="//field[@name='image_128']" position="replace">
+                    <field name="image_logo_corrected"  widget="image" class="oe_avatar" options="{&quot;zoom&quot;: true, &quot;preview_image&quot;:&quot;image_logo_corrected&quot;}"/>
+                </xpath>
+				<xpath expr="//field[@name='image1_1024']" position="replace">
+                    <field name="image_face_corrected"  widget="image" class="oe_avatar" options="{&quot;zoom&quot;: true, &quot;preview_image&quot;:&quot;image_face_corrected&quot;}"/>
+                </xpath>
+				<xpath expr="//field[@name='image2_1024']" position="replace">
+                    <field name="image_profil_corrected"  widget="image" class="oe_avatar" options="{&quot;zoom&quot;: true, &quot;preview_image&quot;:&quot;image_profil_corrected&quot;}"/>
+                </xpath>
+				<xpath expr="//field[@name='image3_1024']" position="replace">
+                    <field name="image_inside_corrected"  widget="image" class="oe_avatar" options="{&quot;zoom&quot;: true, &quot;preview_image&quot;:&quot;image_inside_corrected&quot;}"/>
+                </xpath>
+                <xpath expr="//field[@name='cylindre']" position="after">
+                    <field name="nombre_de_cylindre"/>
+                </xpath>
+                <xpath expr="//field[@name='alesage']" position="after">
+                    <field name="puissance_max"/>
+                </xpath>
+                <xpath expr="//field[@name='transmission']" position="after">
+                        <field name="freins_AV"/>
+                        <field name="freins_AR"/>
+                </xpath>
+                <xpath expr="//field[@name='rearview_out']" position="replace">
+                        <field name="rearview_electric_corrected"/>
+                </xpath>
+                <xpath expr="//field[@name='grille']" position="before">
+                        <field name="rearview_rabatable"/>
+
+                </xpath>
+                <xpath expr="//field[@name='door_handle']" position="after">
+                        <field name="degivreur_lunette"/>
+                        <field name="essui_glace"/>
+                        <field name="galerie_monochrome"/>
+                </xpath>
+                <xpath expr="//field[@name='radio']" position="after">
+                        <field name="screen"/>
+                        <field name="haut_parleur"/>
+                        <field name="reglage_automatique_son"/>
+                </xpath>
+                <xpath expr="//field[@name='usb']" position="after">
+                        <field name="selerie"/>
+                        <field name="reglage_siege_conducteur"/>
+                        <field name="reglage_siege_passager"/>
+                        <field name="appui_tete"/>
+                        <field name="siege_arriere_rabatable"/>
+                </xpath>
+                <xpath expr="//field[@name='vitre_elec']" position="after">
+                        <field name="liseuse"/>
+                        <field name="lampe_coffre"/>
+                        <field name="etui_lunette"/>
+                        <field name="accoudoir_goblet"/>
+                        <field name="accoudoir_arriere"/>
+                        <field name="portiere_courtoisie"/>
+                        <field name="retroviseur_manuel"/>
+                        <field name="toit_electrique"/>
+                        <field name="toit_panoramique"/>
+                </xpath>
+            </field>
+
+        </record>
+    </data>
+</odoo>

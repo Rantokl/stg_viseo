@@ -1,0 +1,15 @@
+<odoo>
+    <template id="viseo_fiche_technique_inherit" inherit_id="viseo_parc_auto.external_layout_fiche_technique">
+        <xpath expr="//div[@class='header']" position="replace">
+            <t t-foreach="docs" t-as="o">
+                    <h1>Fiche Technique - <t t-esc="o[1]"/></h1>
+            </t>
+        </xpath>
+        <xpath expr="//div[@class='footer']" position="replace">
+
+                <p>Generated on: </p>
+
+        </xpath>
+    </template>
+
+</odoo>

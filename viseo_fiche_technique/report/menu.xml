@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="action_fleet_vehicle_report_server" model="ir.actions.server">
+        <field name="name">Fiche technique</field>
+        <field name="model_id"  ref="model_fleet_vehicle_model"/>
+        <field name="binding_model_id"  ref="model_fleet_vehicle_model"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+                action = records.get_report_action()
+        </field>
+    </record>
+    <!--<record id="report_vehicle_comparison" model="ir.actions.report">
+        <field name="name">Vehicle Comparison Report</field>
+        <field name="model">fleet.vehicle.model</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">viseo_fiche_technique.report_vehicle_comparison_new</field>
+        <field name="report_file">viseo_fiche_technique.report_vehicle_comparison_new</field>
+    </record> -->
+</odoo>

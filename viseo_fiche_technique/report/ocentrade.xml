@@ -1,0 +1,1083 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="report_vehicle_comparison_ocentrade">
+        <t t-call="web.html_container">
+            <t t-call="web.basic_layout">
+            <t t-if="docs">
+            <div class="page">
+                <!-- Afficher l'identifiant -->
+
+                <!-- Vous pouvez ajouter plus de détails ici -->
+                <!--<p>Modèle: <t t-esc="doc.name"/></p>
+                <p>Marque: <t t-esc="doc.bror_id.name"/></p>-->
+                <div>
+                    <style>
+                            .page-container {
+                                display: flex;
+                                flex-direction: column;
+                                align-items: flex-end;
+                                padding-right: 20px; /* Optional: Add some padding to the right */
+                            }
+
+                            .image-container {
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                margin-bottom: 10px; /* Optional: Add some space between the divs */
+                                padding: 5px, 5px;
+
+                            }
+                    </style>
+                    <div class="page-container">
+                            <div class="image-container">
+                                <t t-if="docs and len(docs) > 0 and docs[0].image_logo_corrected">
+                                    <img t-att-src="image_data_uri(docs[0].image_logo_corrected)" style="width:150px; height:60px;"/>
+                                </t>
+                                <t t-if="docs and len(docs) > 1 and docs[1].image_logo_corrected">
+                                    <img t-att-src="image_data_uri(docs[1].image_logo_corrected)" style="width:150px; height:60px;"/>
+                                </t>
+                                <t t-if="docs and len(docs) > 2 and docs[2].image_logo_corrected">
+                                    <img t-att-src="image_data_uri(docs[2].image_logo_corrected)" style="width:150px; height:60px;"/>
+                                </t>
+                                <t t-if="docs and len(docs) > 3 and docs[3].image_logo_corrected">
+                                    <img t-att-src="image_data_uri(docs[3].image_logo_corrected)" style="width:150px; height:60px;"/>
+                                </t>
+                            </div>
+                            <div class="image-container">
+                                <t t-if="docs and len(docs) > 0 and docs[0].image_vehicle_corrected">
+                                    <img t-att-src="image_data_uri(docs[0].image_vehicle_corrected)" style="width:150px; height:80px;"/>
+                                </t>
+                                <t t-if="docs and len(docs) > 1 and docs[1].image_vehicle_corrected">
+                                    <img t-att-src="image_data_uri(docs[1].image_vehicle_corrected)" style="width:150px; height:80px;"/>
+                                </t>
+                                <t t-if="docs and len(docs) > 2 and docs[2].image_vehicle_corrected">
+                                    <img t-att-src="image_data_uri(docs[2].image_vehicle_corrected)" style="width:150px; height:80px;"/>
+                                </t>
+                                <t t-if="docs and len(docs) > 3 and docs[3].image_vehicle_corrected">
+                                    <img t-att-src="image_data_uri(docs[3].image_vehicle_corrected)" style="width:150px; height:80px;"/>
+                                </t>
+                            </div>
+                        </div>
+
+                    </div>
+             <table>
+                   <style>
+                       table {
+                                width: 100%;
+                                border-collapse: collapse;
+                            }
+                            th , .subsection{
+                                border: 1px solid black;
+                                font-weight: normal;
+                                padding: 8px;
+                                text-align: center;
+                                font-size: larger;
+                                background-color: black;
+                                color: white;
+                                font-family: 'Lato', sans-serif;
+                            }
+                            td {
+                                border: 1px solid black;
+                                padding: 4px 2px 4px 6px; /* top, right, bottom, left */
+                                text-align: left;
+                                font-size: x-small;
+                            }
+                            .full-width {
+                                font-size: larger;
+                                text-align: center;
+                                font-family: 'Lato', sans-serif;
+                                background-color:  #008ad0;
+                                color: white;
+                            }
+                            .first-col {
+                                background-color: #b3b3b3;
+                            }
+                    </style>
+                    <thead>
+
+                    </thead>
+                       <tbody>
+                           <tr>
+                                <th>SPECIFICATION <br/> TECHNIQUES</th>
+                                <t t-if="docs[0]">
+                                    <th><t t-esc="docs[0].name"/></th>
+                                </t>
+                                <t t-if="docs[1]">
+                                    <th><t t-esc="docs[1].name"/></th>
+                                </t>
+                                <t t-if="len(docs) > 2">
+                                    <th><t t-esc="docs[2].name"/></th>
+                                </t>
+                                <t t-if="len(docs) >3">
+                                    <th><t t-esc="docs[3].name"/></th>
+                                </t>
+                            </tr>
+                            <t t-set="var" t-value="[]"/>
+                            <t t-foreach="docs" t-as="doc_id">
+                                <t t-if="doc_id.engine_type or doc_id.fuel_type_corrected or doc_id.acces_12v or doc_id.nombre_de_cylindre or doc_id.cylindre or doc_id.puissance_max or doc_id.couple">
+                                    <t t-set="var" t-value="var + [doc_id]"/>
+                                </t>
+                            </t>
+                            <t t-if="len(var) > 0">
+                                <tr>
+                                    <td colspan="5" class="full-width">MOTORISATION</td>
+                                </tr>
+                            </t>
+                            <t t-if="len(docs) > 0 and (docs[0].engine_type or (len(docs) > 1 and docs[1].engine_type) or (len(docs) > 2 and docs[2].engine_type) or (len(docs) > 3 and docs[3].engine_type))">
+                                <tr>
+                                        <td class="first-col">Type de moteur</td>
+                                            <t t-if="docs[0]">
+                                                <td><t t-esc="docs[0].engine_type"/></td>
+                                            </t>
+                                            <t t-if="docs[1]">
+                                                <td><t t-esc="docs[1].engine_type"/></td>
+                                            </t>
+                                              <t t-if="docs and len(docs) > 2">
+                                                <td><t t-esc="docs[2].engine_type"/></td>
+                                            </t>
+                                              <t t-if="docs and len(docs) > 3">
+                                                <td><t t-esc="docs[3].engine_type"/></td>
+                                            </t>
+                                </tr>
+                               </t>
+                            <t t-if="len(docs) > 0 and (docs[0].fuel_type_corrected or (len(docs) > 1 and docs[1].fuel_type_corrected) or (len(docs) > 2 and docs[2].fuel_type_corrected) or (len(docs) > 3 and docs[3].fuel_type_corrected))">
+                                <tr>
+                                    <td class="first-col">Carburant</td>
+                                                <t t-if="docs[0]">
+                                                    <td><t t-esc="docs[0].fuel_type_corrected"/></td>
+                                                </t>
+                                                <t t-if="docs[1]">
+                                                    <td><t t-esc="docs[1].fuel_type_corrected"/></td>
+                                                </t>
+                                                <t t-if="len(docs) > 2">
+                                                    <td><t t-esc="docs[2].fuel_type_corrected"/></td>
+                                                </t>
+                                                <t t-if="len(docs) > 3">
+                                                    <td><t t-esc="docs[3].fuel_type_corrected"/></td>
+                                                </t>
+                                </tr>
+                            </t>
+                            <t t-if="len(docs) > 0 and (docs[0].acces_12v or (len(docs) > 1 and docs[1].acces_12v) or (len(docs) > 2 and docs[2].acces_12v) or (len(docs) > 3 and docs[3].acces_12v))">
+                                <tr>
+                                    <td class="first-col">Alimentation</td>
+                                                    <t t-if="docs[0]">
+                                                        <td><t t-esc="docs[0].acces_12v"/></td>
+                                                    </t>
+                                                    <t t-if="docs[1]">
+                                                        <td><t t-esc="docs[1].acces_12v"/></td>
+                                                    </t>
+                                                    <t t-if="len(docs) > 2">
+                                                        <td><t t-esc="docs[2].acces_12v"/></td>
+                                                    </t>
+                                                    <t t-if="len(docs) > 3">
+                                                        <td><t t-esc="docs[3].acces_12v"/></td>
+                                                    </t>
+                                </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].nombre_de_cylindre or (len(docs) > 1 and docs[1].nombre_de_cylindre) or (len(docs) > 2 and docs[2].nombre_de_cylindre) or (len(docs) > 3 and docs[3].nombre_de_cylindre))">
+
+                                <tr>
+                                    <td class="first-col">Nombre de cylindre</td>
+                                                    <t t-if="docs[0]">
+                                                        <td><t t-esc="docs[0].nombre_de_cylindre"/></td>
+                                                    </t>
+                                                    <t t-if="docs[1]">
+                                                        <td><t t-esc="docs[1].nombre_de_cylindre"/></td>
+                                                    </t>
+                                                    <t t-if="len(docs) > 2">
+                                                        <td><t t-esc="docs[2].nombre_de_cylindre"/></td>
+                                                    </t>
+                                                    <t t-if="len(docs) > 3">
+                                                        <td><t t-esc="docs[3].nombre_de_cylindre"/></td>
+                                                    </t>
+                                </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].cylindre or (len(docs) > 1 and docs[1].cylindre) or (len(docs) > 2 and docs[2].cylindre) or (len(docs) > 3 and docs[3].cylindre))">
+                                <tr>
+                                    <td class="first-col">Cylindrée</td>
+                                                    <t t-if="docs[0]">
+                                                        <td><t t-esc="docs[0].cylindre"/></td>
+                                                    </t>
+                                                    <t t-if="docs[1]">
+                                                        <td><t t-esc="docs[1].cylindre"/></td>
+                                                    </t>
+                                                    <t t-if="len(docs) > 2">
+                                                        <td><t t-esc="docs[2].cylindre"/></td>
+                                                    </t>
+                                                    <t t-if="len(docs) > 3">
+                                                        <td><t t-esc="docs[3].cylindre"/></td>
+                                                    </t>
+                                </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].puissance_max or (len(docs) > 1 and docs[1].puissance_max) or (len(docs) > 2 and docs[2].puissance_max) or (len(docs) > 3 and docs[3].puissance_max))">
+                                <tr>
+                                    <td class="first-col">Puissance max(cv)</td>
+                                            <t t-if="docs[0]">
+                                                <td><t t-esc="docs[0].puissance_max"/></td>
+                                            </t>
+                                            <t t-if="docs[1]">
+                                                <td><t t-esc="docs[1].puissance_max"/></td>
+                                            </t>
+                                            <t t-if="len(docs) > 2">
+                                                <td><t t-esc="docs[2].puissance_max"/></td>
+                                            </t>
+                                            <t t-if="len(docs) > 3">
+                                                <td><t t-esc="docs[3].puissance_max"/></td>
+                                            </t>
+                                </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].couple or (len(docs) > 1 and docs[1].couple) or (len(docs) > 2 and docs[2].couple) or (len(docs) > 3 and docs[3].couple))">
+                                <tr>
+                                    <td class="first-col">Couple max(Nm)</td>
+                                            <t t-if="docs[0]">
+                                                <td><t t-esc="docs[0].couple"/></td>
+                                            </t>
+                                            <t t-if="docs[1]">
+                                                <td><t t-esc="docs[1].couple"/></td>
+                                            </t>
+                                            <t t-if="len(docs) > 2">
+                                                <td><t t-esc="docs[2].couple"/></td>
+                                            </t>
+                                            <t t-if="len(docs) > 3">
+                                                <td><t t-esc="docs[3].couple"/></td>
+                                            </t>
+                                </tr>
+                           </t>
+                            <t t-set="var" t-value="[]"/>
+                            <t t-foreach="docs" t-as="doc_id">
+                                <t t-if="doc_id.transmission_mode_corrected or doc_id.transmission">
+                                    <t t-set="var" t-value="var + [doc_id]"/>
+                                </t>
+                            </t>
+                            <t t-if="len(var) > 0">
+                                <tr>
+                                <td colspan="5" class="full-width">TRANSMISSION</td></tr>
+                            </t>
+                            <t t-if="len(docs) > 0 and (docs[0].transmission_mode_corrected or (len(docs) > 1 and docs[1].transmission_mode_corrected) or (len(docs) > 2 and docs[2].transmission_mode_corrected) or (len(docs) > 3 and docs[3].transmission_mode_corrected))">
+                            <tr>
+                                <td class="first-col">Transmission</td>
+                                            <t t-if="docs[0]">
+                                                <td><t t-esc="docs[0].transmission_mode_corrected"/></td>
+                                            </t>
+                                            <t t-if="docs[1]">
+                                                <td><t t-esc="docs[1].transmission_mode_corrected"/></td>
+                                            </t>
+                                            <t t-if="len(docs) > 2">
+                                                <td><t t-esc="docs[2].transmission_mode_corrected"/></td>
+                                            </t>
+                                            <t t-if="len(docs) > 3">
+                                                <td><t t-esc="docs[3].transmission_mode_corrected"/></td>
+                                            </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].transmission or (len(docs) > 1 and docs[1].transmission) or (len(docs) > 2 and docs[2].transmission) or (len(docs) > 3 and docs[3].transmission))">
+
+                                <tr>
+                                        <td class="first-col">Boite de vitesse</td>
+                                            <t t-if="docs[0]">
+                                                <td><t t-esc="docs[0].transmission"/></td>
+                                            </t>
+                                            <t t-if="docs[1]">
+                                                <td><t t-esc="docs[1].transmission"/></td>
+                                            </t>
+                                            <t t-if="len(docs) > 2">
+                                                <td><t t-esc="docs[2].transmission"/></td>
+                                            </t>
+                                            <t t-if="len(docs) > 3">
+                                                <td><t t-esc="docs[3].transmission"/></td>
+                                            </t>
+                                    </tr>
+                            </t>
+                           <t t-set="var" t-value="[]"/>
+                            <t t-foreach="docs" t-as="doc_id">
+                                <t t-if="doc_id.dimensions or doc_id.empattement or doc_id.garde_au_sol or doc_id.weight or doc_id.tank_capacity">
+                                    <t t-set="var" t-value="var + [doc_id]"/>
+                                </t>
+                            </t>
+                            <t t-if="len(var) > 0">
+                                <tr>
+                                  <td colspan="5" class="full-width">DIMENSIONS</td>
+                                </tr>
+                            </t>
+
+                            <t t-if="len(docs) > 0 and (docs[0].dimensions or (len(docs) > 1 and docs[1].dimensions) or (len(docs) > 2 and docs[2].dimensions) or (len(docs) > 3 and docs[3].dimensions))">
+                                <tr>
+                                    <td class="first-col">Dimension lxlxl(mm)</td>
+                                                <t t-if="docs[0]">
+                                                    <td><t t-esc="docs[0].dimensions"/></td>
+                                                </t>
+                                                <t t-if="docs[1]">
+                                                    <td><t t-esc="docs[1].dimensions"/></td>
+                                                </t>
+                                                <t t-if="len(docs) > 2">
+                                                    <td><t t-esc="docs[2].dimensions"/></td>
+                                                </t>
+                                                <t t-if="len(docs) > 3">
+                                                    <td><t t-esc="docs[3].dimensions"/></td>
+                                                </t>
+                                </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].empattement or (len(docs) > 1 and docs[1].empattement) or (len(docs) > 2 and docs[2].empattement) or (len(docs) > 3 and docs[3].empattement))">
+                            <tr>
+                                <td class="first-col">Empattement(mm)</td>
+                                                <t t-if="docs[0]">
+                                                    <td><t t-esc="docs[0].empattement"/></td>
+                                                </t>
+                                                <t t-if="docs[1]">
+                                                    <td><t t-esc="docs[1].empattement"/></td>
+                                                </t>
+                                                <t t-if="len(docs) > 2">
+                                                    <td><t t-esc="docs[2].empattement"/></td>
+                                                </t>
+                                                <t t-if="len(docs) > 3">
+                                                    <td><t t-esc="docs[3].empattement"/></td>
+                                                </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].garde_au_sol or (len(docs) > 1 and docs[1].garde_au_sol) or (len(docs) > 2 and docs[2].garde_au_sol) or (len(docs) > 3 and docs[3].garde_au_sol))">
+                                <tr>
+                                    <td class="first-col">Garde au sol(mm)</td>
+                                                <t t-if="docs[0]">
+                                                    <td><t t-esc="docs[0].garde_au_sol"/></td>
+                                                </t>
+                                                <t t-if="docs[1]">
+                                                    <td><t t-esc="docs[1].garde_au_sol"/></td>
+                                                </t>
+                                                <t t-if="len(docs) > 2">
+                                                    <td><t t-esc="docs[2].garde_au_sol"/></td>
+                                                </t>
+                                                <t t-if="len(docs) > 3">
+                                                    <td><t t-esc="docs[3].garde_au_sol"/></td>
+                                                </t>
+                                </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].weight or (len(docs) > 1 and docs[1].weight) or (len(docs) > 2 and docs[2].weight) or (len(docs) > 3 and docs[3].weight))">
+                                <tr>
+                                    <td class="first-col">Poids à vide(kg)</td>
+                                            <t t-if="docs[0]">
+                                                <td><t t-esc="docs[0].weight"/></td>
+                                            </t>
+                                            <t t-if="docs[1]">
+                                                <td><t t-esc="docs[1].weight"/></td>
+                                            </t>
+                                            <t t-if="len(docs) > 2">
+                                                <td><t t-esc="docs[2].weight"/></td>
+                                            </t>
+                                            <t t-if="len(docs) > 3">
+                                                <td><t t-esc="docs[3].weight"/></td>
+                                            </t>
+                                </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].tank_capacity or (len(docs) > 1 and docs[1].tank_capacity) or (len(docs) > 2 and docs[2].tank_capacity) or (len(docs) > 3 and docs[3].tank_capacity))">
+                                <tr>
+                                    <td class="first-col">Capacité reservoir (L)</td>
+                                                <t t-if="docs[0]">
+                                                    <td><t t-esc="docs[0].tank_capacity"/></td>
+                                                </t>
+                                                <t t-if="docs[1]">
+                                                    <td><t t-esc="docs[1].tank_capacity"/></td>
+                                                </t>
+                                                <t t-if="len(docs) > 2">
+                                                    <td><t t-esc="docs[2].tank_capacity"/></td>
+                                                </t>
+                                                <t t-if="len(docs) > 3">
+                                                    <td><t t-esc="docs[3].tank_capacity"/></td>
+                                                </t>
+                                </tr>
+                           </t>
+                           <t t-set="var" t-value="[]"/>
+                            <t t-foreach="docs" t-as="doc_id">
+                                <t t-if="doc_id.freins_AV or doc_id.freins_AR">
+                                    <t t-set="var" t-value="var + [doc_id]"/>
+                                </t>
+                            </t>
+                            <t t-if="len(var) > 0">
+                                <tr>
+                                   <td colspan="5" class="full-width">FREINS</td>
+                                </tr>
+                            </t>
+                            <t t-if="len(docs) > 0 and (docs[0].freins_AV or (len(docs) > 1 and docs[1].freins_AV) or (len(docs) > 2 and docs[2].freins_AV) or (len(docs) > 3 and docs[3].freins_AV))">
+                                <tr>
+                                    <td class="first-col">freins AV</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].freins_AV"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].freins_AV"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].freins_AV"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].freins_AV"/></td>
+                                    </t>
+                                </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].freins_AR or (len(docs) > 1 and docs[1].freins_AR) or (len(docs) > 2 and docs[2].freins_AR) or (len(docs) > 3 and docs[3].freins_AR))">
+                            <tr>
+                                <td class="first-col">Freins AR</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].freins_AR"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].freins_AR"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].freins_AR"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].freins_AR"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-set="var" t-value="[]"/>
+                            <t t-foreach="docs" t-as="doc_id">
+                                <t t-if="doc_id.wheel_dim or doc_id.jantes_corrected">
+                                    <t t-set="var" t-value="var + [doc_id]"/>
+                                </t>
+                            </t>
+                            <t t-if="len(var) > 0">
+                                <tr>
+                                  <td colspan="5" class="full-width">PNEUMATIQUES</td>
+                                </tr>
+                            </t>
+
+                            <t t-if="len(docs) > 0 and (docs[0].wheel_dim or (len(docs) > 1 and docs[1].wheel_dim) or (len(docs) > 2 and docs[2].wheel_dim) or (len(docs) > 3 and docs[3].wheel_dim))">
+                            <tr>
+                                <td class="first-col">Dimensions</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].wheel_dim"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].wheel_dim"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].wheel_dim"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].wheel_dim"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].jantes_corrected or (len(docs) > 1 and docs[1].jantes_corrected) or (len(docs) > 2 and docs[2].jantes_corrected) or (len(docs) > 3 and docs[3].jantes_corrected))">
+                            <tr><td class="first-col">Jantes</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].jantes_corrected"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].jantes_corrected"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].jantes_corrected"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].jantes_corrected"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].name or (len(docs) > 1 and docs[1].name) or (len(docs) > 2 and docs[2].name) or (len(docs) > 3 and docs[3].name))">
+                            <tr ><td class="subsection">EXTERIEUR</td>
+                                    <t t-if="docs[0]">
+                                        <td class="subsection"><t t-esc="docs[0].name"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td class="subsection"><t t-esc="docs[1].name"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td class="subsection"><t t-esc="docs[2].name"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td class="subsection"><t t-esc="docs[3].name"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].grille or (len(docs) > 1 and docs[1].grille) or (len(docs) > 2 and docs[2].grille) or (len(docs) > 3 and docs[3].grille))">
+                            <tr ><td class="first-col">Calendre</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].grille"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].grille"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].grille"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].grille"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].rearview_electric_corrected or (len(docs) > 1 and docs[1].rearview_electric_corrected) or (len(docs) > 2 and docs[2].rearview_electric_corrected) or (len(docs) > 3 and docs[3].rearview_electric_corrected))">
+                            <tr ><td class="first-col">Rétroviseurs extérieurs couleur caisse- <br/> éléctriques avec répetiteur</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].rearview_electric_corrected"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].rearview_electric_corrected"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].rearview_electric_corrected"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].rearview_electric_corrected"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].rearview_rabatable or (len(docs) > 1 and docs[1].rearview_rabatable) or (len(docs) > 2 and docs[2].rearview_rabatable) or (len(docs) > 3 and docs[3].rearview_rabatable))">
+                            <tr ><td class="first-col">Rétroviseurs exterieurs rabatable<br/> éléctriquement</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].rearview_rabatable"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].rearview_rabatable"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].rearview_rabatable"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].rearview_rabatable"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].parechoc_av or (len(docs) > 1 and docs[1].parechoc_av) or (len(docs) > 2 and docs[2].parechoc_av) or (len(docs) > 3 and docs[3].parechoc_av))">
+                            <tr ><td class="first-col">Pare choc AV</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].parechoc_av"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].parechoc_av"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].parechoc_av"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].parechoc_av"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].parechoc_ar or (len(docs) > 1 and docs[1].parechoc_ar) or (len(docs) > 2 and docs[2].parechoc_ar) or (len(docs) > 3 and docs[3].parechoc_ar))">
+                            <tr ><td class="first-col">Pare choc AR</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].parechoc_ar"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].parechoc_ar"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].parechoc_ar"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].parechoc_ar"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].door_handle or (len(docs) > 1 and docs[1].door_handle) or (len(docs) > 2 and docs[2].door_handle) or (len(docs) > 3 and docs[3].door_handle))">
+                            <tr ><td class="first-col">Poignée de porte</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].door_handle"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].door_handle"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].door_handle"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].door_handle"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].degivreur_lunette or (len(docs) > 1 and docs[1].degivreur_lunette) or (len(docs) > 2 and docs[2].degivreur_lunette) or (len(docs) > 3 and docs[3].degivreur_lunette))">
+                            <tr ><td class="first-col">Dégivreur de lunette AR</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].degivreur_lunette"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].degivreur_lunette"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].degivreur_lunette"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].degivreur_lunette"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].essui_glace or (len(docs) > 1 and docs[1].essui_glace) or (len(docs) > 2 and docs[2].essui_glace) or (len(docs) > 3 and docs[3].essui_glace))">
+                            <tr ><td class="first-col">Essuie glace AR</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].essui_glace"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].essui_glace"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].essui_glace"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].essui_glace"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].galerie_monochrome or (len(docs) > 1 and docs[1].galerie_monochrome) or (len(docs) > 2 and docs[2].galerie_monochrome) or (len(docs) > 3 and docs[3].galerie_monochrome))">
+                            <tr ><td class="first-col">Galerie de toit monochrome</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].galerie_monochrome"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].galerie_monochrome"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].galerie_monochrome"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].galerie_monochrome"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].name or (len(docs) > 1 and docs[1].name) or (len(docs) > 2 and docs[2].name) or (len(docs) > 3 and docs[3].name))">
+                            <tr ><td class="subsection">INTERIEUR</td>
+
+                                    <t t-if="docs[0]">
+                                        <td class="subsection"><t t-esc="docs[0].name"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td class="subsection"><t t-esc="docs[1].name"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td class="subsection"><t t-esc="docs[2].name"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td class="subsection"><t t-esc="docs[3].name"/></td>
+                                    </t>
+                            </tr>
+
+                           </t>
+                           <t t-set="var" t-value="[]"/>
+                            <t t-foreach="docs" t-as="doc_id">
+                                <t t-if="doc_id.radio or doc_id.screen  or doc_id.haut_parleur  or doc_id.reglage_automatique_son">
+                                    <t t-set="var" t-value="var + [doc_id]"/>
+                                </t>
+                            </t>
+                            <t t-if="len(var) > 0">
+                                <tr>
+                                   <td colspan="5" class="full-width">MULTIMEDIA</td>
+                                </tr>
+                            </t>
+
+                            <t t-if="len(docs) > 0 and (docs[0].radio or (len(docs) > 1 and docs[1].radio) or (len(docs) > 2 and docs[2].radio) or (len(docs) > 3 and docs[3].radio))">
+                            <tr ><td class="first-col">Radio</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].radio"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].radio"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].radio"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].radio"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].screen or (len(docs) > 1 and docs[1].screen) or (len(docs) > 2 and docs[2].screen) or (len(docs) > 3 and docs[3].screen))">
+                            <tr ><td class="first-col">Ecran 9"</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].screen"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].screen"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].screen"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].screen"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].haut_parleur or (len(docs) > 1 and docs[1].haut_parleur) or (len(docs) > 2 and docs[2].haut_parleur) or (len(docs) > 3 and docs[3].haut_parleur))">
+                            <tr ><td class="first-col">Ecran 9"</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].haut_parleur"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].haut_parleur"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].haut_parleur"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].haut_parleur"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].reglage_automatique_son or (len(docs) > 1 and docs[1].reglage_automatique_son) or (len(docs) > 2 and docs[2].reglage_automatique_son) or (len(docs) > 3 and docs[3].reglage_automatique_son))">
+                            <tr ><td class="first-col">Réglage automatique du son par <br/>détection de la vitesse</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].reglage_automatique_son"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].reglage_automatique_son"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].reglage_automatique_son"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].reglage_automatique_son"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                           <t t-set="var" t-value="[]"/>
+                            <t t-foreach="docs" t-as="doc_id">
+                                <t t-if="doc_id.selerie or doc_id.reglage_siege_conducteur  or doc_id.reglage_siege_passager  or doc_id.appui_tete or doc_id.siege_arriere_rabatable or doc_id.volant">
+                                    <t t-set="var" t-value="var + [doc_id]"/>
+                                </t>
+                            </t>
+                            <t t-if="len(var) > 0">
+                                <tr>
+                                    <td colspan="5" class="full-width">SELLERIE ET VOLANT</td>
+                                </tr>
+                            </t>
+                            <t t-if="len(docs) > 0 and (docs[0].selerie or (len(docs) > 1 and docs[1].selerie) or (len(docs) > 2 and docs[2].selerie) or (len(docs) > 3 and docs[3].selerie))">
+                            <tr ><td class="first-col">Selerie</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].selerie"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].selerie"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].selerie"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].selerie"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].reglage_siege_conducteur or (len(docs) > 1 and docs[1].reglage_siege_conducteur) or (len(docs) > 2 and docs[2].reglage_siege_conducteur) or (len(docs) > 3 and docs[3].reglage_siege_conducteur))">
+                            <tr ><td class="first-col">Réglage - Siège conducteur </td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].reglage_siege_conducteur"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].reglage_siege_conducteur"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].reglage_siege_conducteur"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].reglage_siege_conducteur"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].reglage_siege_passager or (len(docs) > 1 and docs[1].reglage_siege_passager) or (len(docs) > 2 and docs[2].reglage_siege_passager) or (len(docs) > 3 and docs[3].reglage_siege_passager))">
+                            <tr ><td class="first-col">Réglage Siège passager</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].reglage_siege_passager"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].reglage_siege_passager"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].reglage_siege_passager"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].reglage_siege_passager"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].appui_tete or (len(docs) > 1 and docs[1].appui_tete) or (len(docs) > 2 and docs[2].appui_tete) or (len(docs) > 3 and docs[3].appui_tete))">
+                            <tr ><td class="first-col">3 appuis-têtes des sièges arrières</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].appui_tete"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].appui_tete"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].appui_tete"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].appui_tete"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].siege_arriere_rabatable or (len(docs) > 1 and docs[1].siege_arriere_rabatable) or (len(docs) > 2 and docs[2].siege_arriere_rabatable) or (len(docs) > 3 and docs[3].siege_arriere_rabatable))">
+                            <tr ><td class="first-col">Siège arrière rabattable 4/6</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].siege_arriere_rabatable"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].siege_arriere_rabatable"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].siege_arriere_rabatable"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].siege_arriere_rabatable"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].volant or (len(docs) > 1 and docs[1].volant) or (len(docs) > 2 and docs[2].volant) or (len(docs) > 3 and docs[3].volant))">
+                            <tr ><td class="first-col">Volant</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].volant"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].volant"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].volant"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].volant"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                           <t t-set="var" t-value="[]"/>
+                            <t t-foreach="docs" t-as="doc_id">
+                                <t t-if="doc_id.liseuse or doc_id.lampe_coffre  or doc_id.sun_visor  or doc_id.etui_lunette or doc_id.accoudoir_goblet or doc_id.accoudoir_arriere or doc_id.portiere_courtoisie or doc_id.retroviseur_manuel or doc_id.climatisation">
+                                    <t t-set="var" t-value="var + [doc_id]"/>
+                                </t>
+                            </t>
+                            <t t-if="len(var) > 0">
+                                <tr>
+                                    <td colspan="5" class="full-width">CONFORT</td>
+                                </tr>
+                            </t>
+
+                            <t t-if="len(docs) > 0 and (docs[0].liseuse or (len(docs) > 1 and docs[1].liseuse) or (len(docs) > 2 and docs[2].liseuse) or (len(docs) > 3 and docs[3].liseuse))">
+                            <tr ><td class="first-col">Liseuse arrière</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].liseuse"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].liseuse"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].liseuse"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].liseuse"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].lampe_coffre or (len(docs) > 1 and docs[1].lampe_coffre) or (len(docs) > 2 and docs[2].lampe_coffre) or (len(docs) > 3 and docs[3].lampe_coffre))">
+                            <tr ><td class="first-col">Lampe de coffre</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].lampe_coffre"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].lampe_coffre"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].lampe_coffre"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].lampe_coffre"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].sun_visor or (len(docs) > 1 and docs[1].sun_visor) or (len(docs) > 2 and docs[2].sun_visor) or (len(docs) > 3 and docs[3].sun_visor))">
+                            <tr ><td class="first-col">Pare soleil avec miroirs de courtoisie</td>
+                                     <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].sun_visor"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].sun_visor"/></td>
+                                   </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].sun_visor"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].sun_visor"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].etui_lunette or (len(docs) > 1 and docs[1].etui_lunette) or (len(docs) > 2 and docs[2].etui_lunette) or (len(docs) > 3 and docs[3].etui_lunette))">
+                            <tr><td class="first-col">Etui à lunettes</td>
+                                     <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].etui_lunette"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].etui_lunette"/></td>
+                                   </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].etui_lunette"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].etui_lunette"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].accoudoir_goblet or (len(docs) > 1 and docs[1].accoudoir_goblet) or (len(docs) > 2 and docs[2].accoudoir_goblet) or (len(docs) > 3 and docs[3].accoudoir_goblet))">
+                            <tr ><td class="first-col">Accoudoir central avant avec 2 porte <br/>goblets</td>
+                                     <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].accoudoir_goblet"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].accoudoir_goblet"/></td>
+                                   </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].accoudoir_goblet"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].accoudoir_goblet"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].accoudoir_arriere or (len(docs) > 1 and docs[1].accoudoir_arriere) or (len(docs) > 2 and docs[2].accoudoir_arriere) or (len(docs) > 3 and docs[3].accoudoir_arriere))">
+                            <tr ><td class="first-col">Accoudoir central arrière</td>
+                                     <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].accoudoir_arriere"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].accoudoir_arriere"/></td>
+                                   </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].accoudoir_arriere"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].accoudoir_arriere"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].portiere_courtoisie or (len(docs) > 1 and docs[1].portiere_courtoisie) or (len(docs) > 2 and docs[2].portiere_courtoisie) or (len(docs) > 3 and docs[3].portiere_courtoisie))">
+                            <tr ><td class="first-col">Portière avec lumière de courtoisie</td>
+                                     <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].portiere_courtoisie"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].portiere_courtoisie"/></td>
+                                   </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].portiere_courtoisie"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].portiere_courtoisie"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].retroviseur_manuel or (len(docs) > 1 and docs[1].retroviseur_manuel) or (len(docs) > 2 and docs[2].retroviseur_manuel) or (len(docs) > 3 and docs[3].retroviseur_manuel))">
+                            <tr ><td class="first-col">Rétroviseur manuel <br/> anti-éblouissement</td>
+                                     <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].retroviseur_manuel"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].retroviseur_manuel"/></td>
+                                   </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].retroviseur_manuel"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].retroviseur_manuel"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].climatisation or (len(docs) > 1 and docs[1].climatisation) or (len(docs) > 2 and docs[2].climatisation) or (len(docs) > 3 and docs[3].climatisation))">
+                            <tr ><td class="first-col">Climatisation</td>
+                                     <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].climatisation"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].climatisation"/></td>
+                                   </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].climatisation"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].climatisation"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                           <t t-set="var" t-value="[]"/>
+                            <t t-foreach="docs" t-as="doc_id">
+                                <t t-if="doc_id.vitre_elec or doc_id.toit_electrique  or doc_id.toit_panoramique">
+                                    <t t-set="var" t-value="var + [doc_id]"/>
+                                </t>
+                            </t>
+                            <t t-if="len(var) > 0">
+                                <tr>
+                                     <td colspan="5" class="full-width">VITRES ET TOIT OUVRANT</td>
+                                </tr>
+                            </t>
+                            <t t-if="len(docs) > 0 and (docs[0].vitre_elec or (len(docs) > 1 and docs[1].vitre_elec) or (len(docs) > 2 and docs[2].vitre_elec) or (len(docs) > 3 and docs[3].vitre_elec))">
+                            <tr ><td class="first-col">Vitres électriques</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].vitre_elec"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].vitre_elec"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].vitre_elec"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].vitre_elec"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].toit_electrique or (len(docs) > 1 and docs[1].toit_electrique) or (len(docs) > 2 and docs[2].toit_electrique) or (len(docs) > 3 and docs[3].toit_electrique))">
+                            <tr ><td class="first-col">Toit ouvrant électrique</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].toit_electrique"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].toit_electrique"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].toit_electrique"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].toit_electrique"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                            <t t-if="len(docs) > 0 and (docs[0].toit_panoramique or (len(docs) > 1 and docs[1].toit_panoramique) or (len(docs) > 2 and docs[2].toit_panoramique) or (len(docs) > 3 and docs[3].toit_panoramique))">
+                            <tr ><td class="first-col">Toit ouvrant panoramique</td>
+                                    <t t-if="docs[0]">
+                                        <td><t t-esc="docs[0].toit_panoramique"/></td>
+                                    </t>
+                                    <t t-if="docs[1]">
+                                        <td><t t-esc="docs[1].toit_panoramique"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 2">
+                                        <td><t t-esc="docs[2].toit_panoramique"/></td>
+                                    </t>
+                                    <t t-if="len(docs) > 3">
+                                        <td><t t-esc="docs[3].toit_panoramique"/></td>
+                                    </t>
+                            </tr>
+                           </t>
+                    </tbody>
+                </table>
+                <div class="footer">
+                    <div style="float: left; font-size: x-small;">
+                        <br/>
+                        <br/>
+                        <br/>
+                        <p>Oceantrade se réserve le droit de modifier tous les détails <br/>des caractéristiques techniques et équipements sans préavis. Photos non contractuelles.</p>
+                    </div>
+                    <div class="image-container" style="float: right; display: flex; flex-direction: column; align-items: center;">
+                        <br/>
+                        <br/>
+                        <img src="/viseo_fiche_technique/static/src/img/oceantrade.png" alt="image non importé" style="width: 170px; height: 40px;"/>
+                    </div>
+                    <div style="clear: both;"></div> <!-- Pour assurer que la div footer englobe bien les deux divs alignées -->
+                </div>
+             </div>
+         </t>
+         </t>
+        </t>
+    </template>
+    <report
+        id="viseo_fiche_technique_report_actions_oceantrade"
+        model="fleet.vehicle.model"
+        string="Fiche technique"
+        name="viseo_fiche_technique.report_vehicle_comparison_ocentrade"
+        file="viseo_fiche_technique.report_vehicle_comparison_ocentrade"
+        report_type="qweb-pdf"
+       />
+</odoo>

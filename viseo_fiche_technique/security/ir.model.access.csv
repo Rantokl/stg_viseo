@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_report_parc_auto_report_vehicle_comparison,access.report.parc_auto.report_vehicle_comparison,model_report_parc_auto_report_vehicle_comparison,base.group_user,1,1,1,1
