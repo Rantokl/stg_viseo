@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="wizard_get_web_bank" model="ir.ui.view">
+            <field name="name">web.scrap.wizard.form</field>
+            <field name="model">web.scrap.wizard</field>
+            <field name="arch" type="xml">
+                <form string="WIZARD">
+                    <sheet>
+                        <group>
+                            <field name="date"/>
+                            <field name="bank_id"/>
+                            <field name="account_journal_id"/>
+                            <field name="company_id"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="get_data_from_web" string="Synchroniser" type="object" class="btn-primary"/>
+                        <button special="cancel" string="Annuler" type="object" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="wizard_get_web_bank_action" model="ir.actions.act_window">
+            <field name="name">web.scrap.wizard.form</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">web.scrap.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+            <menuitem name="Synchronisation relevé en ligne"
+              id="menu_bank_statement_online"
+              parent="account.menu_finance_receivables"
+              action="wizard_get_web_bank_action"
+              sequence="40"/>
+</odoo>
