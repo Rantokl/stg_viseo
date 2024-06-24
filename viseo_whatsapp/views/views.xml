@@ -22,9 +22,9 @@
                 <field name="body"/>
 
             </group>
-            <group>
-                        <field name="attachment_ids" widget="many2many_binary"/>
-                      </group>
+<!--            <group>-->
+<!--                        <field name="attachment_ids" widget="many2many_binary"/>-->
+<!--                      </group>-->
          <footer>
               <button string="Envoyer" type="object" class="oe_highlight" icon="fa-send"  name="action_send_whats"/>
              <button string="Cancel" class="btn-secondary" special="cancel"/>

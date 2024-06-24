@@ -2,12 +2,43 @@ odoo.define('viseo_whatsapp.custom_Chatter', function (require) {
     "use strict";
 
     var Chatter = require('mail.Chatter');
+//    var rpc = require('web.rpc');
+
     var rpc = require('web.rpc');
+    var session = require('web.session');
+
+
 
     Chatter.include({
         start: function () {
             this._super.apply(this, arguments);
+            rpc.query({
+                        model: 'whatsapp.viseo',
+                        method: 'computeUser',
+                        args: [[]],
+                        }).then(function(output){
+                            console.log("Value:",output['value'])
+                            if (output['value'] == 'False'){
+                                self.$('.o_chatter_button_whatsapp').hide();
+                            }
+                        });
+//            });
+//            this._super.apply(this, arguments).then(function () {
+////                session.user_has_group('viseo_whatsapp.group_send_whatsapp').then(function(has_group) {
+////                    if (!has_group) {
+////                        self.$('.o_chatter_button_whatsapp').hide();
+////                    }
+////                });
+//                    rpc.query({
+//                        model: 'whatsapp.viseo',
+//                        method: '_computeUser',
+//                        args: [[]],
+//                        }).then(function(output){
+//                            console.log("VAlue:",output['value'])
+//                        });
+//            });
             this.$('.o_chatter_button_whatsapp').click(this._onCustomButtonClick.bind(this));
+//
         },
         _onCustomButtonClick: function (ev) {
 

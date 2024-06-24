@@ -1,0 +1,18 @@
+<odoo>
+    <record model="ir.module.category" id="module_categorie_whatsapp">
+        <field name="name">Whatsapp</field>
+    </record>
+
+    <record id="group_send_whatsapp" model="res.groups">
+        <field name="name">Envoi whatsapp</field>
+        <field name="category_id" ref="viseo_whatsapp.module_categorie_whatsapp"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+     <record id="group_receive_whatsapp" model="res.groups">
+        <field name="name">Réception whatsapp</field>
+        <field name="category_id" ref="viseo_whatsapp.module_categorie_whatsapp"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+
+    </odoo>

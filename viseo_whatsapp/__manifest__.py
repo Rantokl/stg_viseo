@@ -26,11 +26,11 @@
     'data': [
         'security/ir.model.access.csv',
         'views/views.xml',
-        # 'views/buttons_whats.xml',
+        'views/groups.xml',
         'views/templates.xml',
 
     ],
-    # 'qweb': ['static/src/xml/chatter.xml'],
+    'qweb': ['static/src/xml/chatter.xml'],
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',

@@ -163,6 +163,7 @@ class groupWhatsapp(models.Model):
     body = fields.Text('Message(s)')
     model_id = fields.Char()
     id_model = fields.Char()
+    partner_id = fields.Many2many('res.partner', string='Clients')
 
 
 class WhhatsAppViseo(models.Model):
@@ -179,6 +180,14 @@ class WhhatsAppViseo(models.Model):
     group_id = fields.Many2one('whatsapp.group', string="Groupe")
     group_name = fields.Char('Groupe')
     choice = fields.Selection([('interne', 'Interne'), ('wclient', 'Interne avec client')], 'Envoyer en', default='interne')
+    part_id = fields.Boolean(compute="computeUser",default=False)
+
+    # @api.depends('current_user')
+    def computeUser(self):
+        if self.env.user.has_group('viseo_whatsapp.group_send_whatsapp'):
+            return {'value':'True'}
+        else:
+            return {'value':'False'}
 
     @api.onchange('receiver')
     def addCustomer(self):
@@ -568,3 +577,15 @@ class InviteWhatsapp(models.TransientModel):
 
         return super(InviteWhatsapp, self).add_followers()
 
+
+
+class MailMessage(models.Model):
+    _inherit = 'mail.message'
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        res = super(MailMessage, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
+        context = dict(self.env.context)
+        context['user_has_group'] = self.env.user.has_group('viseo_whatsapp.group_send_whatsapp')
+        res['context'] = context
+        return res
