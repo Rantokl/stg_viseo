@@ -19,8 +19,6 @@
 
 
 
-
-
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 from odoo import models, fields, api
@@ -55,17 +53,20 @@ class FacturationIzyrent(models.Model):
     @api.depends('date')
     def remplir_date_de_fin(self):
         for record in self:
-            if record.order_line and record.order_line[0].rental_condition and record.order_line[0].rental_duration:
-                rental_condit = record.order_line[0].rental_condition
-                durat = record.order_line[0].rental_duration
-                if rental_condit == 'day':
-                    record.date_to = record.date + relativedelta(days=durat)
-                elif rental_condit == 'month':
-                    record.date_to = record.date + relativedelta(months=durat)
-                elif rental_condit == 'week':
-                    record.date_to = record.date + relativedelta(weeks=durat)
-                elif rental_condit == 'year':
-                    record.date_to = record.date + relativedelta(years=durat)
+            if record.date:
+                if record.order_line and record.order_line[0].rental_condition and record.order_line[0].rental_duration:
+                    rental_condit = record.order_line[0].rental_condition
+                    durat = record.order_line[0].rental_duration
+                    if rental_condit == 'day':
+                        record.date_to = record.date + relativedelta(days=durat)
+                    elif rental_condit == 'month':
+                        record.date_to = record.date + relativedelta(months=durat)
+                    elif rental_condit == 'week':
+                        record.date_to = record.date + relativedelta(weeks=durat)
+                    elif rental_condit == 'year':
+                        record.date_to = record.date + relativedelta(years=durat)
+                else:
+                    record.date_to = False
             else:
                 record.date_to = False
 
