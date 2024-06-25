@@ -46,6 +46,7 @@
                     <field name="chat_ids"/>
                     <field name="body"/>
                     <field name="users"/>
+                    <field name="partner_id" widget="many2many_tags"/>
                 </group>
 
             </sheet>

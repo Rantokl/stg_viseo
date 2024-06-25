@@ -5,6 +5,35 @@ from whatsapp_api_client_python import API
 import requests, json
 
 
+def get_user(group_id):
+    #group_id = "120363287502846533@g.us"
+
+    # Définir l'URL et les en-têtes de la requête
+    url = f'http://10.68.132.2:3000/api/default/groups/{group_id}'
+    headers = {'accept': '*/*'}
+
+    # Effectuer la requête GET
+    response = requests.get(url, headers=headers)
+
+    # Vérifier le code de statut de la réponse
+    if response.status_code == 200:
+        # Récupérer les données JSON
+        data = response.json()
+
+        # Extraire les IDs des participants en excluant celui avec l'ID '261341130307@c.us'
+        participant_ids = [participant['id']['_serialized'] for participant in data['groupMetadata']['participants'] if
+                           participant['id']['_serialized'] != '261341130307@c.us']
+
+
+
+        return participant_ids
+        # for participant_id in participant_ids:
+        #     print(participant_id)
+    else:
+        print(f"Erreur lors de la requête : {response.status_code}")
+        return None
+
+
 def format_numero_telephone(numero):
     numero_numerique = ''.join(filter(str.isdigit, numero))
 
@@ -198,6 +227,37 @@ class WhhatsAppViseo(models.Model):
             number = format_numero_telephone(client.mobile)
             add_participant_to_group(group, number)
 
+    @api.onchange('group_name')
+    def UpdateDeleteUser(self):
+        users = self.env[self.model_name].search([('id', '=', self.id_model)])
+        user_follower = users.message_follower_ids.partner_id.ids
+        user_followers = users.message_follower_ids.partner_id
+        if self.group_name == None:
+            pass
+
+        else:
+            group = self.env['whatsapp.group'].sudo().search([('name','=',self.group_name)])
+            get_api_group(self.group_name)
+            if group:
+                users = group.partner_id.ids
+                partner_ids = get_user(group.chat_ids)
+                if len(users) == len(user_follower):
+                    pass
+                else:
+                    for user in user_followers:
+                        number = format_numero_telephone(user.mobile)
+                        if number in partner_ids:
+                            pass
+                        else:
+
+                            add_participant_to_group(group.chat_ids, number)
+                    group.write({
+                        'partner_id': user_follower
+                    })
+
+
+
+
 
     @api.onchange('choice')
     def compute_group(self):
@@ -281,13 +341,17 @@ class WhhatsAppViseo(models.Model):
         user_followers = users.message_follower_ids.partner_id
 
         numbers = []
-
+        partner = []
         for user in user_followers:
             numb = user.mobile
             number = self.format_numero_telephone(numb)
             numbers.append(number)
+            partner.append(user.id)
 
-
+        number_user = self.env.user.partner_id.mobile
+        number_user = self.format_numero_telephone(number_user)
+        numbers.append(number_user)
+        partners = partner.append(self.env.user.partner_id.id)
         participant_numbers = numbers
 
 
@@ -327,7 +391,8 @@ class WhhatsAppViseo(models.Model):
                 'users': '261341130307@c.us',
                 'body': 'Group created',
                 'model_id':self.model_name,
-                'id_model':self.id_model
+                'id_model':self.id_model,
+                'partner_id':partner
 
             }
             self.env['whatsapp.group'].sudo().create(groups)
@@ -442,6 +507,7 @@ class WhhatsAppViseo(models.Model):
                           '<p style="color:blue;">Envoyé par Whatsapp</p>') % (self.body))
             data.message_post(
                 body=bodyValue)
+            data.message_subscribe(partner_ids=self.env.user.partner_id.ids)
 
 
         return {
