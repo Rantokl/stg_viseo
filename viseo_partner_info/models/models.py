@@ -13,6 +13,9 @@ class PartnerInformationDocument(models.Model):
     rib_document_partner = fields.Binary(string='Document RIB', attachment=True)
     rib_document_partner_filename = fields.Char(string='Nom du document RIB')
 
+    cr_document_partner = fields.Binary(string='Certificat de Résidence', attachment=True)
+    cr_document_partner_filename = fields.Char(string='Nom du document CR')
+
     cif_document_partner = fields.Binary(string='Document CIF', attachment=True)
     cif_document_partner_filename = fields.Char(string='Nom du document CIF')
     cif_expiration_date = fields.Date(string="Date d'expiration de CIF")
