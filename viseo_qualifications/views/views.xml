@@ -1,0 +1,27 @@
+<odoo>
+    <record id="viseo_qualifications.qualification_form" model="ir.ui.view">
+        <field name="name">hr.employee.qualification.form</field>
+        <field name="model">hr.employee.qualification</field>
+        <field name="arch" type="xml">
+            <form string="Qualification">
+            <group>
+                <group>
+                    <field name="skills_code"/>
+                    <field name="date"/>
+                    <field name="employee_id"/>
+                    <field name="request_level"/>
+                    <field name="eval_employee"/>
+                    <field name="note"/>
+                </group>
+                <group>
+                    <field name="name"/>
+                    <field name="branche_id"/>
+                    <field name="annee"/>
+                    <field name="specialitee"/>
+                    <field name="type"/>
+                </group>
+            </group>
+            </form>
+        </field>
+    </record>
+</odoo>

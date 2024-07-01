@@ -7,21 +7,39 @@
             <field name="arch" type="xml">
                 <notebook position="inside">
                     <page name="document" string="Document">
+                        <!-- <sheet>
+                            <group>
+                                <field name="name"/>
+                                <field name="attachment_id"  widget="many2many_binary"/>
+                                <field name="attachment_preview" />
+                            </group>
+                        </sheet> -->
                         <group>
-                            <field name="cin_document_partner" filename="cin_document_partner_filename" attrs="{'invisible': [('company_type','=', 'company')]}"/>
-                            <field name="cin_document_partner_filename" invisible="1"/>
+                            <group>
+                            <field name="rcs_document_partner" filename="rcs_document_partner_filename" attrs="{'invisible': [('company_type','=','person')]}"/>
+                            <field name="rcs_document_partner_filename" invisible="1"/>
 
                             <field name="cif_document_partner" filename="cif_document_partner_filename" attrs="{'invisible': [('company_type','=', 'person')]}"/>
                             <field name="cif_document_partner_filename" invisible="1"/>
 
+                            <field name="cin_document_partner" filename="cin_document_partner_filename" attrs="{'invisible': [('company_type','=', 'company')]}"  widget="nt_binary_preview" forve_save="1"/>
+                            <field name="cin_document_partner_filename" invisible="1"/>
+
+                            <field name="rib_document_partner" filename="rib_document_partner_filename"/>
+                            <field name="rib_document_partner_filename" invisible="1"/>
+
                             <field name="nif_document_partner" filename="nif_document_partner_filename" attrs="{'invisible': [('company_type','=', 'person')]}"/>
                             <field name="nif_document_partner_filename" invisible="1"/>
-
-                            <field name="rcs_document_partner" filename="rcs_document_partner_filename" attrs="{'invisible': [('company_type','=', 'person')]}"/>
-                            <field name="rcs_document_partner_filename" invisible="1"/>
-
+                            
                             <field name="stat_document_partner" filename="stat_document_partner_filename" attrs="{'invisible': [('company_type','=', 'person')]}"/>
                             <field name="stat_document_partner_filename" invisible="1"/>
+
+                            </group>
+                             <group>
+                                <field name="rcs_expiration_date" attrs="{'invisible': [('company_type','=','person')]}"/>
+                                <field name="cif_expiration_date" attrs="{'invisible': [('company_type','=','person')]}"/>
+                            </group>
+
                         </group>
                     </page> 
                 </notebook>
@@ -34,6 +52,7 @@
                 <tree string="Other Model" editable="bottom">
                     <field name='selection_company_type'/>
                     <field name="create_config_cin_partner"/>
+                    <field name="create_config_rib_partner"/>
                     <field name="create_config_cif_partner"/>
                     <field name="create_config_nif_partner"/>
                     <field name="create_config_rcs_partner"/>
