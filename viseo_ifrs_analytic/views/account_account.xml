@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+        <record id="account_account_add_ifrs_form_inherit" model="ir.ui.view">
+            <field name="name">account.account.inherit.form</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='tax_ids']" position="after">
+                    <field name="ifrs_id" domain="[('company_id', '=', company_id)]"/>
+                    <field name="analytic_id" domain="[('company_id', '=', company_id)]"/>
+                </xpath>
+            </field>
+        </record>
+
+</odoo>
