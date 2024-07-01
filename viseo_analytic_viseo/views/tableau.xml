@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="custom_html_template" name="Tableau Analytique Viseo">
+        <div class="container">
+            <h2>Tableau Analytique</h2>
+            <t t-set="table_data" t-value="[['Produit 1', 100], ['Produit 2', 200], ['Produit 3', 150]]"/>
+    <t t-set="column_headers" t-value="['Produit', 'Quantité']"/>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th t-foreach="column_headers" t-as="header" t-esc="header"/>
+        </tr>
+    </thead>
+    <tbody>
+        <tr t-foreach="table_data" t-as="row">
+            <td t-foreach="row" t-as="cell" t-esc="cell"/>
+        </tr>
+    </tbody>
+</table>
+        </div>
+    </template>
+</odoo>

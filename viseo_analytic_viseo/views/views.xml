@@ -106,6 +106,11 @@
               <field name="end_date"/>
               <field name="supplier_id"/>
               <field name="amount_total"/>
+                <field name="type_repart" class="oe_inline" widget="radio"/>
+                <field name="column_headers"/>
+               <field name="department_names"/>
+                <field name="department_totals"/>
+                <field name="table_data" widget="DepartmentPercentageWidget"/>
             </group>
             <notebook>
               <page id="ecriture" string="Ecriture" >
@@ -125,6 +130,12 @@
                         <field name="amount"/>
                     </tree>
                         </field>
+
+
+              </page>
+                <page id="Tableau" string="Tableau" >
+
+                <field name="table_html"/>
 
 
               </page>
@@ -217,7 +228,7 @@
     <menuitem name="Analytique viseo" id="viseo_analytic_viseo.menu_root3" parent="viseo_pca.root_account_menu_report"
                 action="viseo_analytic_viseo_action_client" sequence="1"/>
 
-    <menuitem name="viseo_analytic" id="viseo_analytic_viseo.menu_root" parent="viseo_pca.root_account_menu_report"
+    <menuitem name="Analytique" id="viseo_analytic_viseo.menu_root" parent="viseo_pca.root_account_menu_report"
                 action="viseo_analytic_viseo.action_window" sequence="2"/>
 
     <!-- menu categories -->

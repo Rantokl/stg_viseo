@@ -63,10 +63,12 @@ odoo.define('viseo_analytic_viseo.analytic', function (require) {
                    }
 
                 console.log('id : ',idValue);
+                var value_id = parseInt(idValue)
+                console.log(value_id);
                 rpc.query({
                     model: 'viseo_analytic.viseo_analytic',
                     method: 'render_table',
-                    args: [1],
+                    args: [value_id],
                     }).then(function(output) {
                     const table = document.querySelector("#tableanalytique");
                     const headers = table.querySelector("thead tr");
@@ -87,11 +89,11 @@ odoo.define('viseo_analytic_viseo.analytic', function (require) {
                 }),
 
                 rpc.query({
-                    model: 'analytic.section',
+                    model: 'viseo_analytic.viseo_analytic',
                     method: 'calcul_value_rebrique',
-                    args: [1],
+                    args: [value_id],
                     }).then(function(output){
-                        console.log(output['famille'])
+                        console.log(typeof(output['famille']))
                         const table = document.querySelector("#tableanalytique");
 
                         const body = table.querySelector("tbody");
@@ -103,20 +105,22 @@ odoo.define('viseo_analytic_viseo.analytic', function (require) {
                                 cellule.innerHTML = output['famille'][i][j];
                             }
                         }
+//
+
 
                     }),
 
                     rpc.query({
                         model: 'viseo_analytic.viseo_analytic',
                         method: 'table_analytic',
-                        args:[1],
+                        args:[[]],
                     }).then(function(result){
                         console.log('idValue:',idValue)
                         console.log(result)
                         rpc.query({
                         model: 'viseo_analytic.viseo_analytic',
                         method: 'takedata',
-                        args:[idValue],
+                        args:[value_id],
                     }).then(function(output){
                         console.log('Test',output)
                         var element = document.getElementById('name');

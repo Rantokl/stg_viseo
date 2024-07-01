@@ -7,13 +7,17 @@ body{
 
 }
 
-.cell-header{
+/*.cell-header{
     width:200%;
     margin:5px;
 }
-
+*/
 .head_table{
     margin-left: 20px;
+}
+
+.cell-body{
+    width:100px;
 }
 /*
 hr {

@@ -1,0 +1,10 @@
+<odoo>
+    <template id="DepartmentPercentageWidget" name="Department Percentage Widget">
+        <div>
+            <button type="button" class="btn btn-primary add-row">Add Row</button>
+            <table class="department-percentage-table table table-bordered mt-2">
+                <!-- Rows will be appended here -->
+            </table>
+        </div>
+    </template>
+</odoo>

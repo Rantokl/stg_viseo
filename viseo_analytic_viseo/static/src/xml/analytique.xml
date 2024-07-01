@@ -16,7 +16,7 @@
         <thead>
             <tr>
                 <th onclick="showModal('Header 1')">
-                    <span>Département</span>
+                    <span>Répartir</span>
                     <hr/>
                     <span>Rubrique</span>
                     </th>
