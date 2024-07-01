@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+
+  <!-- =======================================Pour les séquences====================================================================== -->
+<odoo>
+    <data noupdate='1'>
+		<record id="ir_seq_qualif_hr_employee" model="ir.sequence">
+			<field name="name">Séquence Qualification Employee</field>
+			<field name="code">hr.employee.qualification.sequence</field>
+			<field name="prefix">CS.%(y)s/</field>
+			<field name="padding">4</field>
+			<field name="number_increment">1</field>
+			<field name="number_next_actual">1</field>
+			<field name="implementation">standard</field>
+		</record>
+	</data>
+</odoo>

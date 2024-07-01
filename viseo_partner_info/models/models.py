@@ -1,5 +1,8 @@
 from odoo import models, fields,api, exceptions
-
+from odoo.exceptions import UserError
+from PIL import Image
+import base64
+import io
 
 class PartnerInformationDocument(models.Model):
     _inherit = 'res.partner'
@@ -7,17 +10,43 @@ class PartnerInformationDocument(models.Model):
     cin_document_partner = fields.Binary(string='Document CIN', attachment=True)
     cin_document_partner_filename = fields.Char(string='Nom du document CIN')
 
+    rib_document_partner = fields.Binary(string='Document RIB', attachment=True)
+    rib_document_partner_filename = fields.Char(string='Nom du document RIB')
+
     cif_document_partner = fields.Binary(string='Document CIF', attachment=True)
     cif_document_partner_filename = fields.Char(string='Nom du document CIF')
+    cif_expiration_date = fields.Date(string="Date d'expiration de CIF")
 
     nif_document_partner = fields.Binary(string='Document NIF', attachment=True)
     nif_document_partner_filename = fields.Char(string='Nom du document NIF')
 
     rcs_document_partner = fields.Binary(string='Document RCS', attachment=True)
     rcs_document_partner_filename = fields.Char(string='Nom du document RCS')
+    rcs_expiration_date = fields.Date(string="Date d'expiration de RCS ")
 
     stat_document_partner = fields.Binary(string='Document STAT', attachment=True)
     stat_document_partner_filename = fields.Char(string='Nom du document STAT')
+
+
+# ======================================= CONVERTION D'IMAGE EN PDF ====================================================
+    # def _convert_to_pdf(self, file_content, filename):
+    #     file_extension = filename.split('.')[-1].lower()
+    #     if file_extension not in ['jpg', 'jpeg', 'png']:
+    #         return file_content, filename
+
+    #     try:
+    #         image = Image.open(io.BytesIO(base64.b64decode(file_content)))
+    #         image_converted = image.convert("RGB")
+    #         output = io.BytesIO()
+    #         image_converted.save(output, format="PDF")
+    #         pdf_content = base64.b64encode(output.getvalue())
+    #         pdf_filename = "{}.pdf".format(filename.rsplit('.', 1)[0])
+    #         return pdf_content, pdf_filename
+    #     except Exception as e:
+    #         raise UserError("Error converting image to PDF: {}".format(str(e)))
+
+    #     return file_content, filename
+ #=============================================================================================================================   
 
 # ======================================= RULE TO CREATE CONTACT (SIMPLE) ====================================================
     # @api.model
@@ -220,6 +249,7 @@ class PartnerInformationDocumentCheck(models.Model):
 
     selection_company_type = fields.Selection([('person', 'Particulier'), ('company', 'Société')], string='Type de Client', required=True)
     create_config_cin_partner = fields.Boolean(string="CIN", default=False)
+    create_config_rib_partner = fields.Boolean(string="RIB", default=False)
     create_config_cif_partner = fields.Boolean(string="CIF", default=False)
     create_config_nif_partner = fields.Boolean(string="NIF", default=False)
     create_config_rcs_partner = fields.Boolean(string="RCS", default=False)
@@ -241,6 +271,9 @@ class PartnerCreationInDevis(models.Model):
 
     def cin_file_empty_raise_error(self):
        raise exceptions.UserError("Pour le client Particulier, Il faut ajouter le CIN dans l'onglet 'Document' dans la fiche partner")
+
+    def rib_file_empty_raise_error(self):
+       raise exceptions.UserError("Il faut ajouter le RIB dans l'onglet 'Document' dans la fiche partner")
     
     def cif_file_empty_raise_error(self):
        raise exceptions.UserError("Pour le client Société, Il faut ajouter le CIF dans l'onglet 'Document' dans la fiche partner")
@@ -258,11 +291,18 @@ class PartnerCreationInDevis(models.Model):
         rule_person = self.env['viseo_partner_info.create_config_model'].search([('selection_company_type', '=', 'person')])
         company_rule=self.env['viseo_partner_info.create_config_model'].search([('selection_company_type', '=', 'company')])
 
+
+
         if rule_person and company_rule:
             if self.partner_id.company_type == rule_person.selection_company_type :
                 if rule_person.create_config_cin_partner:
                     if not self.partner_id.cin_document_partner:
                         self.cin_file_empty_raise_error()
+                # ============================  RIB  =============================
+                if rule_person.create_config_rib_partner:
+                    if not self.partner_id.rib_document_partner:
+                        self.rib_file_empty_raise_error()
+                # ================================================================
                 if rule_person.create_config_cif_partner:
                     if not self.partner_id.cif_document_partner:
                         self.cif_file_empty_raise_error()
@@ -279,6 +319,11 @@ class PartnerCreationInDevis(models.Model):
                 if company_rule.create_config_cin_partner:
                     if not self.partner_id.cin_document_partner:
                         self.cin_file_empty_raise_error()
+                # ============================  RIB  ===================================
+                if company_rule.create_config_rib_partner:
+                    if not self.partner_id.rib_document_partner:
+                        self.rib_file_empty_raise_error()
+                # ======================================================================
                 if company_rule.create_config_cif_partner:
                     if not self.partner_id.cif_document_partner:
                         self.cif_file_empty_raise_error()
@@ -296,3 +341,4 @@ class PartnerCreationInDevis(models.Model):
         else:
             raise exceptions.UserError("Ajouter les règles lors de la creation des Clients. Dans le module 'Contact', menu 'Configuration'/'configuration creation'")
         return super(PartnerCreationInDevis, self).action_confirm()
+
