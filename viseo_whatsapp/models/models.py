@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
-from whatsapp_api_client_python import API
+#from whatsapp_api_client_python import API
 import requests, json
 
 
