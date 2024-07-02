@@ -22,9 +22,14 @@ odoo.define('viseo_whatsapp.custom_Chatter', function (require) {
                         }).then(function(output){
                             console.log("Value:",output['value'])
                             if (output['value'] == 'True'){
-                                self.$('.o_chatter_button_whatsapp').show();
-                            }
-                        });
+                                $('.o_chatter_button_whatsapp').show();
+                            }else{
+                                $('.o_chatter_button_whatsapp').hide();
+                    }
+
+                    }).catch(function() {
+                        console.error('Erreur lors de la vérification du groupe utilisateur.');
+                    });
 //            });
 //            this._super.apply(this, arguments).then(function () {
 ////                session.user_has_group('viseo_whatsapp.group_send_whatsapp').then(function(has_group) {
