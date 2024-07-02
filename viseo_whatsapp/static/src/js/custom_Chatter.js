@@ -10,16 +10,19 @@ odoo.define('viseo_whatsapp.custom_Chatter', function (require) {
 
 
     Chatter.include({
+
+
         start: function () {
             this._super.apply(this, arguments);
+
             rpc.query({
                         model: 'whatsapp.viseo',
                         method: 'computeUser',
                         args: [[]],
                         }).then(function(output){
                             console.log("Value:",output['value'])
-                            if (output['value'] == 'False'){
-                                self.$('.o_chatter_button_whatsapp').hide();
+                            if (output['value'] == 'True'){
+                                self.$('.o_chatter_button_whatsapp').show();
                             }
                         });
 //            });
