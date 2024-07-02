@@ -11,6 +11,28 @@
                 <script type="text/javascript">
             $(document).ready(function() {
                 $('.o_chatter_button_whatsapp').hide();
+
+                    odoo.define('module_name.custom_script', function (require) {
+                    "use strict";
+
+                    var rpc = require('web.rpc');
+
+                    rpc.query({
+                        model: 'whatsapp.viseo',
+                        method: 'computeUser',
+                        args: [[]],
+                        }).then(function(output){
+                            console.log("Value:",output['value'])
+                            if (output['value'] == 'True'){
+                                $('.o_chatter_button_whatsapp').show();
+                            }else{
+                                $('.o_chatter_button_whatsapp').hide();
+                    }
+
+                    }).catch(function() {
+                        console.error('Erreur lors de la vérification du groupe utilisateur.');
+                    });
+                });
             });
         </script>
 
