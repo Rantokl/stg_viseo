@@ -343,8 +343,10 @@ class WhhatsAppViseo(models.Model):
         numbers = []
         partner = []
         for user in user_followers:
+            user_id = self.env['hr.employee'].sudo().search([('address_home_id.id','=',user.id)])
+            number_user = user_id.mobile_phone
             numb = user.mobile
-            number = self.format_numero_telephone(numb)
+            number = self.format_numero_telephone(number_user)
             numbers.append(number)
             partner.append(user.id)
 
@@ -384,6 +386,10 @@ class WhhatsAppViseo(models.Model):
             print("Le groupe a été créé avec succès !")
             response_data = json.loads(response.text)
             serialized_id = response_data["gid"]["_serialized"]
+
+            message="Group created by {}".format(self.env.user.name)
+            send_whatsapp_message(serialized_id,message)
+
             # print(f"Valeur de _serialized : {serialized_id}")
             groups = {
                 'name': group,
