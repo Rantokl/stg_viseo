@@ -10,12 +10,10 @@ class WizardCreditApplication(models.TransientModel):
     partner_id = fields.Many2one('res.partner')
     plafond_credit_wizard = fields.Float(string='Plafond de crédit', required=True)
     blocage_type_wizard = fields.Selection([
-        ('none', 'Aucun'),
-        ('blocked', 'Bloque'),
         ('amount_limited', 'Montant'),
         ('date', u'Echéance'),
         ('all', 'Tous')],
-        string='Type de blocage', required=True, copy=False, default='none', track_visibility=True
+        string='Type de blocage', required=True, copy=False, default='amount_limited', track_visibility=True
     )
     payment_condition_wizard = fields.Many2one('account.payment.term', string='condition de payement')
     company_wizard = fields.Many2one('res.company', string='Société')
@@ -43,7 +41,7 @@ class ViseoCreditApplication(models.Model):
         ('amount_limited', 'Montant'),
         ('date', u'Echéance'),
         ('all', 'Tous')],
-        string='Type de Blocage', required=True, copy=False, default='none', track_visibility=True
+        string='Type de Blocage', required=True, copy=False, default='amount_limited', track_visibility=True
     )
     payment_condition = fields.Many2one('account.payment.term', string='Condition de payement')
     company= fields.Many2one('res.company', string='Société')
@@ -261,11 +259,18 @@ class ViseoCreditApplication(models.Model):
                 "</div>")
         self.message_post(body=f"La Demandé de credit pour {self.name} de montant {self.plafond_credit} est accepté par {self.env.user.name} ")
         self.visibility_button_commercial=True
-        groups = self.env['res.groups'].search([('name', '=', 'Commercial')])
+        groups = self.env['res.groups'].search([('name', '=', 'Finance')])
         if groups:
-            self.message_post(body = body_message, subject = u"Demande de validation de credit", partner_ids = groups.users.partner_id.ids)
-            self.message_subscribe(partner_ids = groups.users.partner_id.ids)
-        self.confirm_chief=True
+            users = groups.mapped('users')
+            if users:
+                self.message_post(body = body_message, subject = u"Demande de validation de credit", partner_ids = groups.users.partner_id.ids)
+                self.message_subscribe(partner_ids = groups.users.partner_id.ids)
+                self.confirm_chief=True
+            else:
+                raise exceptions.UserError("Il n'y a aucune personne dans le groupe 'Finance'.")
+        else:
+            raise exceptions.UserError("Il n'y a aucun groupe nommé 'Finance'.")
+        
 
     def chief_rejected_boutton(self):
         body_message = ("<div class='col-xs-6'>"

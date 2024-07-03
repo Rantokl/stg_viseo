@@ -4,17 +4,17 @@
         <field name="name">Autorisation demande credit</field>
     </record>
 
-    <record id="credit_application_direction_validation" model="res.groups">
+    <!-- <record id="credit_application_direction_validation" model="res.groups">
         <field name="name">Validate Direction</field>
         <field name="category_id" ref="viseo_credit_application.module_category_request_credit"/>
-    </record>
+    </record> -->
 
-    <record id="credit_application_finance_validation" model="res.groups">
+    <!-- <record id="credit_application_finance_validation" model="res.groups">
         <field name="name">Validate Finance</field>
         <field name="category_id" ref="viseo_credit_application.module_category_request_credit"/>
-    </record>
-    <record id="credit_application_commercial" model="res.groups">
-        <field name="name">Commercial</field>
+    </record> -->
+    <record id="credit_application_finance" model="res.groups">
+        <field name="name">Finance</field>
         <field name="category_id" ref="viseo_credit_application.module_category_request_credit"/>
     </record>
 
