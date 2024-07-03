@@ -102,7 +102,7 @@ class PartnerInformationDocument(models.Model):
                     raise exceptions.UserError(f"Ajouter la date d'expiration de CIF")
         elif not self.cif_expiration_date:
             if self.cif_document_partner:
-                raise exceptions.UserError(f"Ajouter la date d'expiration de CIF5")
+                raise exceptions.UserError(f"Ajouter la date d'expiration de CIF")
         elif 'cif_expiration_date' in values:
             if not values['cif_expiration_date'] :
                 if self.cif_document_partner:
