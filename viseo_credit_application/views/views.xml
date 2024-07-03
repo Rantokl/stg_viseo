@@ -36,14 +36,14 @@
                                         type="object" 
                                         name="commercial_confirm_boutton" 
                                         class="oe_highlight" 
-                                        groups="viseo_credit_application.credit_application_commercial"
+                                        groups="viseo_credit_application.credit_application_finance"
                                         attrs="{'invisible': [('visibility_button_commercial','=', False)]}"/>
                                         
                                 <button string="Refuser" 
                                         type="object" 
                                         name="commercial_rejected_boutton" 
                                         class="oe_highlight" 
-                                        groups="viseo_credit_application.credit_application_commercial"
+                                        groups="viseo_credit_application.credit_application_finance"
                                         attrs="{'invisible': [('visibility_button_commercial','=', False)]}"/>
                             </group>
                     </page> 

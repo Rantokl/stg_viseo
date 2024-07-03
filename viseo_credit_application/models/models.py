@@ -53,7 +53,7 @@ class ViseoCreditApplication(models.Model):
         default='draft', string='Etat'
     )
     visibility_button_chief = fields.Boolean(string='Visibilité des boutons des chefs', compute='check_chief')
-    visibility_button_commercial = fields.Boolean(string='Visibilité des boutons des commerciaux', default=False)
+    visibility_button_commercial = fields.Boolean(string='Visibilité des boutons des Finaces', default=False)
     requester = fields.Many2one('res.users', string='Demandeur')
     confirm_chief=fields.Boolean(string='Les chefs Confirm??', default=False)
 
