@@ -18,8 +18,8 @@
                             <table class="table table-bordered" id="tableanalytique">
                                 <thead>
                                     <tr>
-                                        <th onclick="showModal('Header 1')">
-                                            <span>Département</span>
+                                        <th id="header1" onclick="showModal('Header 1')">
+                                            <span>Répartir</span>
                                             <hr/>
                                             <span>Rubrique</span>
                                         </th>
@@ -36,7 +36,14 @@
                             </table>
                             </div>
                             </div>
-
+                                <script type="text/javascript">
+                                // Your JavaScript code to populate the header values
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    // Example of populating header value
+                                    document.getElementById('header1').innerText = 'Nouvelle Valeur';
+                                    // Add more JavaScript to dynamically set values as needed
+                                });
+                            </script>
 
                             </t>
 
@@ -66,6 +73,7 @@
                                         </tbody>
                                     </table>
                                 </div>
+
                             </templates>
                         </field>
 

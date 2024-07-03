@@ -13,6 +13,7 @@ odoo.define('viseo_analytic_viseo.analytic', function (require) {
             'click .cell-header': 'onAfficherWizard',
             'click .cell-body': 'onAfficherWizard',
             "click button[name='table_analytic']": "table_analytic",
+            'click #ajouterEnfantButton': 'openAddchild',
         },
 
         init: function(){
@@ -28,6 +29,32 @@ odoo.define('viseo_analytic_viseo.analytic', function (require) {
 
         start: function(){
             this.show_pivott()
+            this._super.apply(this, arguments);
+        },
+
+        openAddchild : function(ev){
+            ev.preventDefault();
+            rpc.query({
+                 model: 'analytic.addchild',
+                 method: 'openWizardChild',
+                 args: [[]],
+            }).then(function(output){
+                   console.log('Open wizard')
+//                   self.do_action({
+//
+//                       name: 'Whatsapp',
+//                       type: 'ir.actions.act_window',
+//                       res_model: 'analytic.addchild',
+//                       view_mode: 'form',
+//                       views: [[false, 'form']],
+////                       context:{'default_id_model':idValue,
+////                                 'default_model_name': modelValue,
+//////                                 'default_group_name':output['name']
+////                                 },
+//                       target: 'new',
+//                        });
+
+            });
         },
 
         table_analytic : function(){
@@ -102,7 +129,13 @@ odoo.define('viseo_analytic_viseo.analytic', function (require) {
                             var ligne = table.insertRow(i + 1);
                             for (var j = 0; j < output['famille'][i].length; j++) {
                                 var cellule = ligne.insertCell(j);
-                                cellule.innerHTML = output['famille'][i][j];
+                                // Si la colonne est >= 1 et contient des valeurs numériques, appliquez le format Ariary
+                                if (j >= 1 && typeof output['famille'][i][j] === 'number') {
+                                    cellule.innerHTML = output['famille'][i][j].toLocaleString('en-MG', { style: 'currency', currency: 'MGA' });
+                                    cellule.className = 'currency';
+                                } else {
+                                    cellule.innerHTML = output['famille'][i][j];
+                                }
                             }
                         }
 //

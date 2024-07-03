@@ -31,12 +31,14 @@
         'views/template_view.xml',
         'views/analytique.xml',
         'views/templates.xml',
+        'wizard/child.xml',
     ],
     'qweb':['static/src/xml/analytique.xml',
             'static/src/xml/template.xml'],
     'assets': {
         'web.assets_backend': [
-            'your_module_name/static/src/js/department_percentage_widget.js',  # Assurez-vous que le chemin est correct
+            'your_module_name/static/src/js/department_percentage_widget.js',
+            'viseo_analytic_viseo/static/src/js/custom_template.js',# Assurez-vous que le chemin est correct
         ],
     },
     # only loaded in demonstration mode

@@ -107,10 +107,11 @@
               <field name="supplier_id"/>
               <field name="amount_total"/>
                 <field name="type_repart" class="oe_inline" widget="radio"/>
-                <field name="column_headers"/>
-               <field name="department_names"/>
-                <field name="department_totals"/>
-                <field name="table_data" widget="DepartmentPercentageWidget"/>
+<!--                <field name="column_headers"/>-->
+<!--               <field name="department_names"/>-->
+<!--                <field name="department_totals"/>-->
+<!--                <field name="table_data" widget="DepartmentPercentageWidget"/>-->
+                <t t-call="viseo_analytic_viseo.custom_html_template"/>
             </group>
             <notebook>
               <page id="ecriture" string="Ecriture" >
@@ -134,8 +135,9 @@
 
               </page>
                 <page id="Tableau" string="Tableau" >
-
+                 <t t-call="custom_html_template"/>
                 <field name="table_html"/>
+
 
 
               </page>

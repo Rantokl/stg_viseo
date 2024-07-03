@@ -36,8 +36,58 @@ class viseo_analytic(models.Model):
         ('marque', 'Marque'),
         ('article', 'Article'),
         ('depart', 'Departement'),
+        ('sale','Vendeur'),
         ('none', 'Aucun'),
     ], default='none')
+
+    def get_top_salespersons(self, start_date, end_date):
+        self.env.cr.execute("""
+                   SELECT
+                       user_id,
+                       SUM(amount_total) as total_sales
+                   FROM
+                       sale_order
+                   WHERE
+                       date_order BETWEEN %s AND %s
+                       AND state IN ('sale')
+                   GROUP BY
+                       user_id
+                   ORDER BY
+                       total_sales DESC
+   
+               """, (start_date, end_date))
+
+        results = self.env.cr.dictfetchall()
+        vals = results[:10]
+        # Initialize the total sales variable
+        total_sales_sum = 0
+        all_salespersons = []
+        value_sale = []
+        total_sales_sum10 = 0
+        all_salespersons10 = []
+        value_sale10 = []
+
+        for record in vals:
+            user = self.env['res.users'].browse(record['user_id'])
+            total_sales_sum10 += record['total_sales']
+            all_salespersons10.append(user.name)
+            value_sale10.append(record['total_sales'])
+        # Format the results and calculate the total sales sum
+        for record in results:
+            user = self.env['res.users'].browse(record['user_id'])
+            total_sales_sum += record['total_sales']
+            all_salespersons.append(user.name)
+            value_sale.append(record['total_sales'])
+
+
+
+
+        return all_salespersons, total_sales_sum, value_sale,all_salespersons10, total_sales_sum10, value_sale10
+        #     {
+        #     'top_salespersons': all_salespersons[:10],  # Top 10 salespersons
+        #     'total_sales_sum': total_sales_sum,
+        #     'all_salespersons': all_salespersons,  # All salespersons
+        # }
 
 
 
@@ -113,6 +163,18 @@ class viseo_analytic(models.Model):
                             brute_marge.append(0)
                         cogs.append(total_cogs)
                         val_table.append(total_revenue)
+                    else:
+                        if self.type_repart == 'sale':
+                            departments, total_sales, value_sale,departments10, total_sales10, value_sale10 = self.get_top_salespersons(self.start_date,self.end_date)
+                            for i in range(len(departments10)):
+                                val_table.append(value_sale10[i])
+                                cogs.append(0)
+                                brute_marge.append(0)
+                            # val_table.append(value_sale)
+                            val_table.append(total_sales-total_sales10)
+                            cogs.append(total_cogs)
+                            val_table.append(total_sales)
+
 
         # tab = [[23, 25, 36, 14, 13, 12, 13, 14, ], [23, 25, 36, 14, 13, 12, 13, 14, ],
         #        [23, 25, 36, 14, 13, 12, 13, 14, ]]
@@ -292,6 +354,15 @@ class viseo_analytic(models.Model):
                         return {
                             'departements': departments
                         }
+                    else:
+                        if self.type_repart == 'sale':
+                            departments, total_sum, value_sale,departments10, total_sales10, value_sale10 = self.get_top_salespersons(self.start_date, self.end_date)
+                            # print('test', departments)
+                            departments10.append('Autres')
+                            departments10.append('TOTAL')
+                            return {
+                                'departements': departments10
+                            }
 
     @api.model
     def create(self, sequence):
@@ -441,6 +512,31 @@ class AnalytiqueEcriture(models.Model):
     _inherit = 'analytic.move.line'
 
     analytique_id = fields.Many2one('viseo_analytic.viseo_analytic', string="analytique_id")
+
+
+
+class AddChild(models.TransientModel):
+    _name = 'analytic.addchild'
+
+
+    parents = fields.Char('Parents')
+    enfants = fields.Char('Enfants')
+
+
+    def openWizardChild(self):
+        print('OpenWizard_')
+        # self.ensure_one()
+        return {
+
+            'type': 'ir.actions.act_window',
+            'res_model': 'analytic.addchild',
+            'view_mode': 'form',
+            'view_id':'action_child_wizard',
+            'views': [(False, 'form')],
+            'target': 'new',
+
+        }
+
 
 #     name = fields.Char()
 #     value = fields.Integer()

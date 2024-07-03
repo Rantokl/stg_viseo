@@ -5,12 +5,10 @@
     <div class="pivot_table">
         <div class="head_table">
             <h2 id="name">
-
             </h2>
         <button type="button" class="btn btn-primary">Sauvegarder</button>
-
+            <button type="button" class="btn btn-primary" id="ajouterEnfantButton">Ajouter des enfants</button>
         </div>
-
          <div class="container-lg">
     <table class="table table-bordered" id="tableanalytique">
         <thead>
@@ -20,14 +18,11 @@
                     <hr/>
                     <span>Rubrique</span>
                     </th>
-
             </tr>
         </thead>
         <tbody>
             <tr>
-<!--                <td onclick="showModal('Row 1, Col 1')">Data 1</td>-->
-<!--                <td onclick="showModal('Row 1, Col 2')">Data 2</td>-->
-<!--                <td onclick="showModal('Row 1, Col 3')">Data 3</td>-->
+
             </tr>
 
         </tbody>
@@ -51,6 +46,8 @@
         </div>
     </div>
 </div>
+
+
 </t>
 
 </template>
