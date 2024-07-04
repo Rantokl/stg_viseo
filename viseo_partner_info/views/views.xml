@@ -12,11 +12,13 @@
                             <div class="container" style="display: flex; flex-wrap: wrap;">
                                 <div class="column" style="flex: 1; min-width: 20%; box-sizing: border-box; padding: 10px;">
                                     <group>                                    
-                                        <field name="rcs_document_partner" filename="rcs_document_partner_filename" attrs="{'invisible': [('company_type','=','person')]}"/>
+                                        <field name="rcs_document_partner" filename="rcs_document_partner_filename" attrs="{'invisible': [('company_type','=','person')], 'readonly': False}"/>
                                         <field name="rcs_document_partner_filename" invisible="1"/>
+                                        <field name="required_rcs" invisible="1"/>
 
-                                        <field name="cif_document_partner" filename="cif_document_partner_filename" attrs="{'invisible': [('company_type','=', 'person')]}"/>
+                                        <field name="cif_document_partner" filename="cif_document_partner_filename" attrs="{'invisible': [('company_type', '=', 'person')],'readonly': False}"/>
                                         <field name="cif_document_partner_filename" invisible="1"/>
+                                        <field name="required_cif" invisible="1"/>
 
                                         <field name="cin_document_partner" filename="cin_document_partner_filename" attrs="{'invisible': [('company_type','=', 'company')]}"  widget="nt_binary_preview" force_save="1"/>
                                         <field name="cin_document_partner_filename" invisible="1"/>
@@ -36,8 +38,8 @@
                                 </div>
                                 <div class="column" style="flex: 1; min-width: 20%; box-sizing: border-box; padding: 10px;">
                                     <group>
-                                        <field name="rcs_expiration_date" attrs="{'invisible': [('company_type','=','person')]}"/>
-                                        <field name="cif_expiration_date" attrs="{'invisible': [('company_type','=','person')]}"/>
+                                        <field name="rcs_expiration_date" attrs="{'invisible': [('company_type','=','person')],'required': [('required_rcs','=',True)],'readonly': False}"/>
+                                        <field name="cif_expiration_date" attrs="{'invisible': [('company_type','=','person')],'required': [('required_cif','=',True)],'readonly': False}"/>
                                     </group>
                                 </div>
                             </div>

@@ -19,6 +19,7 @@ class PartnerInformationDocument(models.Model):
     cif_document_partner = fields.Binary(string='Document CIF', attachment=True)
     cif_document_partner_filename = fields.Char(string='Nom du document CIF')
     cif_expiration_date = fields.Date(string="Date d'expiration de CIF")
+    required_cif=fields.Boolean(default=False, compute='compute_required_cif')
 
     nif_document_partner = fields.Binary(string='Document NIF', attachment=True)
     nif_document_partner_filename = fields.Char(string='Nom du document NIF')
@@ -26,10 +27,88 @@ class PartnerInformationDocument(models.Model):
     rcs_document_partner = fields.Binary(string='Document RCS', attachment=True)
     rcs_document_partner_filename = fields.Char(string='Nom du document RCS')
     rcs_expiration_date = fields.Date(string="Date d'expiration de RCS ")
+    required_rcs=fields.Boolean(default=False, compute='compute_required_rcs')
 
     stat_document_partner = fields.Binary(string='Document STAT', attachment=True)
     stat_document_partner_filename = fields.Char(string='Nom du document STAT')
 
+    @api.depends('rcs_document_partner')
+    def compute_required_rcs(self):
+        if self.rcs_document_partner:
+            if not self.rcs_expiration_date:
+                self.required_rcs=True
+            else :
+                self.required_rcs =False
+        else :
+            self.required_rcs =False
+    
+    @api.depends('cif_document_partner')
+    def compute_required_cif(self):
+        if self.cif_document_partner:
+            if not self.cif_expiration_date:
+                self.required_cif =True
+                
+            else :
+                self.required_cif =False
+        else :
+            self.required_cif =False
+            
+ 
+    
+    def create(self, values):
+        if values.get('rcs_document_partner'):
+            if not values.get('rcs_expiration_date'):
+                raise exceptions.UserError(f"Ajouter la date d'éxpiration de RCS")
+        if values.get('cif_document_partner'):
+            if not values.get('cif_expiration_date'):
+                raise exceptions.UserError(f"Ajouter la date d'éxpiration de CIF")
+        return super(PartnerInformationDocument, self).create(values)
+    
+    def write(self, values):
+        if 'rcs_document_partner' in values:
+            if values['rcs_document_partner']:
+                if 'rcs_expiration_date' in values:
+                    if not values['rcs_expiration_date']:
+                        raise exceptions.UserError(f"Ajouter la date d'expiration de RCS")
+                elif not self.rcs_expiration_date :
+                    raise exceptions.UserError(f"Ajouter la date d'expiration de RCS")
+        elif self.rcs_document_partner:
+            if 'rcs_expiration_date' in values:
+                if not values['rcs_expiration_date'] :
+                    raise exceptions.UserError(f"Ajouter la date d'expiration de RCS")
+        elif not self.rcs_expiration_date:
+            if 'rcs_document_partner' in values:
+                if values['rcs_expiration_date'] :
+                    raise exceptions.UserError(f"Ajouter la date d'expiration de RCS")
+        elif 'rcs_expiration_date' in values:
+            if not values['rcs_expiration_date'] :
+                if self.rcs_document_partner:
+                    raise exceptions.UserError(f"Ajouter la date d'expiration de RCS")
+
+        if 'cif_document_partner' in values:
+            if values['cif_document_partner']:
+                if 'cif_expiration_date' in values:
+                    if not values['cif_expiration_date']:
+                        raise exceptions.UserError(f"Ajouter la date d'expiration de CIF")
+                elif not self.cif_expiration_date :
+                    raise exceptions.UserError(f"Ajouter la date d'expiration de CIF")
+        elif self.cif_document_partner:
+            if 'cif_expiration_date' in values:
+                if not values['cif_expiration_date'] :
+                    raise exceptions.UserError(f"Ajouter la date d'expiration de CIF")
+        elif not self.cif_expiration_date:
+            if 'cif_document_partner' in values:
+                if values['cif_expiration_date'] :
+                    raise exceptions.UserError(f"Ajouter la date d'expiration de CIF")
+        elif not self.cif_expiration_date:
+            if self.cif_document_partner:
+                raise exceptions.UserError(f"Ajouter la date d'expiration de CIF")
+        elif 'cif_expiration_date' in values:
+            if not values['cif_expiration_date'] :
+                if self.cif_document_partner:
+                    raise exceptions.UserError(f"Ajouter la date d'expiration de CIF")
+        # print("==============================================================="*2)
+        return super(PartnerInformationDocument, self).write(values)
 
 # ======================================= CONVERTION D'IMAGE EN PDF ====================================================
     # def _convert_to_pdf(self, file_content, filename):
@@ -252,6 +331,7 @@ class PartnerInformationDocumentCheck(models.Model):
 
     selection_company_type = fields.Selection([('person', 'Particulier'), ('company', 'Société')], string='Type de Client', required=True)
     create_config_cin_partner = fields.Boolean(string="CIN", default=False)
+    create_config_cr_partner = fields.Boolean(string="CR", default=False)
     create_config_rib_partner = fields.Boolean(string="RIB", default=False)
     create_config_cif_partner = fields.Boolean(string="CIF", default=False)
     create_config_nif_partner = fields.Boolean(string="NIF", default=False)
@@ -265,8 +345,6 @@ class PartnerInformationDocumentCheck(models.Model):
             raise exceptions.UserError(f"Une règle avec la même type de Client '{existing_records.selection_company_type}' existe déjà.")
         return super(PartnerInformationDocumentCheck, self).create(values)
 
-
-
 # ============================= CREATE PARTNER IN DEVIS ==================================================================
 
 class PartnerCreationInDevis(models.Model):
@@ -274,6 +352,9 @@ class PartnerCreationInDevis(models.Model):
 
     def cin_file_empty_raise_error(self):
        raise exceptions.UserError("Pour le client Particulier, Il faut ajouter le CIN dans l'onglet 'Document' dans la fiche partner")
+
+    def cr_file_empty_raise_error(self):
+       raise exceptions.UserError("Pour le client Particulier, Il faut ajouter la Cértificat de Résidence(CR) dans l'onglet 'Document' dans la fiche partner")
 
     def rib_file_empty_raise_error(self):
        raise exceptions.UserError("Il faut ajouter le RIB dans l'onglet 'Document' dans la fiche partner")
@@ -294,13 +375,15 @@ class PartnerCreationInDevis(models.Model):
         rule_person = self.env['viseo_partner_info.create_config_model'].search([('selection_company_type', '=', 'person')])
         company_rule=self.env['viseo_partner_info.create_config_model'].search([('selection_company_type', '=', 'company')])
 
-
-
         if rule_person and company_rule:
             if self.partner_id.company_type == rule_person.selection_company_type :
                 if rule_person.create_config_cin_partner:
                     if not self.partner_id.cin_document_partner:
                         self.cin_file_empty_raise_error()
+                # =========================  CR   ================================
+                if rule_person.create_config_cr_partner:
+                    if not self.partner_id.cr_document_partner:
+                        self.cr_file_empty_raise_error()
                 # ============================  RIB  =============================
                 if rule_person.create_config_rib_partner:
                     if not self.partner_id.rib_document_partner:
@@ -322,6 +405,10 @@ class PartnerCreationInDevis(models.Model):
                 if company_rule.create_config_cin_partner:
                     if not self.partner_id.cin_document_partner:
                         self.cin_file_empty_raise_error()
+                # ============================  CR  ====================================
+                if company_rule.create_config_cr_partner:
+                    if not self.partner_id.cr_document_partner:
+                        self.cr_file_empty_raise_error()
                 # ============================  RIB  ===================================
                 if company_rule.create_config_rib_partner:
                     if not self.partner_id.rib_document_partner:
@@ -344,4 +431,3 @@ class PartnerCreationInDevis(models.Model):
         else:
             raise exceptions.UserError("Ajouter les règles lors de la creation des Clients. Dans le module 'Contact', menu 'Configuration'/'configuration creation'")
         return super(PartnerCreationInDevis, self).action_confirm()
-

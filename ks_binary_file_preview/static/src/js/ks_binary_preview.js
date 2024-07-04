@@ -49,7 +49,7 @@ odoo.define('ks_binary_file_preview.ks_binary_preview', function(require) {
                             ks_attachmentViewer.appendTo($('body'));
                         }
                         else{
-                            alert('This file type can not be previewed.')
+                            alert('Ce type de fichier ne peut pas être prévisualisé.')
                         }
                     }
                 }
@@ -71,7 +71,7 @@ odoo.define('ks_binary_file_preview.ks_binary_preview', function(require) {
                         if (vals && vals.id) {
                             ks_docView(vals);
                         } else {
-                            alert('The preview of the file can not be generated as it does not exist in the Odoo file system (Attachments).')
+                            alert("L'aperçu du fichier ne peut pas être généré car il n'existe pas dans le système de fichiers d'Odoo (Attachments).")
                         }
                     });
                 }
