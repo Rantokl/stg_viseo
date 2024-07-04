@@ -464,7 +464,7 @@ class WhhatsAppViseo(models.Model):
                     local = '0'+author[3:-5]
                     interna = '+261'+author[3:-5]
 
-                    partner = self.env['res.partner'].search(['|',('mobile','=',local),('mobile','=',interna)])
+                    partner = self.env['hr.employee'].search(['|',('mobile_phone','=',local),('mobile_phone','=',interna)])
                     if partner:
                         group.write({
                             'body':message

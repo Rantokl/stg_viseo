@@ -10,8 +10,12 @@
                 </header>
                 <sheet>
 
+                    <t t-call="analytic_template">
+                        <t t-set="analytic_data" t-value="o.get_analytic_data()"/>
+                    </t>
+
                     <templates id="analytique_viseo">
-                        <t t-name="custom_html_template">
+                        <t t-name="custom_html_template_analytique">
                             <div class="pivot_table">
                                 <h2>Tableau analytique</h2>
                                  <div class="container-lg">
@@ -23,65 +27,38 @@
                                             <hr/>
                                             <span>Rubrique</span>
                                         </th>
+<!--                                        <t t-foreach="analytic_data" t-as="col">-->
+<!--                                            <th t-esc="col['header']"/>-->
+<!--                                            </t>-->
 
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                        <!--                <td onclick="showModal('Row 1, Col 1')">Data 1</td>-->
-
-                                    </tr>
+<!--                                    <t t-foreach="analytic_data[0]['rows']" t-as="row" t-index="row_index">-->
+<!--                                            <tr>-->
+<!--                                                <td t-esc="'Row ' + (row_index + 1)"/>-->
+<!--                                                <t t-foreach="analytic_data" t-as="col">-->
+<!--                                                    <td t-esc="col['rows'][row_index]"/>-->
+<!--                                                </t>-->
+<!--                                            </tr>-->
+<!--                                        </t>-->
 
                                 </tbody>
                             </table>
                             </div>
                             </div>
-                                <script type="text/javascript">
-                                // Your JavaScript code to populate the header values
-                                document.addEventListener('DOMContentLoaded', function() {
-                                    // Example of populating header value
-                                    document.getElementById('header1').innerText = 'Nouvelle Valeur';
-                                    // Add more JavaScript to dynamically set values as needed
-                                });
-                            </script>
 
                             </t>
 
                 </templates>
-
-                    <field name="html_content" widget="html" options="{'render': 'as-is'}">
-                            <templates>
-                                <div>
-                                    <!-- Your dynamic HTML template with a table goes here -->
-                                    <h1>Hello, ${object.name}!</h1>
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Column 1</th>
-                                                <th>Column 2</th>
-                                                <!-- Add more columns as needed -->
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <!--<t t-foreach="object.your_related_model_ids" t-as="record">
-                                                <tr>
-                                                    <td>${record.field1}</td>
-                                                    <td>${record.field2}</td>
-                                                    &lt;!&ndash; Add more columns as needed &ndash;&gt;
-                                                </tr>
-                                            </t>-->
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                            </templates>
-                        </field>
 
                 </sheet>
 
             </form>
         </field>
     </record>
+
+
 
 
 </odoo>

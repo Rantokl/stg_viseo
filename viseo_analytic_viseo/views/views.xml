@@ -199,7 +199,7 @@
             </field>
         </record>
 
-      <record id="launch_devis_pdf_sav" model="ir.actions.act_window">
+      <record id="form_ecriture_analytique" model="ir.actions.act_window">
         <field name="name">ecriture comptable</field>
         <field name="res_model">account.move.line.view</field>
         <field name="type">ir.actions.act_window</field>
@@ -225,6 +225,13 @@
       </field>
     </record>
 -->
+      <record id="test_analytic" model="ir.actions.act_window">
+        <field name="name">ecriture comptable</field>
+        <field name="res_model">my.model</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">tree,form</field>
+
+</record>
 
     <!-- Top menu item -->
     <menuitem name="Analytique viseo" id="viseo_analytic_viseo.menu_root3" parent="viseo_pca.root_account_menu_report"
@@ -232,6 +239,9 @@
 
     <menuitem name="Analytique" id="viseo_analytic_viseo.menu_root" parent="viseo_pca.root_account_menu_report"
                 action="viseo_analytic_viseo.action_window" sequence="2"/>
+
+      <menuitem name="Test" id="viseo_analytic_viseo.menu_root_test" parent="viseo_pca.root_account_menu_report"
+                action="test_analytic" sequence="2"/>
 
     <!-- menu categories -->
 <!--

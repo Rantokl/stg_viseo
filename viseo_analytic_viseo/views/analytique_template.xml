@@ -1,0 +1,67 @@
+<!-- views/analytique_view_templates.xml -->
+
+<odoo>
+    <template id="analytic_template" name="Analytic Template">
+        <div class="pivot_table">
+            <h2>Tableau analytique</h2>
+            <div class="container-lg">
+                <table class="table table-bordered" id="tableanalytique">
+                    <thead>
+                        <tr>
+                            <th t-foreach="analytic_data" t-as="data">
+                                <span t-esc="data['header']"/>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="analytic_data" t-as="data">
+                            <td t-esc="data['data']"/>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </template>
+
+
+    <record id="my_model_view_form" model="ir.ui.view">
+    <field name="name">my.model.view.form</field>
+    <field name="model">my.model</field>
+    <field name="arch" type="xml">
+        <form>
+            <sheet>
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_my_template" type="action" class="oe_stat_button" icon="fa-list-alt">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_text">Afficher le tableau</span>
+                        </div>
+                    </button>
+                </div>
+                <group>
+                    <field name="name"/>
+                    <field name="value"/>
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+    <record id="my_model_view_tree" model="ir.ui.view">
+    <field name="name">my.model.view.tree</field>
+    <field name="model">my.model</field>
+    <field name="arch" type="xml">
+        <tree>
+
+
+
+                    <field name="name"/>
+                    <field name="value"/>
+
+
+        </tree>
+    </field>
+</record>
+
+
+
+
+</odoo>

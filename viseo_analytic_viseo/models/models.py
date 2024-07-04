@@ -299,7 +299,7 @@ class viseo_analytic(models.Model):
         }
 
     def openWizard(self):
-        self.ensure_one()
+        # self.ensure_one()
         return {
 
             'type': 'ir.actions.act_window',
@@ -445,6 +445,18 @@ class viewAnalytique(models.Model):
     _name = 'viseo.analytique.view'
     name = fields.Char(default='Nouveau')
     html_content = fields.Html('Contenu html')
+
+    analytic_data = fields.Text(string='Analytic Data')
+
+    # @api.model
+    def get_dynamic_table_data(self):
+        # Remplacez par votre logique pour obtenir les données
+
+        print('Test valeur')
+        return [
+            {'header': 'Header 1', 'rows': ['Data 1', 'Data 2']},
+            {'header': 'Header 2', 'rows': ['Data 3', 'Data 4']}
+        ]
 
 
 class AccountMoveLineView(models.TransientModel):
