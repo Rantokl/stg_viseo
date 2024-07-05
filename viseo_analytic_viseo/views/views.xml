@@ -136,7 +136,7 @@
               </page>
                 <page id="Tableau" string="Tableau" >
                  <t t-call="custom_html_template"/>
-                <field name="table_html"/>
+                <field name="table_html" widget="custom_html_widget"/>
 
 
 
@@ -191,8 +191,7 @@
                     <footer>
                     <!--<button name="export_pdf" string="Devis" type="object" class="oe_highlight"/>
                     <button special="cancel" string="Annuler" class="btn btn-sm btn-default"/>-->
-                    <button string="Spliter" type="object" class="oe_highlight" icon="fa-upload"
-                                    name="save_pdf_to_server"/>
+                    <button string="Spliter" type="object" class="oe_highlight"/>
 
                 </footer>
                 </form>

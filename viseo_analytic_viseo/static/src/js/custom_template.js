@@ -1,59 +1,54 @@
 odoo.define('viseo_analytic_viseo.custom_template', function (require) {
     "use strict";
 
-//    var publicWidget = require('web.public.widget');
-//
-   var ajax = require('web.ajax');
-   var rpc = require('web.rpc');
 
+   var rpc = require('web.rpc');
     var FormController = require('web.FormController');
     var rpc = require('web.rpc');
-
-
+    var isShowPivottExecuted = false;
 
     FormController.include({
         events: {
             'click .cell-header': 'onAfficherWizard',
             'click .cell-body': 'onAfficherWizard',
-            "click button[name='table_analytic']": "table_analytic",
-            'click #ajouterEnfantButton': 'openAddchild',
+//            "click button[name='table_analytic']": "table_analytic",
+//            'click #ajouterEnfantButton': 'openAddchild',
         },
-        init: function(){
-            this._super.apply(this, arguments);
-            console.log('Analytic initialized....');
-        },
+
+//        $(document).ready(function () {
+//            this.show_pivott();
+//        }),
+
+//        init: function(){
+//            this._super.apply(this, arguments);
+//
+//            console.log('Analytic initialized....');
+//            this.hasShownPivott = false;
+//        },
         start: function(){
-            this.show_pivott()
+//            this.show_pivott();
+//            console.log(this.hasShownPivott)
             this._super.apply(this, arguments);
+            if (this.modelName === 'viseo.analytique.view') {
+                this.show_pivott();
+                isShowPivottExecuted = true; // Marquer show_pivott() comme déjà exécuté
+            }
+//            if (this.hasShownPivott==false) {
+//                this.show_pivott();
+//                console.log(!this.hasShownPivott)
+//                this.hasShownPivott = true;  // Marquer show_pivott() comme déjà exécuté
+//            }else{
+//                console.log(this.hasShownPivott)
+//            }
         },
 
-        onAfficherWizard : function(ev){
-            ev.preventDefault();
-            var self = this;
-            rpc.query({
-                 model: 'viseo_analytic.viseo_analytic',
-                 method: 'openWizard',
-                 args: [[]],
-            }).then(function(output){
-                  console.log('Wizard')
-//                showModal('Content')
-                    self.do_action({
-                    name:'Ecriture',
-                    type: 'ir.actions.act_window',
-                    res_model: 'account.move.line.view',
-                    view_type: 'form',
-                    view_mode: 'form',
-                    target: 'new',
 
-                });
-            })
-        },
 
          show_pivott: function(){
 
             var self = this;
 
-            $(document).ready(function () {
+//            $(document).ready(function () {
 
                 var data = [];
                 var url = window.location.href;
@@ -62,8 +57,10 @@ odoo.define('viseo_analytic_viseo.custom_template', function (require) {
                 var idValue = null;
                 var modelValue = null;
                 var activeIdValue = null;
-
-                // Parcours des paramètres et récupération des valeurs
+//
+//
+//
+//                // Parcours des paramètres et récupération des valeurs
                 for (var i = 0; i < params.length; i++) {
                     var param = params[i].split('=');
                     var paramName = param[0];
@@ -73,20 +70,28 @@ odoo.define('viseo_analytic_viseo.custom_template', function (require) {
                         activeIdValue = paramValue;
                     } else if (paramName === 'id') {
                         idValue = paramValue;
-                    } else if (paramName === 'model') {
-                        modelValue = paramValue;
-                    }
+//                    } else if (paramName === 'model') {
+//                        modelValue = paramValue;
+//                    }
                 }
-
-                console.log('Active ID value:', activeIdValue);
-                console.log('ID value:', idValue);
-                console.log('Model value:', modelValue);
+                }
+//
+//                console.log('Active ID value:', activeIdValue);
+//                console.log('ID value:', idValue);
+//                console.log('Model value:', modelValue);
 
 //                console.log('id : ',idValue);
 
+                rpc.query({
+                    model: 'viseo_analytic.viseo_analytic',
+                    method: 'action_afficher_template',
+                    args: [[]],
+                    }).then(function(output){
+                        console.log(output)
+                        const table = document.querySelector("#tableanalytique");
 
-                if (modelValue == 'viseo.analytique.view'){
-                    var value_id = parseInt(activeIdValue)
+//                        if (output['model'] == 'viseo.analytique.view'){
+                    var value_id = parseInt(idValue)
                     console.log(value_id);
                     rpc.query({
                     model: 'viseo_analytic.viseo_analytic',
@@ -144,8 +149,8 @@ odoo.define('viseo_analytic_viseo.custom_template', function (require) {
                         method: 'table_analytic',
                         args:[[]],
                     }).then(function(result){
-                        console.log('idValue:',idValue)
-                        console.log(result)
+//                        console.log('idValue:',idValue)
+//                        console.log(result)
                         rpc.query({
                         model: 'viseo_analytic.viseo_analytic',
                         method: 'takedata',
@@ -158,12 +163,42 @@ odoo.define('viseo_analytic_viseo.custom_template', function (require) {
                     })
 
                     })
-                }
+//                }
+
+                    });
 
 
-                });
+
+//                });
 
                 },
+                onAfficherWizard : function(){
+//            ev.preventDefault();
+            var self = this;
+
+                rpc.query({
+                        model: 'viseo_analytic.viseo_analytic',
+                        method: 'openWizard',
+                        args:[[]],
+                    }).then(function(result){
+                        console.log('Wizard')
+                        self.do_action({
+
+                       name: 'Ecriture',
+                       type: 'ir.actions.act_window',
+                       res_model: 'account.move.line.view',
+                       view_mode: 'form',
+                       views: [[false, 'form']],
+                       context:{
+                                 },
+                       target: 'new',
+                        });
+                    });
+
+
+
+        },
+
 
 //         },
 

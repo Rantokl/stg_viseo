@@ -287,16 +287,57 @@ class viseo_analytic(models.Model):
         print(data1)
         return self.env.ref('viseo_analytic_viseo.viseo_analytic_viseo_action_client').read()[0]
 
+    def takeId(self):
+        return{
+            'id': self.id,
+            'model':'viseo.analytique.view'
+        }
+
+
+
     def action_afficher_template(self):
+        # print('test', self.id)
         return {
             'name': 'Affichage du Template',
+            # 'res_id': self.id,
             'type': 'ir.actions.act_window',
             'res_model': 'viseo.analytique.view',
             'view_mode': 'form',
             'view_id': self.env.ref('viseo_analytic_viseo.view_my_template').id,
             # Remplacez 'my_module.view_my_template' par l'ID de votre vue template
+            'context': {'default_html_content': """
+            <div class="pivot_table">
+                                <h2>Tableau analytique</h2>
+                                 <div class="container-lg">
+                            <table class="table table-bordered" id="tableanalytique">
+                                <thead>
+                                    <tr>
+                                        <th id="header1" onclick="showModal('Header 1')">
+                                            <span>Répartir</span>
+                                            <hr/>
+                                            <span>Rubrique</span>
+                                        </th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="cell-body">
+
+                                    </tr>
+
+
+                                </tbody>
+                            </table>
+                            </div>
+                            </div>
+            """},
             'target': 'current',
+
         }
+
+    # 'context': {'default_html_content': self.env.ref(
+    #     'viseo_analytic_viseo.custom_html_template_analytique').read(),
+    #             },
 
     def openWizard(self):
         # self.ensure_one()
@@ -448,6 +489,12 @@ class viewAnalytique(models.Model):
 
     analytic_data = fields.Text(string='Analytic Data')
 
+    def write(self, vals):
+        if 'html_content' in vals:
+            vals['html_content'] = self.env['ir.ui.view'].render_template(
+                'analytique_viseo.custom_html_template_analytique')
+        return super(viewAnalytique, self).write(vals)
+
     # @api.model
     def get_dynamic_table_data(self):
         # Remplacez par votre logique pour obtenir les données
@@ -459,7 +506,7 @@ class viewAnalytique(models.Model):
         ]
 
 
-class AccountMoveLineView(models.TransientModel):
+class AccountMoveLineView(models.Model):
     _name = 'account.move.line.view'
 
     name = fields.Char('Nouveau')

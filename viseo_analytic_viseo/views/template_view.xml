@@ -6,51 +6,46 @@
             <form >
                 <header>
 
-                    <button name="read_depart_group" string="Test data" class="oe_highlight"  type="object" />
+                    <button name="openWizardChild" string="Ajouter des enfants" class="oe_highlight"  type="object" />
                 </header>
                 <sheet>
 
-                    <t t-call="analytic_template">
+                    <t t-call="custom_html_template_analytique">
                         <t t-set="analytic_data" t-value="o.get_analytic_data()"/>
                     </t>
 
-                    <templates id="analytique_viseo">
-                        <t t-name="custom_html_template_analytique">
-                            <div class="pivot_table">
-                                <h2>Tableau analytique</h2>
-                                 <div class="container-lg">
-                            <table class="table table-bordered" id="tableanalytique">
-                                <thead>
-                                    <tr>
-                                        <th id="header1" onclick="showModal('Header 1')">
-                                            <span>Répartir</span>
-                                            <hr/>
-                                            <span>Rubrique</span>
-                                        </th>
-<!--                                        <t t-foreach="analytic_data" t-as="col">-->
-<!--                                            <th t-esc="col['header']"/>-->
-<!--                                            </t>-->
+                    <field name="html_content" widget="custom_html_widget"/>
 
-                                    </tr>
-                                </thead>
-                                <tbody>
-<!--                                    <t t-foreach="analytic_data[0]['rows']" t-as="row" t-index="row_index">-->
-<!--                                            <tr>-->
-<!--                                                <td t-esc="'Row ' + (row_index + 1)"/>-->
-<!--                                                <t t-foreach="analytic_data" t-as="col">-->
-<!--                                                    <td t-esc="col['rows'][row_index]"/>-->
-<!--                                                </t>-->
-<!--                                            </tr>-->
-<!--                                        </t>-->
+<!--                    <templates id="analytique_viseo">-->
+<!--                        <t t-name="custom_html_template_analytique">-->
+<!--                            <div class="pivot_table">-->
+<!--                                <h2>Tableau analytique</h2>-->
+<!--                                 <div class="container-lg">-->
+<!--                            <table class="table table-bordered" id="tableanalytique">-->
+<!--                                <thead>-->
+<!--                                    <tr>-->
+<!--                                        <th id="header1" onclick="showModal('Header 1')">-->
+<!--                                            <span>Répartir</span>-->
+<!--                                            <hr/>-->
+<!--                                            <span>Rubrique</span>-->
+<!--                                        </th>-->
 
-                                </tbody>
-                            </table>
-                            </div>
-                            </div>
+<!--                                    </tr>-->
+<!--                                </thead>-->
+<!--                                <tbody>-->
+<!--                                    <tr class="cell-body">-->
 
-                            </t>
+<!--                                    </tr>-->
 
-                </templates>
+
+<!--                                </tbody>-->
+<!--                            </table>-->
+<!--                            </div>-->
+<!--                            </div>-->
+
+<!--                            </t>-->
+
+<!--                </templates>-->
 
                 </sheet>
 

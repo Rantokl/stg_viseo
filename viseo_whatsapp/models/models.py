@@ -450,7 +450,7 @@ class WhhatsAppViseo(models.Model):
             data = response.json()
 
             if data:
-                message_data = data[-1  ]
+                message_data = data[-1]
                 message = message_data['body']
                 group = self.env['whatsapp.group'].search([('chat_ids', '=', chat_id)])
                 if group.body == message:
