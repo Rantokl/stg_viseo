@@ -84,13 +84,13 @@
 <!--                            <field string="Documents" name="doc_count" widget="statinfo"/> action_pivot_view_test-->
 
 <!--                        </button>-->
-                        <button name="render_table" class="oe_stat_button" type="object"  icon="fa-tasks" >
-                            <field string="Analytiques" name="analytic_count" widget="statinfo" />
-                        </button>
-              <button name="table_analytic" class="oe_stat_button" type="object"  icon="fa-tasks" string="Test">
+<!--                        <button name="render_table" class="oe_stat_button" type="object"  icon="fa-tasks" >-->
+<!--                            <field string="Analytiques" name="analytic_count" widget="statinfo" />-->
+<!--                        </button>-->
+<!--              <button name="table_analytic" class="oe_stat_button" type="object"  icon="fa-tasks" string="Test">-->
 
-                        </button>
-              <button name="action_afficher_template" class="oe_stat_button" type="object"  icon="fa-tasks" string="Afficher">
+<!--                        </button>-->
+              <button name="action_afficher_template" class="oe_stat_button" type="object"  icon="fa-tasks" string="Tableau analytique">
 
                         </button>
                      
@@ -136,7 +136,7 @@
               </page>
                 <page id="Tableau" string="Tableau" >
                  <t t-call="custom_html_template"/>
-                <field name="table_html" widget="custom_html_widget"/>
+                <field name="table_html" />
 
 
 

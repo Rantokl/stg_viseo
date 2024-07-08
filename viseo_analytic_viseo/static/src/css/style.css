@@ -6,6 +6,23 @@ body{
     overflow: auto;
 
 }
+.note-editing-area{
+    overflow: auto;
+    color:'blue'
+}
+
+
+.o_field_html {
+    overflow-x: auto;
+    white-space: nowrap;
+    display: block;
+}
+
+.o_field_html > * {
+    display: inline-block;
+    vertical-align: top;
+    white-space: normal; /* Pour permettre le retour à la ligne à l'intérieur des éléments du champ HTML */
+}
 
 /*.cell-header{
     width:200%;

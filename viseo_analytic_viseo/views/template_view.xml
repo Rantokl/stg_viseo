@@ -7,45 +7,20 @@
                 <header>
 
                     <button name="openWizardChild" string="Ajouter des enfants" class="oe_highlight"  type="object" />
+                    <button name="generate_excel_file" string="Exporter" class="oe_highlight"  type="object" />
                 </header>
                 <sheet>
+                    <group>
+                        <field name="analytic_id" readonly="1"/>
+                    </group>
 
                     <t t-call="custom_html_template_analytique">
                         <t t-set="analytic_data" t-value="o.get_analytic_data()"/>
                     </t>
 
-                    <field name="html_content" widget="custom_html_widget"/>
-
-<!--                    <templates id="analytique_viseo">-->
-<!--                        <t t-name="custom_html_template_analytique">-->
-<!--                            <div class="pivot_table">-->
-<!--                                <h2>Tableau analytique</h2>-->
-<!--                                 <div class="container-lg">-->
-<!--                            <table class="table table-bordered" id="tableanalytique">-->
-<!--                                <thead>-->
-<!--                                    <tr>-->
-<!--                                        <th id="header1" onclick="showModal('Header 1')">-->
-<!--                                            <span>Répartir</span>-->
-<!--                                            <hr/>-->
-<!--                                            <span>Rubrique</span>-->
-<!--                                        </th>-->
-
-<!--                                    </tr>-->
-<!--                                </thead>-->
-<!--                                <tbody>-->
-<!--                                    <tr class="cell-body">-->
-
-<!--                                    </tr>-->
+                    <field name="html_content" />
 
 
-<!--                                </tbody>-->
-<!--                            </table>-->
-<!--                            </div>-->
-<!--                            </div>-->
-
-<!--                            </t>-->
-
-<!--                </templates>-->
 
                 </sheet>
 

@@ -32,6 +32,7 @@
         'views/analytique.xml',
         'views/templates.xml',
         'wizard/child.xml',
+        'wizard/analytic.xml',
         'views/analytique_template.xml',
         'views/test.xml',
     ],

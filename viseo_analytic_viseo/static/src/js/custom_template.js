@@ -28,11 +28,42 @@ odoo.define('viseo_analytic_viseo.custom_template', function (require) {
         start: function(){
 //            this.show_pivott();
 //            console.log(this.hasShownPivott)
+//                $(document).ready(function(){
+
+                    var data = [];
+                var url = window.location.href;
+                var params = url.split('#').join('&');
+                params = params.split('&');
+            var idValue = null;
+                var modelValue = null;
+                var activeIdValue = null;
+//
+//
+//
+//                // Parcours des paramètres et récupération des valeurs
+                for (var i = 0; i < params.length; i++) {
+                    var param = params[i].split('=');
+                    var paramName = param[0];
+                    var paramValue = decodeURIComponent(param[1]);
+
+                    if (paramName === 'id') {
+                        idValue = paramValue;
+                    } else if (paramName === 'active_id') {
+                        activeIdValue = paramValue;
+//                    } else if (paramName === 'model') {
+//                        modelValue = paramValue;
+//                    }
+                }
+                }
+                console.log(idValue);
+                console.log(activeIdValue);
             this._super.apply(this, arguments);
-            if (this.modelName === 'viseo.analytique.view') {
+            if (this.modelName === 'viseo.analytique.view' && idValue!=null && !isShowPivottExecuted) {
                 this.show_pivott();
                 isShowPivottExecuted = true; // Marquer show_pivott() comme déjà exécuté
             }
+//                })
+
 //            if (this.hasShownPivott==false) {
 //                this.show_pivott();
 //                console.log(!this.hasShownPivott)

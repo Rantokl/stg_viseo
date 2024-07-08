@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
+import base64
+import io
 import json
+
+import xlsxwriter
 
 from odoo import models, fields, api
 from odoo.exceptions import UserError
@@ -32,6 +36,7 @@ class viseo_analytic(models.Model):
     table_data = fields.Text(string='Table Data')
     column_headers = fields.Text('En-têtes des colonnes')
     table_html = fields.Html('Tableau')
+
     type_repart = fields.Selection(string="Repartir par", selection=[
         ('marque', 'Marque'),
         ('article', 'Article'),
@@ -204,6 +209,10 @@ class viseo_analytic(models.Model):
         #         ('type', '=', 'in_invoice'),
         #     ])
 
+        chaine_json = json.dumps(resultat)
+
+        self.write({'table_data':chaine_json})
+
         return {
             # 'content': tab,
             'famille': resultat
@@ -297,12 +306,31 @@ class viseo_analytic(models.Model):
 
     def action_afficher_template(self):
         # print('test', self.id)
-        return {
+        repair_id = self.env['viseo.analytique.view'].sudo().search([('analytic_id.id', '=', self.id)])
+
+        if repair_id:
+
+            return {
             'name': 'Affichage du Template',
             # 'res_id': self.id,
             'type': 'ir.actions.act_window',
             'res_model': 'viseo.analytique.view',
             'view_mode': 'form',
+            'res_id': repair_id.id,
+            # 'view_id': self.env.ref('viseo_analytic_viseo.view_my_template').id,
+            # Remplacez 'my_module.view_my_template' par l'ID de votre vue template
+
+            'target': 'current',
+
+        }
+        else:
+            return {
+            'name': 'Affichage du Template',
+            # 'res_id': self.id,
+            'type': 'ir.actions.act_window',
+            'res_model': 'viseo.analytique.view',
+            'view_mode': 'form',
+            # 'res_id': repair_id.id,
             'view_id': self.env.ref('viseo_analytic_viseo.view_my_template').id,
             # Remplacez 'my_module.view_my_template' par l'ID de votre vue template
             'context': {'default_html_content': """
@@ -322,7 +350,7 @@ class viseo_analytic(models.Model):
                                 </thead>
                                 <tbody>
                                     <tr class="cell-body">
-
+                                        <td style="min-width: 200px; white-space: nowrap;"></td>
                                     </tr>
 
 
@@ -330,10 +358,12 @@ class viseo_analytic(models.Model):
                             </table>
                             </div>
                             </div>
-            """},
+            """,
+                        'default_analytic_id':self.id},
             'target': 'current',
 
         }
+
 
     # 'context': {'default_html_content': self.env.ref(
     #     'viseo_analytic_viseo.custom_html_template_analytique').read(),
@@ -486,14 +516,59 @@ class viewAnalytique(models.Model):
     _name = 'viseo.analytique.view'
     name = fields.Char(default='Nouveau')
     html_content = fields.Html('Contenu html')
-
+    analytic_id = fields.Many2one('viseo_analytic.viseo_analytic', string='Ref analytique')
     analytic_data = fields.Text(string='Analytic Data')
+
+    @api.model
+    def create(self, sequence):
+        sequence['name'] = self.env['ir.sequence'].next_by_code('viseo.analytique.view') or '/'
+
+        return super(viewAnalytique, self).create(sequence)
 
     def write(self, vals):
         if 'html_content' in vals:
             vals['html_content'] = self.env['ir.ui.view'].render_template(
                 'analytique_viseo.custom_html_template_analytique')
         return super(viewAnalytique, self).write(vals)
+
+    def generate_excel_file(self):
+        # Create an in-memory output file for the new workbook.
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        worksheet = workbook.add_worksheet()
+
+        # Example data, replace this with your actual data retrieval logic
+        data = self.env['viseo_analytic.viseo_analytic'].sudo().search([('id','=',self.analytic_id.id)])
+        value = json.loads(data.table_data)
+        data = [
+            ['Répartir', 'Rubrique'],
+            ['Exemple 1', 'Valeur 1'],
+            ['Exemple 2', 'Valeur 2'],
+        ]
+
+        # Write data to the worksheet
+        for row_num, row_data in enumerate(value):
+            for col_num, cell_data in enumerate(row_data):
+                worksheet.write(row_num, col_num, cell_data)
+
+        # Close the workbook
+        workbook.close()
+        output.seek(0)
+
+        # Encode the file to base64
+        excel_file = base64.b64encode(output.read()).decode()
+
+        # Create and return the action for the wizard
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'analytique.excel.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_excel_file': excel_file,
+                'default_file_name': '{}.xlsx'.format(self.name),
+            }
+        }
 
     # @api.model
     def get_dynamic_table_data(self):
@@ -621,3 +696,19 @@ class AddChild(models.TransientModel):
 #     def _value_pc(self):
 #         for record in self:
 #             record.value2 = float(record.value) / 100
+
+
+class AnalytiqueExcelWizard(models.TransientModel):
+    _name = 'analytique.excel.wizard'
+    _description = 'Wizard for downloading Excel file'
+
+    excel_file = fields.Binary('Excel File', readonly=True)
+    file_name = fields.Char('File Name', readonly=True, default='tableau_analytique.xlsx')
+
+    def download_excel_file(self):
+        return {
+            'type': 'ir.actions.act_url',
+            'url': 'web/content/?model=analytique.excel.wizard&id=%s&field=excel_file&download=true&filename=%s' % (
+            self.id, self.file_name),
+            'target': 'self',
+        }
