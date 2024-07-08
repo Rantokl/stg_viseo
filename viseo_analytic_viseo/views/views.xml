@@ -107,6 +107,7 @@
               <field name="supplier_id"/>
               <field name="amount_total"/>
                 <field name="type_repart" class="oe_inline" widget="radio"/>
+                <field name="table_data" />
 <!--                <field name="column_headers"/>-->
 <!--               <field name="department_names"/>-->
 <!--                <field name="department_totals"/>-->

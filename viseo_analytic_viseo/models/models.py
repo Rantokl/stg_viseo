@@ -194,22 +194,16 @@ class viseo_analytic(models.Model):
             tabData.append(data)
 
 
-
+        value = []
         resultat = []
         for lettre, chiffres in zip(tabData, tab):
             element_resultat = [lettre] + chiffres
             resultat.append(element_resultat)
 
-        # total_amount = sum(invoice.amount_total for invoice in invoices)
-        # for rubrique in rubriques:
-        #     invoices = self.env['account.move'].search([
-        #         ('partner_id', '=', self.supplier_id.id),
-        #         ('invoice_date', '>=', self.start_date),
-        #         ('invoice_date', '<=', self.end_date),
-        #         ('type', '=', 'in_invoice'),
-        #     ])
-
-        chaine_json = json.dumps(resultat)
+        header = self.render_table()
+        value.append(header['departements'])
+        value.append(resultat)
+        chaine_json = json.dumps(value)
 
         self.write({'table_data':chaine_json})
 
