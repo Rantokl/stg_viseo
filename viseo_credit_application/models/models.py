@@ -17,6 +17,7 @@ class WizardCreditApplication(models.TransientModel):
     )
     payment_condition_wizard = fields.Many2one('account.payment.term', string='condition de payement')
     company_wizard = fields.Many2one('res.company', string='Société')
+    requester_wizard= fields.Many2one('res.users', string='Demandeur')
     def send_application_credit_from_wizard(self):
         self.ensure_one()
         self.requester_wizard = self.env.user.id
@@ -26,7 +27,8 @@ class WizardCreditApplication(models.TransientModel):
             'plafond_credit': self.plafond_credit_wizard,
             'blocage_type': self.blocage_type_wizard,
             'payment_condition': self.payment_condition_wizard.id,
-            'company':self.company_wizard.id
+            'company':self.company_wizard.id,
+            'requester': self.requester_wizard
         })
         # ================================================================================================================
         self.partner_id.request_credit_application()
@@ -53,9 +55,33 @@ class ViseoCreditApplication(models.Model):
         default='draft', string='Etat'
     )
     visibility_button_chief = fields.Boolean(string='Visibilité des boutons des chefs', compute='check_chief')
-    visibility_button_commercial = fields.Boolean(string='Visibilité des boutons des Finaces', default=False)
+    visibility_button_finance = fields.Boolean(string='Visibilité des boutons des Finaces', default=False)
     requester = fields.Many2one('res.users', string='Demandeur')
-    confirm_chief=fields.Boolean(string='Les chefs Confirm??', default=False)
+    confirm_chief=fields.Boolean(string='Les chefs Confirme??', default=False)
+
+    # ==================================================== REJECTED AUTOMATICLY ==================================================================
+    # def rejected_request(self):
+    #     requester= self.requester    
+    #     self.state_application_credit = 'rejected'
+    #     self.information_commecial(self.state_application_credit)
+    # ============================================================================================================================================
+    
+    def information_commecial(self, status):
+        requester= self.requester
+        if status == 'rejected':
+            message = ("<div class='col-xs-6'>"
+                "<ul>"
+                f"<li><i>Demande de crédit pour {self.name}: Réfusé par {self.env.user.name}</i></li>"
+                "</ul>"
+                "</div>")
+            self.message_post(body = message, subject = u"Demande de crédit Réfusé", partner_ids = requester.partner_id.ids)
+        elif status == 'done':
+            message = ("<div class='col-xs-6'>"
+                "<ul>"
+                f"<li><i>Demande de crédit pour {self.name} : Validé par {self.env.user.name}</i></li>"
+                "</ul>"
+                "</div>")
+            self.message_post(body = message, subject = u"Demande de crédit Réfusé", partner_ids = requester.partner_id.ids)
 
     def check_chief(self):
         if self.confirm_chief == False:    
@@ -137,10 +163,11 @@ class ViseoCreditApplication(models.Model):
         else:
             self.visibility_button_chief=False
 
-    def commercial_confirm_boutton(self):
-        self.message_post(body=f"La Demande de credit pour {self.name} de montant {self.plafond_credit} est VALIDE par {self.env.user.name} ")
+    def finance_confirm_boutton(self):
+        # self.message_post(body=f"La Demande de credit pour {self.name} de montant {self.plafond_credit} est VALIDE par {self.env.user.name} ")
         self.state_application_credit='done'
-        self.visibility_button_commercial = False
+        self.information_commecial(self.state_application_credit)
+        self.visibility_button_finance= False
         self.confirm_chief=True
         self.credit_limit = self.plafond_credit
         self.warning_type = self.blocage_type
@@ -152,16 +179,17 @@ class ViseoCreditApplication(models.Model):
                                     (f'res.partner,{self.id}', self.company.id))
 
         is_property = self.env.cr.fetchall()
-        # print('=====================================================================================================================')
         # print(is_property)
 
         if is_property:
             property_id = is_property[0][3]  
+            # =================================================== ORM ===========================================================================
             # property_record = self.env['ir.property'].search([('id','=',property_id),('company_id','!=',1)])
             # print(property_record)
             # property_record.sudo().update({
             #     'value_reference': f'account.payment.term,{self.property_payment_term_id.id}'
             # })
+            # ===================================================================================================================================
             query_update = """
                             UPDATE ir_property
                             SET value_reference = %s
@@ -172,10 +200,6 @@ class ViseoCreditApplication(models.Model):
                 property_id
             ))
             # print(self.company.id)
-
-            # print('§§§§§§§§§§§§§§§§§§§§§§§§§§§§UPDATED§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§')
-
-
         else:
             # print(f'res.partner,{self.id}')
             # print(self.property_payment_term_id.company_id.id)
@@ -191,9 +215,8 @@ class ViseoCreditApplication(models.Model):
                 'fields_id': payment_term_field.id
                 })
             # print(self.company.id)
-            # print('§§§§§§§§§§§§§§§§§§§§§§§§§§§§CREATED§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§')
 
-
+# =================================================== TEST BOUTTON ===========================================================================
     # def test(self):
     #     self.credit_limit = self.plafond_credit
     #     self.warning_type = self.blocage_type
@@ -204,7 +227,6 @@ class ViseoCreditApplication(models.Model):
     #                             (f'res.partner,{self.id}', self.company.id))
 
     #     is_property = self.env.cr.fetchall()
-    #     print('=====================================================================================================================')
     #     print(is_property)
 
     #     if is_property:
@@ -225,9 +247,6 @@ class ViseoCreditApplication(models.Model):
     #         ))
     #         print(self.company.id)
 
-    #         print('§§§§§§§§§§§§§§§§§§§§§§§§§§§§UPDATED§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§')
-
-
     #     else:
     #         # print(f'res.partner,{self.id}')
     #         # print(self.property_payment_term_id.company_id.id)
@@ -243,12 +262,13 @@ class ViseoCreditApplication(models.Model):
     #             'fields_id': payment_term_field.id
     #             })
     #         print(self.company.id)
-    #         print('§§§§§§§§§§§§§§§§§§§§§§§§§§§§CREATED§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§')
+# ================================================================================================================================================
 
-    def commercial_rejected_boutton(self):
-        self.message_post(body=f"La Demandé de credit pour {self.name} de montant {self.plafond_credit} est été REFUSEE par {self.env.user.name}")
+    def finance_rejected_boutton(self):
+        # self.message_post(body=f"La Demandé de credit pour {self.name} de montant {self.plafond_credit} est été REFUSEE par {self.env.user.name}")
         self.state_application_credit='rejected'
-        self.visibility_button_commercial = False
+        self.information_commecial(self.state_application_credit)
+        self.visibility_button_finance = False
         self.confirm_chief==True
 
     def chief_confirm_boutton(self):
@@ -258,7 +278,7 @@ class ViseoCreditApplication(models.Model):
                 "</ul>"
                 "</div>")
         self.message_post(body=f"La Demandé de credit pour {self.name} de montant {self.plafond_credit} est accepté par {self.env.user.name} ")
-        self.visibility_button_commercial=True
+        self.visibility_button_finance=True
         groups = self.env['res.groups'].search([('name', '=', 'Finance')])
         if groups:
             users = groups.mapped('users')
@@ -299,14 +319,13 @@ class ViseoCreditApplication(models.Model):
                         "</div>")
         self.message_post(body=f"{self.env.user.name} a Demandé un credit pour {self.name} de montant {self.plafond_credit}")
         self.requester=self.env.user.id
-
-    def request_credit_application(self):
+    
+    def send_request_credit(self):
         user_id = self.env.user.id
         self.state_application_credit='request'
         self.confirm_chief=False
         model_id = self.env['ir.model'].search([('model', '=', 'sale.order')]).ids
         rules = self.env['rule.rule'].with_context(active_test=False).search([('model_id', 'in', model_id)])
-        # print('=====================================gbgb============================================')
         # print(rules)
         id_rule_of_user=[]
         id_rule_user_parent=[]
@@ -319,12 +338,13 @@ class ViseoCreditApplication(models.Model):
                         id_rule_user_parent.append(rule.parent_id.ids)
                         if rule.parent_id.parent_id:
                             id_rule_user_parent_of_parent.append(rule.parent_id.parent_id.ids)
+            # =================================================== DEBUG REGLE ===========================================================================
             #         print("Règle:", rule.name)
             #         print("Utilisateurs associés:")
             #         print(user.name.name)
             #         print(user.amount_limit)
+            # ================================================================================================================================================
                     id_rule_of_user.append(rule.ids)
-            # print('*************************************************************************') 
         # print(len(id_rule_of_user))
         body_message = ("<div class='col-xs-6'>"
                         "<ul>"
@@ -424,7 +444,6 @@ class ViseoCreditApplication(models.Model):
                     for user_is_chief in is_chief:
                         if user_is_chief.name.id == user_id:
                             if user_is_chief.amount_limit >= self.plafond_credit : 
-                                # print("¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿")
                                 # print(user_is_chief.amount_limit , ">=", self.plafond_credit)
                                 user_chef=True
                                 id_many_rule_of_user.append(many_rule_of_user)
@@ -451,12 +470,82 @@ class ViseoCreditApplication(models.Model):
         else :
             raise exceptions.UserError("Vous n'êtes pas autorisé à solliciter un crédit.")           
 
+    def request_credit_application(self):
+        if self.company_type =='person':
+            if self.cin_document_partner :
+                if self.cr_document_partner:
+                    if self.rib_document_partner:
+                        self.send_request_credit()
+                    else: 
+                        self.rib_file_empty_raise_error()
+                else: 
+                    self.cr_file_empty_raise_error()
+            else: 
+                self.cin_file_empty_raise_error()
+        else :
+            if self.cif_document_partner :
+                if self.rcs_document_partner:
+                    if self.stat_document_partner:
+                        if self.nif_document_partner:
+                            if self.rib_document_partner:
+                                if self.cr_document_partner_represent:
+                                    if self.cin_document_partner_represent:
+                                        self.send_request_credit()
+                                    else: 
+                                        # self.rejected_request()
+                                        self.cin_represent_file_empty_raise_error()
+                                else: 
+                                    # self.rejected_request()
+                                    self.cr_represent_file_empty_raise_error()
+                            else: 
+                                # self.rejected_request()
+                                self.rib_file_empty_raise_error()
+                        else: 
+                            # self.rejected_request()
+                            self.nif_file_empty_raise_error()  
+                    else:  
+                        # self.rejected_request() 
+                        self.stat_file_empty_raise_error()
+                else: 
+                    # self.rejected_request() 
+                    self.rcs_file_empty_raise_error()
+            else: 
+                # self.rejected_request() 
+                self.cif_file_empty_raise_error()
+
+
+    def cin_file_empty_raise_error(self):
+       raise exceptions.UserError("Pour le client Particulier, Il faut ajouter le CIN dans l'onglet 'Document' dans la fiche partner")
+
+    def cr_file_empty_raise_error(self):
+       raise exceptions.UserError("Pour le client Particulier, Il faut ajouter la Cértificat de Résidence(CR) dans l'onglet 'Document' dans la fiche partner")
+
+    def rib_file_empty_raise_error(self):
+       raise exceptions.UserError("Il faut ajouter le RIB dans l'onglet 'Document' dans la fiche partner")
+    
+    def cif_file_empty_raise_error(self):
+       raise exceptions.UserError("Pour le client Société, Il faut ajouter le CIF dans l'onglet 'Document' dans la fiche partner")
+    
+    def nif_file_empty_raise_error(self):
+       raise exceptions.UserError("Pour le client Société, Il faut ajouter le NIF dans l'onglet 'Document' dans la fiche partner")
+    
+    def rcs_file_empty_raise_error(self):
+       raise exceptions.UserError("Pour le client Société, Il faut ajouter le RCS dans l'onglet 'Document' dans la fiche partner")
+    
+    def stat_file_empty_raise_error(self):
+       raise exceptions.UserError("Pour le client Société, Il faut ajouter le STAT dans l'onglet 'Document' dans la fiche partner")
+
+    def cin_represent_file_empty_raise_error(self):
+       raise exceptions.UserError("Pour le client Société, Il faut ajouter le CIN du représentant dans l'onglet 'Document' dans la fiche partner")
+
+    def cr_represent_file_empty_raise_error(self):
+       raise exceptions.UserError("Pour le client Société, Il faut ajouter la Cértificat de Résidence(CR) du représentant dans l'onglet 'Document' dans la fiche partner")
+
     def send_application_credit(self):
         if self.state_application_credit !='request':
             user_id = self.env.user.id
             model_id = self.env['ir.model'].search([('model', '=', 'sale.order')]).ids
             rules = self.env['rule.rule'].with_context(active_test=False).search([('model_id', 'in', model_id)])
-            # print('=====================================gbgb============================================')
             # print(rules)
             rule_of_user=[]
             for rule in rules:          
@@ -467,9 +556,9 @@ class ViseoCreditApplication(models.Model):
                         # print("Utilisateurs associés:")
                         # print(user.name.name)
                         rule_of_user.append(rule.name)
-                # print('*************************************************************************')     
+                  
             if len(rule_of_user) > 0:
-                #------------------------------------------------------------------------------------------------------------------------------------
+                #------------------------------------------------------------------ WIZARD ------------------------------------------------------------
                 return{
                     'type': 'ir.actions.act_window',
                     'res_model': 'credit_application.wizard',

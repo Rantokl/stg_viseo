@@ -32,6 +32,12 @@ class PartnerInformationDocument(models.Model):
     stat_document_partner = fields.Binary(string='Document STAT', attachment=True)
     stat_document_partner_filename = fields.Char(string='Nom du document STAT')
 
+    cin_document_partner_represent = fields.Binary(string='CIN Représentant ', attachment=True)
+    cin_document_partner_filename_represent = fields.Char(string='Nom du document CIN Représentant')
+
+    cr_document_partner_represent = fields.Binary(string='Certificat de Résidence Représentant', attachment=True)
+    cr_document_partner_filename_represent = fields.Char(string='Nom du document RIB Représentant')
+
     @api.depends('rcs_document_partner')
     def compute_required_rcs(self):
         if self.rcs_document_partner:

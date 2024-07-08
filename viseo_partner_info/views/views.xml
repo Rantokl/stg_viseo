@@ -34,6 +34,12 @@
 
                                         <field name="stat_document_partner" filename="stat_document_partner_filename" attrs="{'invisible': [('company_type','=', 'person')]}"/>
                                         <field name="stat_document_partner_filename" invisible="1"/>
+                                        
+                                        <field name="cin_document_partner_represent" filename="cin_document_partner_filename_represent" attrs="{'invisible': [('company_type','=', 'person')]}"/>
+                                        <field name="cin_document_partner_filename_represent" invisible="1"/>
+
+                                        <field name="cr_document_partner_represent" filename="cr_document_partner_filename_represent" attrs="{'invisible': [('company_type','=', 'person')]}"/>
+                                        <field name="cr_document_partner_filename_represent" invisible="1"/>
                                     </group>
                                 </div>
                                 <div class="column" style="flex: 1; min-width: 20%; box-sizing: border-box; padding: 10px;">
@@ -61,6 +67,7 @@
                     <field name="create_config_nif_partner"/>
                     <field name="create_config_rcs_partner"/>
                     <field name="create_config_stat_partner"/>
+                    
                 </tree>
             </field>
         </record>
