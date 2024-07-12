@@ -1,0 +1,179 @@
+<odoo>
+    <template id="report_viseo_exit_document">
+        <t t-call="web.html_container">
+            <t t-foreach="o" t-as="doc">
+                <div class="page">
+                    <t t-if="o.state in ('dir','resp','new')">
+                        <div class="watermark" style="position:absolute;opacity:0.8;z-index:1000;transform:rotate(300deg);-webkit-transform:rotate(300deg);width:100%;">
+                            <p style="font-size:100px;color:#FF0000">NON LIVRABLE</p>
+                        </div>
+                    </t>
+                    <t t-if="o.state == 'back'">
+                        <div class="watermark" style="position:absolute;opacity:0.8;z-index:1000;transform:rotate(300deg);-webkit-transform:rotate(300deg);width:100%;">
+                            <p style="font-size:100px;color:#00A09D">RETOURNEE</p>
+                        </div>
+                    </t>
+                    <t t-if="o.state == 'not_back'">
+                        <div class="watermark" style="position:absolute;opacity:0.8;z-index:1000;transform:rotate(300deg);-webkit-transform:rotate(300deg);width:100%;">
+                            <p style="font-size:100px;color:#FF0000">NON RETOURNEE</p>
+                        </div>
+                    </t>
+                    <div class="oe_title">
+                        <h2>Bon de sortie: <span t-field="doc.name"/></h2><t t-if="o.status=='back'">
+                        <span><p style="font-size:13px !important;text-align:right">A retourner le :<span t-field="doc.back_date"/></p></span>
+                    </t>
+                    </div>
+                    <style>
+                        .table_content th, .table_content td {
+                            border: 1.5px solid black;
+                            padding: 5px;
+                            text-align: center;
+                        }
+
+                        .table_content th{
+                            background-color:grey;
+                            color:white;
+                        }
+
+                        .row{
+                            width:100%;
+                            height:5%;
+                        }
+                        .container {
+                            font-size: 13px !important;
+                            display: flex;
+                            justify-content: space-between;
+                            flex-wrap: wrap;
+                        }
+                        .col-6 {
+                            flex: 1;
+                            padding: 10px;
+                        }
+                        .col-6 p {
+                            margin: 0 0 10px;
+                        }
+                        @media print {
+                            .container {
+                                display: flex;
+                                flex-direction: row;
+                            }
+                            .column {
+                                width: 50%;
+                                padding: 10px;
+                            }
+                        }
+                    </style>
+
+                    <div id="informations" class="container" style="font-size:13px !important; padding-bottom:30px">
+                        <table width="100%" style="font-size:13px !important;">
+                            <thead>
+
+                            </thead>
+                            <tbody>
+                                <td>
+                                    <p><strong>Expediteur:</strong> <t t-esc="doc.expediteur.name"/></p>
+                            <p><strong>Emplacement:</strong> <t t-esc="doc.start"/></p>
+                            <p><strong>Transporteur:</strong> <t t-esc="doc.partner_id.name"/></p>
+                            <p><strong>Véhicule N°:</strong> <t t-esc="doc.vehicle_id.name"/></p>
+                                </td>
+                                <td>
+                                    <p><strong>Date:</strong> <t t-esc="doc.date"/></p>
+                            <p><strong>Destinataire:</strong> <t t-esc="doc.receiver.name"/></p>
+                            <p><strong>Adresse:</strong> <t t-esc="doc.address"/></p>
+                            <p><strong>Motif:</strong> <t t-esc="doc.motif"/></p>
+                                </td>
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                    <table class="table_content" width="100%" style="font-size:13px !important;white-space: nowrap;border-collapse: collapse;
+            width: 100%; padding-top:10px">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Designation/Article</th>
+                                <th class="text-center">Quantité</th>
+                                <th class="text-center">Unité</th>
+                                <th class="text-center">Observation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="doc.product_id" t-as="product">
+                                <tr t-att-class="'bg-200 font-weight-bold o_line_section'">
+                                    <td class="text-right" style="text-align:center">
+                                        <span t-field="product.designation"/>
+
+                                    </td>
+                                    <td class="text-right" style="text-align:center">
+                                        <span t-field="product.quantity"/>
+                                    </td>
+                                    <td class="text-right" style="text-align:center">
+                                        <span t-field="product.unity"/>
+                                    </td>
+                                    <td class="text-right" style="text-align:center">
+                                        <span t-field="product.obs"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+
+                    <div class="col-10" style="padding-top:10px">
+                        <!-- <div class="table-responsive"> -->
+                        <table class="table-bordered" style="border: 1px solid black !important;font-size:13px !important;">
+                            <tr>
+                                <th style="text-align:center;width: 33%;">
+                                    <span>Demandé par</span>
+                                </th>
+                                <th style="text-align:center;width: 33%;" t-if="doc.chief_user_id">
+                                    <span>Validé par</span>
+                                </th>
+                                <th style="text-align:center;width: 33%;" t-if="doc.validator_id">
+                                    <span>Confirmé par</span>
+                                </th>
+                            </tr>
+                            <tr>
+                                <td class="pl-2 pr-2" style="background-color:white;color:black; text-align:center" >
+                                    <div t-if="doc.user_id.signature_image" class="text-center">
+                                        <img t-att-src="image_data_uri(o.user_id.signature_image)" style="max-width: 100px;"/>
+                                    </div>
+                                    <span t-field="doc.user_id"/><br/>
+                                    <span t-field="doc.user_id.employee_ids.job_id" style="font-size:10px !important;"/>
+                                </td>
+                                <td class="pl-2 pr-2" t-if="o.chief_user_id" style="background-color:white;color:black; text-align:center">
+                                    <div t-if="doc.chief_user_id.signature_image" class="text-center">
+                                        <img t-att-src="image_data_uri(o.chief_user_id.signature_image)" style="max-width: 100px;"/>
+                                    </div>
+                                    <span t-field="doc.chief_user_id"/><br/>
+                                    <span t-field="doc.chief_user_id.employee_ids.job_id" style="font-size:10px !important;"/>
+                                </td>
+                                <td class="pl-2 pr-2" t-if="doc.validator_id" style="background-color:white;color:black; text-align:center">
+                                    <div t-if="doc.validator_id.signature_image" class="text-center">
+                                        <img t-att-src="image_data_uri(doc.validator_id.signature_image)" alt="validator_signature" style="max-width:100px;"/>
+                                    </div>
+                                    <span t-field="doc.validator_id"/><br/>
+                                    <span t-field="doc.validator_id.employee_ids.job_id" style="font-size:10px !important;"/>
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- </div> -->
+                    </div>
+
+
+                </div>
+            </t>
+        </t>
+    </template>
+
+      <template id="report_custom_exit">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="viseo_exit.report_viseo_exit_document"/>
+<!--                <t t-call="viseo_print_repair.report_repair_order_documents_test"/>-->
+            </t>
+        </t>
+    </template>
+
+
+</odoo>

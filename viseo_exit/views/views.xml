@@ -1,0 +1,145 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+    <record model="ir.ui.view" id="viseo_exit_list">
+      <field name="name">Bon de Sortie</field>
+      <field name="model">viseo.exit</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="date"/>
+          <field name="expediteur"/>
+          <field name="partner_id"/>
+          <field name="receiver"/>
+          <field name="address"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="viseo_exit_form">
+      <field name="name">Bon de Sortie</field>
+      <field name="model">viseo.exit</field>
+      <field name="arch" type="xml">
+        <form>
+
+          <header>
+            <button
+							name="request_exit"
+							string="DEMANDE BON DE SORTIE"
+							class="oe_highlight"
+							type="object"
+							attrs="{'invisible':[
+								('state', '!=', 'new')
+							]}"/>
+            <button
+							name="resp_validation"
+							string="VALIDATION RESPONSABLE"
+							class="oe_highlight"
+							type="object"
+							attrs="{'invisible':[
+								('state', '!=', 'resp')
+							]}"/>
+
+            <button
+							name="dir_validation"
+							string="VALIDATION DIRECTION"
+							class="oe_highlight"
+							type="object"
+							attrs="{'invisible':[
+								('state', '!=', 'dir'), ('direction','=',False)
+							]}"/>
+              <button
+							name="back_validation"
+							string="RETOURNER"
+							class="oe_highlight"
+							type="object"
+							attrs="{'invisible':[
+								('state', '!=', 'liv'), ('direction','=',False)
+							]}"/>
+            <field
+              name="state"
+              widget="statusbar"
+              statusbar_visible="new,resp,dir,liv"
+              statusbar_colors="{'KEY_IS_STATE':'VALUE_IS_COLOR'}"/>
+          </header>
+          <sheet>
+              <div class="badge-pill badge-success float-right"
+                         attrs="{'invisible': [
+
+                                   ('state', '!=', 'back'),
+
+                                  ]}">
+                        Retourné
+                    </div>
+              <div class="badge-pill badge-secondary float-right"
+                         attrs="{'invisible': [
+
+                                   ('state', '!=', 'not_back'),
+
+                                  ]}">
+                        Non retourné
+                    </div>
+            <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+
+            <group class="row">
+              <group class="col">
+                <field name="expediteur"/>
+                <field name="start"/>
+                <field name="partner_id"/>
+                <field name="vehicle_id"/>
+                  <field name="direction" invisible="1"/>
+              </group>
+              <group class="col">
+                <field name="date"/>
+                <field name="receiver"/>
+                <field name="address"/>
+                <field name="motif"/>
+              </group>
+            </group>
+              <group class="row">
+                  <group class="col">
+                  <field name="status" widget='radio' options="{'horizontal': true}"/>
+              <field name="back_date" attrs="{'invisible':[
+								('status', '=', 'transfert')]}" />
+              </group>
+              </group>
+
+
+            <notebook>
+              <page id="article" string="Article">
+                <field name="product_id">
+                  <tree editable="bottom">
+<!--                        <field name="article"/>-->
+                        <field name="designation" widget="section_and_note_text"/>
+                        <field name="quantity"/>
+                        <field name="unity"/>
+                        <field name="obs"/>
+                    </tree>
+                </field>
+              </page>
+            </notebook>
+          </sheet>
+          <div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+						<field name="message_ids" widget="mail_thread" options='{"thread_level": 1}'/>
+					</div>
+        </form>
+      </field>
+    </record>
+
+    <!-- actions opening views on models -->
+    <record model="ir.actions.act_window" id="viseo_exit_action_window">
+      <field name="name">Bon de Sortie</field>
+      <field name="res_model">viseo.exit</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="viseo_internal_request.menu_internal_request_purchase" name="Consommation de Stock" parent="purchase.menu_purchase_root" sequence="15" groups="base.group_user"/>
+    <menuitem name="Consommation de stock" id="internal_request_menu" parent="viseo_internal_request.menu_internal_request_purchase" action="viseo_internal_request.information_action_form" sequence="10" groups="base.group_user"/>
+    <menuitem name="Bon de sortie" id="viseo_exit_menu_2" parent="viseo_internal_request.menu_internal_request_purchase" action="viseo_exit_action_window" sequence="20" groups="base.group_user"/>
+  </data>
+</odoo>

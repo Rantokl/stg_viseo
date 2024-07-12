@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_viseo_exit,viseo_exit,model_viseo_exit,base.group_user,1,1,1,1
+access_product_exit,product_exit,model_product_exit,base.group_user,1,1,1,1
+access_unity_product,unity.product,model_unity_product,base.group_user,1,1,1,1
+access_viseo_product_exit, viseo_product.exit,model_viseo_product_exit,base.group_user,1,1,1,1
