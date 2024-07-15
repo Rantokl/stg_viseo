@@ -15,6 +15,8 @@ odoo.define('viseo_whatsapp.custom_Chatter', function (require) {
         start: function () {
             this._super.apply(this, arguments);
 
+
+
             rpc.query({
                         model: 'whatsapp.viseo',
                         method: 'computeUser',
@@ -23,7 +25,9 @@ odoo.define('viseo_whatsapp.custom_Chatter', function (require) {
                             console.log("Value:",output['value'])
                             if (output['value'] == 'True'){
                                 $('.o_chatter_button_whatsapp').show();
-                            }else{
+                                $('.o_chatter_button_whatsapp').show();
+                            }else {
+                                $('.o_chatter_button_whatsapp').hide();
                                 $('.o_chatter_button_whatsapp').hide();
                     }
 
@@ -75,7 +79,8 @@ odoo.define('viseo_whatsapp.custom_Chatter', function (require) {
                     method: 'take_group_whatsapp',
                     args: [[],modelValue, idValue],
                     }).then(function(output){
-                        self.do_action({
+                        if (output){
+                            self.do_action({
 
                        name: 'Whatsapp',
                        type: 'ir.actions.act_window',
@@ -88,6 +93,10 @@ odoo.define('viseo_whatsapp.custom_Chatter', function (require) {
                                  },
                        target: 'new',
                         });
+                        }else{
+                            alert("Veuillez rajouter des abonnés")
+                        }
+
                     });
 
         }

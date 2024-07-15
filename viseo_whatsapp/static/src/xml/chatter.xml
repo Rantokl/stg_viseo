@@ -4,21 +4,16 @@
         <t t-extend="mail.chatter.Buttons">
             <t t-jquery=".o_chatter_button_log_note" t-operation="after">
 <!--                <t t-if="widget.context.user_has_group">-->
+                <div class="group_whatsapp" groups="viseo_whatsapp.group_send_whatsapp">
                     <button class="btn btn-link o_chatter_button_whatsapp" title="To send via Whatsapp" >
                         <i class="fa fa-whatsapp" title="Dates"/> Whatsapp
                     </button>
+                </div>
+
 
                 <script type="text/javascript">
             $(document).ready(function() {
-                $('.o_chatter_button_whatsapp').hide();
-
-<!--                    odoo.define('viseo_whatsapp.custom_script', function (require) {-->
-<!--                    "use strict";-->
-
-<!--                    var rpc = require('web.rpc');-->
-
-<!--                    -->
-<!--                });-->
+<!--                    $('.o_chatter_button_whatsapp').hide();-->
             });
         </script>
 
