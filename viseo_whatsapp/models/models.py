@@ -5,6 +5,23 @@ from odoo import models, fields, api
 import requests, json
 
 
+def update_group_security(group_id, admins_only):
+    url = f'http://10.68.132.2:3000/api/default/groups/{group_id}/settings/security/messages-admin-only'
+    headers = {
+        'accept': '*/*',
+        'Content-Type': 'application/json'
+    }
+    data = {
+        'adminsOnly': admins_only
+    }
+
+    response = requests.put(url, headers=headers, json=data)
+
+    if response.status_code == 200:
+        print('Group security settings updated successfully.')
+    else:
+        print(f'Failed to update group security settings. Status code: {response.status_code}')
+        print(response.text)
 def get_user(group_id):
     #group_id = "120363287502846533@g.us"
 
@@ -245,7 +262,9 @@ class WhhatsAppViseo(models.Model):
                     pass
                 else:
                     for user in user_followers:
-                        number = format_numero_telephone(user.mobile)
+                        user_id = self.env['hr.employee'].sudo().search([('address_home_id.id', '=', user.id)])
+                        number_user = user_id.mobile_phone
+                        number = format_numero_telephone(number_user)
                         if number in partner_ids:
                             pass
                         else:
@@ -386,6 +405,7 @@ class WhhatsAppViseo(models.Model):
             print("Le groupe a été créé avec succès !")
             response_data = json.loads(response.text)
             serialized_id = response_data["gid"]["_serialized"]
+            update_group_security(serialized_id,False)
 
             message="Group created by {}".format(self.env.user.name)
             send_whatsapp_message(serialized_id,message)
@@ -450,7 +470,7 @@ class WhhatsAppViseo(models.Model):
             data = response.json()
 
             if data:
-                message_data = data[-1]
+                message_data = data[-1  ]
                 message = message_data['body']
                 group = self.env['whatsapp.group'].search([('chat_ids', '=', chat_id)])
                 if group.body == message:
@@ -608,7 +628,7 @@ class MassWhatsapp(models.Model):
 
         return True
 
-    def send_message_api(id,message):
+    def send_message_api(self,id,message):
         # Remplacez cette URL par l'URL de votre API
         # print(message[0])
         api_url = "http://10.68.132.2:3000/api/sendText/"
