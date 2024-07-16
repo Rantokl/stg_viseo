@@ -233,7 +233,13 @@ class WhhatsAppViseo(models.Model):
     group_name = fields.Char('Groupe')
     choice = fields.Selection([('interne', 'Interne'), ('wclient', 'Interne avec client')], 'Envoyer en',
                               default='interne')
-    part_id = fields.Boolean(compute="computeUser", default=False)
+    part_id = fields.Boolean(compute="_computeUser", default=False)
+
+    def _computeUser(self):
+        if self.env.user.has_group('viseo_whatsapp.group_send_whatsapp'):
+            return True
+        else:
+            return False
 
     # @api.depends('current_user')
     def computeUser(self):

@@ -15,9 +15,8 @@ odoo.define('viseo_whatsapp.custom_Chatter', function (require) {
         start: function () {
             this._super.apply(this, arguments);
 
-
-
-            rpc.query({
+            $(document).ready(function() {
+                rpc.query({
                         model: 'whatsapp.viseo',
                         method: 'computeUser',
                         args: [[]],
@@ -34,6 +33,9 @@ odoo.define('viseo_whatsapp.custom_Chatter', function (require) {
                     }).catch(function() {
                         console.error('Erreur lors de la vérification du groupe utilisateur.');
                     });
+            });
+
+
 //            });
 //            this._super.apply(this, arguments).then(function () {
 ////                session.user_has_group('viseo_whatsapp.group_send_whatsapp').then(function(has_group) {
