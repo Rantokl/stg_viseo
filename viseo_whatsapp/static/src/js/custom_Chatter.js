@@ -23,9 +23,11 @@ odoo.define('viseo_whatsapp.custom_Chatter', function (require) {
                         }).then(function(output){
                             console.log("Value:",output['value'])
                             if (output['value'] == 'True'){
+                                document.getElementById("whatsapp").hidden = false;
                                 $('.o_chatter_button_whatsapp').show();
                                 $('.o_chatter_button_whatsapp').show();
                             }else {
+                                document.getElementById("whatsapp").hidden = true;
                                 $('.o_chatter_button_whatsapp').hide();
                                 $('.o_chatter_button_whatsapp').hide();
                     }

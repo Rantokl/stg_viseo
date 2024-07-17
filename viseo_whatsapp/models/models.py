@@ -237,8 +237,10 @@ class WhhatsAppViseo(models.Model):
 
     def _computeUser(self):
         if self.env.user.has_group('viseo_whatsapp.group_send_whatsapp'):
+            print('Test true')
             return True
         else:
+            print('Test False')
             return False
 
     # @api.depends('current_user')
