@@ -4,11 +4,7 @@
     </record>
 
     <record id="group_send_whatsapp" model="res.groups">
-<<<<<<< HEAD
-        <field name="name">Whatsapp users</field>
-        <field name="category_id" ref="viseo_whatsapp.module_categorie_whatsapp"/>
-        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
-=======
+
         <field name="name">Envoi whatsapp</field>
         <field name="category_id" ref="viseo_whatsapp.module_categorie_whatsapp"/>
         <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
@@ -18,7 +14,7 @@
         <field name="category_id" ref="viseo_whatsapp.module_categorie_whatsapp"/>
         <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
     </record>
->>>>>>> 3cf763ab107577f5d4443362b75d19a2cb2eec82
+
 
 
     </odoo>
