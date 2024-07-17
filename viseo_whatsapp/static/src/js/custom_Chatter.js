@@ -25,16 +25,17 @@ odoo.define('viseo_whatsapp.custom_Chatter', function (require) {
                             if (output['value'] == 'True'){
                                 document.getElementById("whatsapp").hidden = false;
                                 $('.o_chatter_button_whatsapp').show();
-                                $('.o_chatter_button_whatsapp').show();
+
                             }else {
                                 document.getElementById("whatsapp").hidden = true;
                                 $('.o_chatter_button_whatsapp').hide();
-                                $('.o_chatter_button_whatsapp').hide();
+
                     }
 
-                    }).catch(function() {
-                        console.error('Erreur lors de la vérification du groupe utilisateur.');
-                    });
+                    })
+//                    .catch(function() {
+//                        console.error('Erreur lors de la vérification du groupe utilisateur.');
+//                    });
             });
 
 
