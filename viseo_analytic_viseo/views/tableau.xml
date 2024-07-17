@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+        <template id="custom_html_template_analytique">
+        <div class="pivot_table">
+            <h2>Tableau analytique</h2>
+            <div class="container-lg">
+                <table class="table table-bordered" id="tableanalytique">
+                    <thead>
+                        <tr>
+                            <th id="header1" onclick="showModal('Header 1')">
+                                <span>Répartir</span>
+                                <hr/>
+                                <span>Rubrique</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="cell-body"></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </template>
+
+
+</odoo>

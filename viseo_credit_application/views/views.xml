@@ -19,7 +19,7 @@
                                        /> -->
                                 <field name="state_application_credit" readonly="1"/>
                                 <field name="visibility_button_chief" invisible="1"/>
-                                <field name="visibility_button_commercial" invisible="1"/>
+                                <field name="visibility_button_finance" invisible="1"/>
                             </group>
                             <group>
                                 <button string="Valider" 
@@ -34,17 +34,17 @@
                                  
                                 <button string="Confirmer" 
                                         type="object" 
-                                        name="commercial_confirm_boutton" 
+                                        name="finance_confirm_boutton" 
                                         class="oe_highlight" 
-                                        groups="viseo_credit_application.credit_application_commercial"
-                                        attrs="{'invisible': [('visibility_button_commercial','=', False)]}"/>
+                                        groups="viseo_credit_application.credit_application_finance"
+                                        attrs="{'invisible': [('visibility_button_finance','=', False)]}"/>
                                         
                                 <button string="Refuser" 
                                         type="object" 
-                                        name="commercial_rejected_boutton" 
+                                        name="finance_rejected_boutton" 
                                         class="oe_highlight" 
-                                        groups="viseo_credit_application.credit_application_commercial"
-                                        attrs="{'invisible': [('visibility_button_commercial','=', False)]}"/>
+                                        groups="viseo_credit_application.credit_application_finance"
+                                        attrs="{'invisible': [('visibility_button_finance','=', False)]}"/>
                             </group>
                     </page> 
                 </notebook>

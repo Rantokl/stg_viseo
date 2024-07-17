@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record model="ir.ui.view" id="wizard_form_add_child">
+        <field name="name">wizard add child</field>
+        <field name="model">analytic.addchild</field>
+        <field name="arch" type="xml">
+            <form string="Wizard add child">
+                <group>
+
+                    <field name="parents"/>
+                    <field name="enfants"/>
+                </group>
+                <footer>
+
+                    <button special="cancel" string="Annuler" class="btn btn-sm btn-default"/>
+
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_child_wizard" model="ir.actions.act_window">
+        <field name="name">Add Child</field>
+        <field name="res_model">analytic.addchild</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="wizard_form_add_child"/>
+        <field name="target">new</field>
+    </record>
+</odoo>

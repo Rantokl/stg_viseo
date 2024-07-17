@@ -2,12 +2,59 @@ odoo.define('viseo_whatsapp.custom_Chatter', function (require) {
     "use strict";
 
     var Chatter = require('mail.Chatter');
+//    var rpc = require('web.rpc');
+
     var rpc = require('web.rpc');
+    var session = require('web.session');
+
+
 
     Chatter.include({
+
+
         start: function () {
             this._super.apply(this, arguments);
+
+            $(document).ready(function() {
+                rpc.query({
+                        model: 'whatsapp.viseo',
+                        method: 'computeUser',
+                        args: [[]],
+                        }).then(function(output){
+                            console.log("Value:",output['value'])
+                            if (output['value'] == 'True'){
+                                document.getElementById("whatsapp").hidden = false;
+                                $('.o_chatter_button_whatsapp').show();
+                                $('.o_chatter_button_whatsapp').show();
+                            }else {
+                                document.getElementById("whatsapp").hidden = true;
+                                $('.o_chatter_button_whatsapp').hide();
+                                $('.o_chatter_button_whatsapp').hide();
+                    }
+
+                    }).catch(function() {
+                        console.error('Erreur lors de la vérification du groupe utilisateur.');
+                    });
+            });
+
+
+//            });
+//            this._super.apply(this, arguments).then(function () {
+////                session.user_has_group('viseo_whatsapp.group_send_whatsapp').then(function(has_group) {
+////                    if (!has_group) {
+////                        self.$('.o_chatter_button_whatsapp').hide();
+////                    }
+////                });
+//                    rpc.query({
+//                        model: 'whatsapp.viseo',
+//                        method: '_computeUser',
+//                        args: [[]],
+//                        }).then(function(output){
+//                            console.log("VAlue:",output['value'])
+//                        });
+//            });
             this.$('.o_chatter_button_whatsapp').click(this._onCustomButtonClick.bind(this));
+//
         },
         _onCustomButtonClick: function (ev) {
 
@@ -36,7 +83,8 @@ odoo.define('viseo_whatsapp.custom_Chatter', function (require) {
                     method: 'take_group_whatsapp',
                     args: [[],modelValue, idValue],
                     }).then(function(output){
-                        self.do_action({
+                        if (output){
+                            self.do_action({
 
                        name: 'Whatsapp',
                        type: 'ir.actions.act_window',
@@ -49,6 +97,10 @@ odoo.define('viseo_whatsapp.custom_Chatter', function (require) {
                                  },
                        target: 'new',
                         });
+                        }else{
+                            alert("Veuillez rajouter des abonnés")
+                        }
+
                     });
 
         }

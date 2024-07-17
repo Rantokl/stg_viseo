@@ -22,9 +22,9 @@
                 <field name="body"/>
 
             </group>
-            <group>
-                        <field name="attachment_ids" widget="many2many_binary"/>
-                      </group>
+<!--            <group>-->
+<!--                        <field name="attachment_ids" widget="many2many_binary"/>-->
+<!--                      </group>-->
          <footer>
               <button string="Envoyer" type="object" class="oe_highlight" icon="fa-send"  name="action_send_whats"/>
              <button string="Cancel" class="btn-secondary" special="cancel"/>
@@ -46,6 +46,7 @@
                     <field name="chat_ids"/>
                     <field name="body"/>
                     <field name="users"/>
+                    <field name="partner_id" widget="many2many_tags"/>
                 </group>
 
             </sheet>
@@ -74,19 +75,19 @@
 
 
 
-      <record id="viseo_whatsapp_id" model="ir.ui.view">
-        <field name="name">viseo_whatsapp</field>
-        <field name="model">mail.wizard.invite</field>
-        <field name="inherit_id" ref="mail.mail_wizard_invite_form"/>
-        <field name="arch" type="xml">
-<!--             find field description and add the field-->
-<!--                 idea_ids after it -->
-            <xpath expr="//field[@name='send_mail']" position="after">
-              <field name="whatsapp" string="Ajouter au groupe Whatsapp"/>
+<!--      <record id="viseo_whatsapp_id" model="ir.ui.view">-->
+<!--        <field name="name">viseo_whatsapp</field>-->
+<!--        <field name="model">mail.wizard.invite</field>-->
+<!--        <field name="inherit_id" ref="mail.mail_wizard_invite_form"/>-->
+<!--        <field name="arch" type="xml">-->
+<!--&lt;!&ndash;             find field description and add the field&ndash;&gt;-->
+<!--&lt;!&ndash;                 idea_ids after it &ndash;&gt;-->
+<!--            <xpath expr="//field[@name='send_mail']" position="after">-->
+<!--              <field name="whatsapp" string="Ajouter au groupe Whatsapp"/>-->
 
-            </xpath>
-        </field>
-    </record>
+<!--            </xpath>-->
+<!--        </field>-->
+<!--    </record>-->
 
       <!--<record id="view_extend_chatter_topbar" model="ir.ui.view">
             <field name="name">model.chatter_topbar_extended</field>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="my_template">
+        <t t-call="web.html_container">
+            <t t-call="web.internal_layout">
+                <div class="page">
+                    <h1>Mon tableau dynamique</h1>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Valeur</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="data" t-as="row">
+                                <td><span t-esc="row['name']"/></td>
+                                <td><span t-esc="row['value']"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+
+
+    <record id="action_my_template" model="ir.actions.report">
+    <field name="name">Mon tableau dynamique</field>
+    <field name="model">my.model</field>
+    <field name="report_type">qweb-html</field>
+    <field name="report_name">viseo_analytic_viseo.my_template</field>
+    <field name="report_file">viseo_analytic_viseo.my_template</field>
+    <field name="binding_model_id" ref="model_my_model"/>
+    <field name="binding_type">report</field>
+</record>
+</odoo>

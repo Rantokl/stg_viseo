@@ -213,6 +213,29 @@ class viseo_rdv_mobile(models.Model):
         all_atelier = atelier_id.search([], order='name')
         return all_atelier
 
+
+    def createRDV(self):
+        start_date = datetime.now()
+        end_date = start_date + timedelta(hours=1)
+        start_date = datetime.strftime(start_date, '%Y-%m-%d %H:%M:%S')
+        end_date = datetime.strftime(end_date, '%Y-%m-%d %H:%M:%S')
+        imran = {
+            'current_user': 7673,
+            'atelier_id': 6,
+            'emplacement': 'pl',
+            'type_rendez_vous_id': 1,
+            'state': 'accepted',
+            'mecanicien_id': 7154,
+            'place_id': 1,
+            'customer_vehicle_id': 4199,
+            'note': 'Entretien ',
+            'date_start': start_date,
+            'date_stop':end_date
+        }
+
+        self.create(imran)
+
+
     def action_ask_rdv(self):
         to_subscribe = self.responsable_atelier_id
         substitute_leave = self.env['ir.module.module'].sudo().search(

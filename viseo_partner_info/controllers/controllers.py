@@ -19,3 +19,15 @@
 #         return http.request.render('viseo_partner_info.object', {
 #             'object': obj
 #         })
+from odoo import http
+from odoo.http import request
+
+class PDFPreviewController(http.Controller):
+    @http.route('/web/pdf_preview', type='http', auth='user')
+    def pdf_preview(self, id=None, **kwargs):
+        record = request.env['res.partner'].browse(int(id))
+        pdf_data = record.pdf_file
+        return request.make_response(pdf_data, headers=[
+            ('Content-Type', 'application/pdf'),
+            ('Content-Disposition', 'inline; filename="preview.pdf"')
+        ])

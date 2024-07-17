@@ -20,21 +20,33 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','account','viseo_substitute_leave','purchase'],
+    'depends': ['base','account','viseo_substitute_leave','purchase','web'],
 
     # always loaded
     'data': [
         'security/ir.model.access.csv',
         'views/views.xml',
         'views/sequence.xml',
-        # 'views/rubrique.xml',
+        'views/tableau.xml',
         'views/template_view.xml',
-        #'views/table.xml',
+        'views/analytique.xml',
         'views/templates.xml',
+        'wizard/child.xml',
+        'wizard/analytic.xml',
+        'views/analytique_template.xml',
+        'views/test.xml',
     ],
     'qweb':['static/src/xml/analytique.xml',
             'static/src/xml/template.xml'],
-
+    'assets': {
+        'web.assets_backend': [
+            'your_module_name/static/src/js/department_percentage_widget.js',
+            'viseo_analytic_viseo/static/src/js/custom_template.js',# Assurez-vous que le chemin est correct
+        ],
+        'web.assets_frontend': [
+            'viseo_analytic_viseo/static/src/js/custom_template.js',
+        ],
+    },
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',

@@ -1,0 +1,13 @@
+<odoo>
+    <record id="group_validation_direction_viseo_exit" model="res.groups">
+        <field name="name">Validation direction bon de sortie</field>
+        <field name="category_id" ref="base.module_category_operations_purchase"/>
+       <!-- <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>-->
+    </record>
+
+     <record id="group_validation_direction_viseo_exit_not_notified" model="res.groups">
+        <field name="name">Validation direction bon de sortie non notifié</field>
+        <field name="category_id" ref="base.module_category_operations_purchase"/>
+       <!-- <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>-->
+    </record>
+</odoo>

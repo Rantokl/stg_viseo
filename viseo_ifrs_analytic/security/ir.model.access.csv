@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ifrs_section,ifrs.section users,model_ifrs_section,base.group_user,1,1,1,1
+access_ifrs_section_type,ifrs.section.type users,model_ifrs_section_type,base.group_user,1,1,1,1
+access_ifrs_move_line,ifrs.move.line users,model_ifrs_move_line,base.group_user,1,1,1,1
+access_analytic_section,analytic.section users,model_analytic_section,base.group_user,1,1,1,1
+access_analytic_section_type,analytic.section.type users,model_analytic_section_type,base.group_user,1,1,1,1
+access_analytic_move_line,analytic.move.line users,model_analytic_move_line,base.group_user,1,1,1,1
+access_ifrs_rules,ifrs.rules users,model_ifrs_rules,base.group_user,1,1,1,1
+access_ifrs_origin_rules,ifrs.origin.rules users,model_ifrs_origin_rules,base.group_user,1,1,1,1
+access_ifrs_dest_rules,ifrs.origin.rules users,model_ifrs_dest_rules,base.group_user,1,1,1,1
+access_analytic_rules,analytic.rules users,model_analytic_rules,base.group_user,1,1,1,1
+access_analytic_origin_rules,analytic.origin.rules users,model_analytic_origin_rules,base.group_user,1,1,1,1
+access_analytic_dest_rules,analytic.dest.rules users,model_analytic_dest_rules,base.group_user,1,1,1,1

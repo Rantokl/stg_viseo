@@ -1,0 +1,20 @@
+<odoo>
+    <data>
+        <record id="view_analytique_excel_wizard" model="ir.ui.view">
+            <field name="name">analytique.excel.wizard.form</field>
+            <field name="model">analytique.excel.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Télécharger le fichier Excel">
+                    <group>
+                        <field name="excel_file" filename="file_name" readonly="1"/>
+                        <field name="file_name" readonly="1"/>
+                    </group>
+                    <footer>
+                        <button name="download_excel_file" string="Télécharger" type="object" class="oe_highlight"/>
+                        <button string="Fermer" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

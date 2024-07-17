@@ -10,5 +10,15 @@
             <field eval="False" name="company_id"/>
             <field name="implementation">standard</field>
         </record>
+
+        <record id="analytique_tableau_sequence" model="ir.sequence">
+            <field name="name">Tableau analytique </field>
+            <field name="code">viseo.analytique.view</field>
+            <field name="prefix">TAB_AL.%(y)s.</field>
+            <field name="number_increment">1</field>
+            <field name="padding">3</field>
+            <field eval="False" name="company_id"/>
+            <field name="implementation">standard</field>
+        </record>
     </data>
 </odoo>

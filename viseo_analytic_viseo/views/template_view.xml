@@ -6,74 +6,29 @@
             <form >
                 <header>
 
-                    <button name="read_depart_group" string="Test data" class="oe_highlight"  type="object" />
+                    <button name="openWizardChild" string="Ajouter des enfants" class="oe_highlight"  type="object" />
+                    <button name="generate_excel_file" string="Exporter" class="oe_highlight"  type="object" />
                 </header>
                 <sheet>
+                    <group>
+                        <field name="analytic_id" readonly="1"/>
+                    </group>
 
-                    <templates id="analytique_viseo">
-                        <t t-name="custom_html_template">
-                            <div class="pivot_table">
-                                <h2>Tableau analytique</h2>
-                                 <div class="container-lg">
-                            <table class="table table-bordered" id="tableanalytique">
-                                <thead>
-                                    <tr>
-                                        <th onclick="showModal('Header 1')">
-                                            <span>Département</span>
-                                            <hr/>
-                                            <span>Rubrique</span>
-                                        </th>
+                    <t t-call="custom_html_template_analytique">
+                        <t t-set="analytic_data" t-value="o.get_analytic_data()"/>
+                    </t>
 
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                        <!--                <td onclick="showModal('Row 1, Col 1')">Data 1</td>-->
-
-                                    </tr>
-
-                                </tbody>
-                            </table>
-                            </div>
-                            </div>
+                    <field name="html_content" />
 
 
-                            </t>
-
-                </templates>
-
-                    <field name="html_content" widget="html" options="{'render': 'as-is'}">
-                            <templates>
-                                <div>
-                                    <!-- Your dynamic HTML template with a table goes here -->
-                                    <h1>Hello, ${object.name}!</h1>
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Column 1</th>
-                                                <th>Column 2</th>
-                                                <!-- Add more columns as needed -->
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <!--<t t-foreach="object.your_related_model_ids" t-as="record">
-                                                <tr>
-                                                    <td>${record.field1}</td>
-                                                    <td>${record.field2}</td>
-                                                    &lt;!&ndash; Add more columns as needed &ndash;&gt;
-                                                </tr>
-                                            </t>-->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </templates>
-                        </field>
 
                 </sheet>
 
             </form>
         </field>
     </record>
+
+
 
 
 </odoo>

@@ -1,16 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
     <templates xml:space="preserve">
-    <t t-extend="mail.chatter.Buttons">
-        <t t-jquery=".o_chatter_button_log_note" t-operation="after">
-<!--            <div class="col-lg-4">-->
-                <button class="btn btn-link o_chatter_button_whatsapp" title="To send via Whatsapp" name="openWhatsapp">
-                <i class="fa fa-whatsapp" title="Dates" /> Whatsapp
-            </button>
-<!--            </div>-->
+        <t t-extend="mail.chatter.Buttons">
+            <t t-jquery=".o_chatter_button_log_note" t-operation="after">
+<!--                <t t-if="widget.context.user_has_group">-->
+                <div id="whatsapp" class="group_whatsapp" groups="viseo_whatsapp.group_send_whatsapp">
+                    <button class="btn btn-link o_chatter_button_whatsapp" title="To send via Whatsapp" attrs="{'invisible':[('part_id','=',False)]}">
+                        <i class="fa fa-whatsapp" title="Dates"/> Whatsapp
+                    </button>
+                </div>
 
+
+                <script type="text/javascript">
+            $(document).ready(function() {
+
+            });
+        </script>
+
+<!--                </t>-->
+            </t>
         </t>
-    </t>
-</templates>
+    </templates>
 
 
+<!--name="openWhatsapp"-->
+<!--                >-->
+<!--                -->
