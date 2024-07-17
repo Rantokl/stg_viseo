@@ -8,10 +8,10 @@ import datetime
 from rpc import mailsend
 from vehicle import vehicle_info
 
-from whats import sendmes
-# cd from sms import sms
+#from whats import sendmes
+
 from rdv import rdvvehicle
-import random
+
 from database import dbconnex
 
 server = 'localhost'
@@ -117,7 +117,7 @@ while True:
                             #mailsend(card,loc, tt, vehicle_id,mdl, plq,email)
                             #time.sleep(2)
                         else :
-                            print("Vehicule: None, card not attributed!!!")
+                            print("Vehicle: None, card not attributed!!!")
                             time.sleep(2)
             # except:
             #     print('Error in code')            
