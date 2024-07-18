@@ -1,62 +1,38 @@
 odoo.define('viseo_whatsapp.custom_Chatter', function (require) {
     "use strict";
 
-    var Chatter = require('mail.Chatter');
-//    var rpc = require('web.rpc');
-
+    var Chatter = require('mail.Chatter')
     var rpc = require('web.rpc');
     var session = require('web.session');
+    var config = require('web.config');
+    var QWeb = require('web.core').qweb;
 
 
 
     Chatter.include({
+        start: async function () {
 
-
-        start: function () {
             this._super.apply(this, arguments);
 
-            $(document).ready(function() {
-                rpc.query({
-                        model: 'whatsapp.viseo',
-                        method: 'computeUser',
-                        args: [[]],
-                        }).then(function(output){
-                            console.log("Value:",output['value'])
-                            if (output['value'] == 'True'){
-                                document.getElementById("whatsapp").hidden = false;
-                                $('.o_chatter_button_whatsapp').show();
-
-                            }else {
-                                document.getElementById("whatsapp").hidden = true;
-                                $('.o_chatter_button_whatsapp').hide();
-
-                    }
-
-                    })
-//                    .catch(function() {
-//                        console.error('Erreur lors de la vérification du groupe utilisateur.');
-//                    });
-            });
-
-
-//            });
-//            this._super.apply(this, arguments).then(function () {
-////                session.user_has_group('viseo_whatsapp.group_send_whatsapp').then(function(has_group) {
-////                    if (!has_group) {
-////                        self.$('.o_chatter_button_whatsapp').hide();
-////                    }
-////                });
-//                    rpc.query({
-//                        model: 'whatsapp.viseo',
-//                        method: '_computeUser',
-//                        args: [[]],
-//                        }).then(function(output){
-//                            console.log("VAlue:",output['value'])
-//                        });
-//            });
+            this._renderButtons()
             this.$('.o_chatter_button_whatsapp').click(this._onCustomButtonClick.bind(this));
-//
+
         },
+        async willStart() {
+        await this._super(...arguments);
+        this.hasDocumentUserGroup = await session.user_has_group('viseo_whatsapp.group_send_whatsapp');
+    },
+
+        _renderButtons: function () {
+        return QWeb.render('mail.chatter.Buttons', {
+            newMessageButton: !!this.fields.thread,
+            logNoteButton: this.hasLogButton,
+            scheduleActivityButton: !!this.fields.activity,
+            isMobile: config.device.isMobile,
+            has_group: this.hasDocumentUserGroup,
+
+        });
+    },
         _onCustomButtonClick: function (ev) {
 
             var self=this;
@@ -108,3 +84,49 @@ odoo.define('viseo_whatsapp.custom_Chatter', function (require) {
     });
 
 });
+
+
+
+//            $(document).ready(function() {
+
+//                rpc.query({
+//                        model: 'whatsapp.viseo',
+//                        method: 'computeUser',
+//                        args: [[]],
+//                        }).then(function(output){
+//                            console.log("Value:",output['value'])
+//                            if (output['value'] == 'True'){
+//                                console.log("True")
+//                                $('.o_chatter_button_whatsapp').show();
+//
+//                            }else {
+//                                console.log("False")
+//                                $('.o_chatter_button_whatsapp').hide();
+//
+//                    }
+//
+//                    })
+//            });
+//               session.user_has_group('viseo_whatsapp.group_send_whatsapp').then(function(has_group){
+//                if(has_group==true){
+//                    $('.o_chatter_button_whatsapp').show();
+//                }else{
+//                    $('.o_chatter_button_whatsapp').hide();
+//                }
+//            }
+
+//            });
+//            this._super.apply(this, arguments).then(function () {
+////                session.user_has_group('viseo_whatsapp.group_send_whatsapp').then(function(has_group) {
+////                    if (!has_group) {
+////                        self.$('.o_chatter_button_whatsapp').hide();
+////                    }
+////                });
+//                    rpc.query({
+//                        model: 'whatsapp.viseo',
+//                        method: '_computeUser',
+//                        args: [[]],
+//                        }).then(function(output){
+//                            console.log("VAlue:",output['value'])
+//                        });
+//            });

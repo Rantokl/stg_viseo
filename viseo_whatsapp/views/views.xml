@@ -13,9 +13,9 @@
                 <field name="model_name" invisible="1"/>
                 <field name="users" invisible="1"/>
                 <field name="choice" widget='radio' options="{'horizontal': true}"/>
-
+                <field name="customer" invisible="1"/>
                  <field name="receiver"  attrs="{
-										'invisible':[('choice', 'in', ['interne'])]}"/>
+										'invisible':['|',('choice', '=', 'interne'),('customer','=',True)]}"/>
 <!--                <field name="group_id" attrs="{-->
 <!--										'invisible':[('choice', '=', 'uclient')]}"/>-->
                 <field name="group_name" />

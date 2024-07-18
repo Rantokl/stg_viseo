@@ -233,15 +233,20 @@ class WhhatsAppViseo(models.Model):
     group_name = fields.Char('Groupe')
     choice = fields.Selection([('interne', 'Interne'), ('wclient', 'Interne avec client')], 'Envoyer en',
                               default='interne')
-    part_id = fields.Boolean(compute="_computeUser", default=False)
+    customer = fields.Boolean(compute="_computeUser", default=False)
 
+    @api.onchange('group_name')
     def _computeUser(self):
-        if self.env.user.has_group('viseo_whatsapp.group_send_whatsapp'):
-            print('Test true')
-            return True
+        if self.choice == 'wclient':
+            group, group_name = get_api_group(self.group_name)
+            if group:
+                self.customer = True
+
+            else:
+                self.customer = False
+
         else:
-            print('Test False')
-            return False
+            self.customer = False
 
     # @api.depends('current_user')
     def computeUser(self):
@@ -250,13 +255,16 @@ class WhhatsAppViseo(models.Model):
         else:
             return {'value': 'False'}
 
-    @api.onchange('receiver')
-    def addCustomer(self):
-        client = self.receiver
-        if client:
-            group, group_name = get_api_group(self.group_name)
-            number = format_numero_telephone(client.mobile)
-            add_participant_to_group(group, number)
+    # @api.onchange('receiver')
+    # def addCustomer(self):
+    #     client = self.receiver
+    #     if client:
+    #         group, group_name = get_api_group(self.group_name)
+    #         if group:
+    #             number = format_numero_telephone(client.mobile)
+    #             add_participant_to_group(group, number)
+    #         else:
+    #             pass
 
     @api.onchange('group_name')
     def UpdateDeleteUser(self):
@@ -300,12 +308,12 @@ class WhhatsAppViseo(models.Model):
                     group_name1 = 'INT_' + 'PARTNER_' + str(data.id)
                 else:
                     group_name1 = 'INT_' + data.name
-            groups, group_name = get_api_group(group_name1)
-            if group_name is None:
-                self.createGroup(group_name1)
-                self.group_name = group_name1
-            else:
-                self.group_name = group_name
+            # groups, group_name = get_api_group(group_name1)
+            # if group_name is None:
+            #     self.createGroup(group_name1)
+            #     self.group_name = group_name1
+            # else:
+            self.group_name = group_name1
         else:
             if self.choice == 'wclient':
                 if self.model_name == 'fleet.vehicle':
@@ -317,11 +325,11 @@ class WhhatsAppViseo(models.Model):
                         group_name1 = data.name
                 groups, group_name = get_api_group(group_name1)
 
-                if not group_name:
-                    self.createGroup(group_name1)
-                    self.group_name = group_name1
-                else:
-                    self.group_name = group_name
+                # if not group_name:
+                #     self.createGroup(group_name1)
+                #     self.group_name = group_name1
+                # else:
+                self.group_name = group_name1
 
         # users = self.env[self.model_name].search([('id', '=', self.id_model)])
         # return users.message_follower_ids.partner_id
@@ -377,8 +385,8 @@ class WhhatsAppViseo(models.Model):
             numbers.append(number)
             partner.append(user.id)
             if not user.mobile:
-                user.write({'mobile':number[0:12],
-                            'phone':number[0:12]})
+                user.write({'mobile': number[0:12],
+                            'phone': number[0:12]})
 
         user_mobile = self.env['hr.employee'].sudo().search([('user_id.id', '=', self.env.user.id)])
         number_user = user_mobile.mobile_phone
@@ -431,6 +439,7 @@ class WhhatsAppViseo(models.Model):
 
             }
             self.env['whatsapp.group'].sudo().create(groups)
+            return serialized_id
         else:
             print("Erreur lors de la création du groupe. Code de réponse :", response.status_code)
         # else:
@@ -494,10 +503,10 @@ class WhhatsAppViseo(models.Model):
 
                     local = '0' + author[3:-5]
                     interna = '+261' + author[3:-5]
-                    intern = '261'+author[3:-5]
+                    intern = '261' + author[3:-5]
 
                     partner = self.env['res.partner'].sudo().search(
-                        ['|','|' ,('mobile', '=', local), ('mobile', '=', interna),('mobile', '=', intern)])
+                        ['|', '|', ('mobile', '=', local), ('mobile', '=', interna), ('mobile', '=', intern)])
                     if partner:
                         group.write({
                             'body': message
@@ -547,6 +556,29 @@ class WhhatsAppViseo(models.Model):
             data.message_post(
                 body=bodyValue)
             data.message_subscribe(partner_ids=self.env.user.partner_id.ids)
+        else:
+            if self.receiver is None:
+                raise UserError("Veuillez remplir le champ client")
+            else:
+                if self.receiver:
+                    serialized_id = self.createGroup(self.group_name)
+                    add_participant_to_group(serialized_id, self.receiver.mobile)
+                    response = send_whatsapp_message(serialized_id, self.body)
+                    bodyValue = (("<p>%s</p>"
+                                  '<p style="color:blue;">Envoyé par Whatsapp</p>') % (self.body))
+                    data.message_post(
+                        body=bodyValue)
+                    data.message_subscribe(partner_ids=self.env.user.partner_id.ids)
+
+                else:
+
+                    serialized_id = self.createGroup(self.group_name)
+                    response = send_whatsapp_message(serialized_id, self.body)
+                    bodyValue = (("<p>%s</p>"
+                                  '<p style="color:blue;">Envoyé par Whatsapp</p>') % (self.body))
+                    data.message_post(
+                        body=bodyValue)
+                    data.message_subscribe(partner_ids=self.env.user.partner_id.ids)
 
         return {
             'type': 'ir.actions.client',
@@ -693,7 +725,6 @@ class MailMessage(models.Model):
         return res
 
 
-
 class Respartner(models.Model):
     _inherit = 'res.partner'
 
@@ -726,12 +757,25 @@ class Respartner(models.Model):
         for partner in self.env['res.partner'].sudo().search([]):
             employee = self.env['hr.employee'].sudo().search([('address_home_id', '=', partner.id)])
             # if not partner.phone and partner.employee_ids:
-                # Get the employee's mobile phone number if available
+            # Get the employee's mobile phone number if available
 
             if employee and employee.mobile_phone:
                 partner.phone = self.normalize_phone_number(employee.mobile_phone)
-                partner.write({'phone':partner.phone})
+                partner.write({'phone': partner.phone})
 
             if partner.phone:
                 # Normalize the phone number
                 partner.phone = self.normalize_phone_number(partner.phone)
+
+
+class MailChatter(models.Model):
+    _inherit = 'res.users'
+
+    user_in_whatsapp_group = fields.Boolean(compute='_compute_user_in_whatsapp_group', default=False, store=True)
+
+
+    def _compute_user_in_whatsapp_group(self):
+        if self.env.user.has_group('viseo_whatsapp.group_send_whatsapp'):
+            self.user_in_whatsapp_group = True
+        else:
+            self.user_in_whatsapp_group = False

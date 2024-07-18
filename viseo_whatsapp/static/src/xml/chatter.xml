@@ -1,28 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!--<odoo>-->
     <templates xml:space="preserve">
         <t t-extend="mail.chatter.Buttons">
             <t t-jquery=".o_chatter_button_log_note" t-operation="after">
-<!--                <t t-if="widget.context.user_has_group">-->
-                <div id="whatsapp" class="group_whatsapp" groups="viseo_whatsapp.group_send_whatsapp">
-                    <button class="btn btn-link o_chatter_button_whatsapp" title="To send via Whatsapp" attrs="{'invisible':[('part_id','=',False)]}">
-                        <i class="fa fa-whatsapp" title="Dates"/> Whatsapp
-                    </button>
-                </div>
+<!--                <t t-debug="">-->
+                <t t-if="has_group">
 
-
-                <script type="text/javascript">
-            $(document).ready(function() {
-
-            });
-        </script>
+                    <div id="whatsapp" class="group_whatsapp" >
+                        <button class="btn btn-link o_chatter_button_whatsapp" title="To send via Whatsapp">
+                            <i class="fa fa-whatsapp" title="Dates"/> Whatsapp
+                        </button>
+                    </div>
+                </t>
 
 <!--                </t>-->
             </t>
+
         </t>
     </templates>
+<!--</odoo>-->
 
+<!--groups="viseo_whatsapp.group_send_whatsapp"  -->
+<!--<templates id="custom_chatter_buttons" inherit_id="mail.chatter.Buttons">-->
+<!--    <xpath expr="//div[@class='o_chatter_button_log_note']" position="after">-->
+<!--        <div class="o_chatter_button_whatsapp" groups="viseo_whatsapp.group_send_whatsapp">-->
+<!--            <button class="btn btn-link" title="Envoyer via WhatsApp"> <i class="fa fa-whatsapp"/>-->
+<!--                WhatsApp2-->
+<!--            </button>-->
+<!--        </div>-->
+<!--    </xpath>-->
+<!--</templates>-->
 
-<!--name="openWhatsapp"-->
-<!--                >-->
-<!--                -->
+<!--groups="viseo_whatsapp.group_send_whatsapp"-->
+<!--                <t t-if="widget.context.user_has_group">-->
