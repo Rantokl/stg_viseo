@@ -442,11 +442,7 @@ class WhhatsAppViseo(models.Model):
             return serialized_id
         else:
             print("Erreur lors de la création du groupe. Code de réponse :", response.status_code)
-        # else:
-        #     print('No one in message')
-        #     # raise UserError("Veuillez rajouter des abonnés avant d'envoyer des messages")
 
-        # return group
 
     def takeallgroup(self):
 
@@ -469,10 +465,6 @@ class WhhatsAppViseo(models.Model):
                     subjects.append(group['groupMetadata']['subject'])
                     serialized_ids.append(group['groupMetadata']['id']['_serialized'])
 
-            # print("Sujets :")
-            # print(subjects)
-            # print("\nID sérialisés :")
-            # print(serialized_ids)
             return serialized_ids
         else:
             print(f"Erreur lors de la requête : {response.status_code}")
@@ -585,16 +577,6 @@ class WhhatsAppViseo(models.Model):
             'tag': 'reload',
         }
 
-        # self.createGroup()
-
-        #  return {
-        #     'view_mode' : 'form',
-        #     'res_model' : self.model_name,
-        #     'type' : 'ir.actions.act_window',
-        #     'target' : 'current',
-        #     'res_id' : self[0].id_model,
-        # }
-
     def _computeGroup(self):
         receiver = self.receiver
 
@@ -622,15 +604,6 @@ class WhhatsAppViseo(models.Model):
                         group_name1 = 'PARTNER_' + str(data.id)
                     else:
                         group_name1 = data.name
-            #
-            # groups, group_name = get_api_group(group_name1)
-            # if not group_name:
-            #     self.createGroup(group_name1)
-            #     self.group_name = group_name1
-            #     return {'group': groups,
-            #             'name': group_name1}
-            # else:
-            #     self.group_name = group_name
 
             return {'group': 'Test',
                     'name': group_name1}
@@ -768,14 +741,3 @@ class Respartner(models.Model):
                 partner.phone = self.normalize_phone_number(partner.phone)
 
 
-class MailChatter(models.Model):
-    _inherit = 'res.users'
-
-    user_in_whatsapp_group = fields.Boolean(compute='_compute_user_in_whatsapp_group', default=False, store=True)
-
-
-    def _compute_user_in_whatsapp_group(self):
-        if self.env.user.has_group('viseo_whatsapp.group_send_whatsapp'):
-            self.user_in_whatsapp_group = True
-        else:
-            self.user_in_whatsapp_group = False

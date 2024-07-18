@@ -7,8 +7,6 @@ odoo.define('viseo_whatsapp.custom_Chatter', function (require) {
     var config = require('web.config');
     var QWeb = require('web.core').qweb;
 
-
-
     Chatter.include({
         start: async function () {
 
@@ -84,49 +82,4 @@ odoo.define('viseo_whatsapp.custom_Chatter', function (require) {
     });
 
 });
-
-
-
-//            $(document).ready(function() {
-
-//                rpc.query({
-//                        model: 'whatsapp.viseo',
-//                        method: 'computeUser',
-//                        args: [[]],
-//                        }).then(function(output){
-//                            console.log("Value:",output['value'])
-//                            if (output['value'] == 'True'){
-//                                console.log("True")
-//                                $('.o_chatter_button_whatsapp').show();
-//
-//                            }else {
-//                                console.log("False")
-//                                $('.o_chatter_button_whatsapp').hide();
-//
-//                    }
-//
-//                    })
-//            });
-//               session.user_has_group('viseo_whatsapp.group_send_whatsapp').then(function(has_group){
-//                if(has_group==true){
-//                    $('.o_chatter_button_whatsapp').show();
-//                }else{
-//                    $('.o_chatter_button_whatsapp').hide();
-//                }
-//            }
-
-//            });
-//            this._super.apply(this, arguments).then(function () {
-////                session.user_has_group('viseo_whatsapp.group_send_whatsapp').then(function(has_group) {
-////                    if (!has_group) {
-////                        self.$('.o_chatter_button_whatsapp').hide();
-////                    }
-////                });
-//                    rpc.query({
-//                        model: 'whatsapp.viseo',
-//                        method: '_computeUser',
-//                        args: [[]],
-//                        }).then(function(output){
-//                            console.log("VAlue:",output['value'])
-//                        });
 //            });

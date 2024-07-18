@@ -3,19 +3,14 @@
     <templates xml:space="preserve">
         <t t-extend="mail.chatter.Buttons">
             <t t-jquery=".o_chatter_button_log_note" t-operation="after">
-<!--                <t t-debug="">-->
                 <t t-if="has_group">
-
                     <div id="whatsapp" class="group_whatsapp" >
                         <button class="btn btn-link o_chatter_button_whatsapp" title="To send via Whatsapp">
                             <i class="fa fa-whatsapp" title="Dates"/> Whatsapp
                         </button>
                     </div>
                 </t>
-
-<!--                </t>-->
             </t>
-
         </t>
     </templates>
 <!--</odoo>-->
