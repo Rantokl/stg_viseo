@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_equipement_bike_tools,equipement_bike_tools,model_equipement_bike_tools,base.group_user,1,1,1,1
+access_model_equipment,model_equipment,model_model_equipment,base.group_user,1,1,1,1
