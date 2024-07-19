@@ -385,7 +385,7 @@ class WhhatsAppViseo(models.Model):
             numbers.append(number)
             partner.append(user.id)
             if not user.mobile:
-                user.write({'mobile': number[0:12],
+                user.sudo().write({'mobile': number[0:12],
                             'phone': number[0:12]})
 
         user_mobile = self.env['hr.employee'].sudo().search([('user_id.id', '=', self.env.user.id)])
@@ -733,11 +733,12 @@ class Respartner(models.Model):
             # Get the employee's mobile phone number if available
 
             if employee and employee.mobile_phone:
-                partner.phone = self.normalize_phone_number(employee.mobile_phone)
-                partner.write({'phone': partner.phone})
+                partner_phone = self.normalize_phone_number(employee.mobile_phone)
+                partner.sudo().write({'phone': partner_phone})
 
             if partner.phone:
                 # Normalize the phone number
-                partner.phone = self.normalize_phone_number(partner.phone)
+                # partner.phone = self.normalize_phone_number(partner.phone)
+                partner.sudo().write({'phone':self.normalize_phone_number(partner.phone)})
 
 
