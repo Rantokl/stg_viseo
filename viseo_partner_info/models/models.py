@@ -18,8 +18,8 @@ class PartnerInformationDocument(models.Model):
 
     cif_document_partner = fields.Binary(string='Document CIF', attachment=True)
     cif_document_partner_filename = fields.Char(string='Nom du document CIF')
-    cif_expiration_date = fields.Date(string="Expire le")
-    cif_declaration_date = fields.Date(string="Du")
+    cif_expiration_date = fields.Date(string="CIF Expire le")
+    cif_declaration_date = fields.Date(string="CIF Du")
     required_cif=fields.Boolean(default=False, compute='compute_required_cif')
 
     nif_document_partner = fields.Binary(string='Document NIF', attachment=True)
@@ -27,8 +27,8 @@ class PartnerInformationDocument(models.Model):
 
     rcs_document_partner = fields.Binary(string='Document RCS', attachment=True)
     rcs_document_partner_filename = fields.Char(string='Nom du document RCS')
-    rcs_expiration_date = fields.Date(string="Expire le")
-    rcs_declaration_date = fields.Date(string="Du")
+    rcs_expiration_date = fields.Date(string="RCS Expire le")
+    rcs_declaration_date = fields.Date(string="RCS Du")
     required_rcs=fields.Boolean(default=False, compute='compute_required_rcs')
 
     stat_document_partner = fields.Binary(string='Document STAT', attachment=True)
