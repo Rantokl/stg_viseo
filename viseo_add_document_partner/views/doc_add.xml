@@ -1,13 +1,10 @@
 <odoo>
   <data>
-        <record id="partner_info_form" model="ir.ui.view">
-            <field name="name">Formulaire d'informations sur le partenaire</field>
-            <field name="model">res.partner</field>
-            <field name="inherit_id" ref="base.view_partner_form"/>
-            <field name="arch" type="xml">
-                <notebook position="inside">
-                    <page name="document" string="Document">
-                    <!-- <form> -->
+<record id="new_contact_form_view_" model="ir.ui.view">
+        <field name="name">Test contact</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <form>
                     <div class="container">
                         <table style="width: 100%; border-collapse: collapse;">
                             <tr>
@@ -16,6 +13,7 @@
                                         <field name="rcs_document_partner" attrs="{'invisible': [('company_type','=','person')], 'readonly': False}"/>
                                         <field name="rcs_document_partner_filename" invisible="1"/>
                                         <field name="required_rcs" invisible="1"/>
+                                        <field name="company_type" invisible="1"/>
                                     </group>
                                 </td>
                                 <!-- <td>
@@ -79,7 +77,7 @@
                             <!-- <field name="cin_document_partner_filename_represent" invisible="1"/> -->
                             <!-- <field name="cr_document_partner_represent" attrs="{'invisible': [('company_type','=', 'person')]}"/> -->
                             <!-- <field name="cr_document_partner_filename_represent" invisible="1"/> -->
-                            <field name="document_partner_represent" nolabel="1" attrs="{'invisible': [('company_type','=', 'person')]}">
+                            <field name="document_partner_represent" nolabel="1" attrs="{'invisible': [('company_type','=', 'person')]}" >
                                 <tree editable="bottom">
                                     <field name="partner_id" invisible="1"/>
                                     <field name="cin_represent" widget="binary"/>
@@ -89,36 +87,25 @@
                             </field>
                         </group>
                     </div>
-                <!-- </form> -->
-            </page> 
-            </notebook>
-            </field>
-        </record>
-        <record id="view_other_model_tree" model="ir.ui.view">
-            <field name="name">viseo_partner_info.create_config_model.tree</field>
-            <field name="model">viseo_partner_info.create_config_model</field>
-            <field name="arch" type="xml">
-                <tree string="Other Model" editable="bottom">
-                    <field name='selection_company_type'/>
-                    <field name="create_config_cin_partner"/>
-                    <field name="create_config_rib_partner"/>
-                    <field name="create_config_cif_partner"/>
-                    <field name="create_config_nif_partner"/>
-                    <field name="create_config_rcs_partner"/>
-                    <field name="create_config_stat_partner"/>
-                    
-                </tree>
-            </field>
-        </record>
-
-        <record id="action_creation_config" model="ir.actions.act_window">
-            <field name="name">Other Model</field>
-            <field name="res_model">viseo_partner_info.create_config_model</field>
-            <field name="view_mode">tree</field>
-            <field name="view_id" ref="view_other_model_tree"/>
-            <field name="target">current</field>
-        </record>
-
-        <menuitem id="creation_config" name="Configuration de creation" parent="contacts.res_partner_menu_config" action="action_creation_config"/>
-  </data>
+                </form>
+        </field>
+    </record>
+    <record id="action_server_add_document_partner" model="ir.actions.server">
+      <field name="name">Ajout document</field>
+      <field name="model_id" ref="model_res_partner"/>
+      <field name="binding_model_id" ref="model_res_partner"/>
+      <field name="binding_view_types">form</field>
+      <field name="state">code</field>
+      <field name="code">action = records.add_doc_partner_from_wizard()</field>
+    </record>
+    <record id="new_partner_action_" model="ir.actions.act_window">
+        <field name="name">Test</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+        	(0, 0, {'view_mode': 'form', 'view_id': ref('viseo_add_document_partner.new_contact_form_view_')})]"/>
+    </record>
+      </data>
 </odoo>

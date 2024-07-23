@@ -35,10 +35,13 @@ class PartnerInformationDocument(models.Model):
     stat_document_partner_filename = fields.Char(string='Nom du document STAT')
 
     # cin_document_partner_represent = fields.Binary(string='CIN Représentant ', attachment=True)
-    cin_document_partner_represent = fields.Many2many('ir.attachment', string='CIN Représentant')
-    cin_document_partner_filename_represent = fields.Char(string='Nom du document CIN Représentant')
-
-    cr_document_partner_represent = fields.Binary(string='Certificat de Résidence Représentant', attachment=True)
+    # cin_document_partner_represent = fields.Many2many('ir.attachment', string='CIN Représentant')
+    # cin_document_partner_filename_represent = fields.Char(string='Nom du document CIN Représentant')
+    document_partner_represent = fields.One2many(
+        comodel_name='viseo_document_partner.partner_document', 
+        inverse_name='partner_id', 
+        string='Document du représentant'
+    )
     cr_document_partner_filename_represent = fields.Char(string='Nom du document RIB Représentant')
 
     @api.depends('rcs_document_partner')
@@ -75,7 +78,7 @@ class PartnerInformationDocument(models.Model):
     #         'type': 'ir.actions.client',
     #         'tag': 'reload',
     #     }
-    
+    @api.model
     def create(self, values):
         if values.get('rcs_document_partner'):
             if not values.get('rcs_expiration_date'):

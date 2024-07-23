@@ -504,13 +504,7 @@ class ViseoCreditApplication(models.Model):
                                     if self.stat_document_partner:
                                         if self.nif_document_partner:
                                             if self.rib_document_partner:
-                                                if self.cr_document_partner_represent:
-                                                    if self.cin_document_partner_represent:
-                                                        self.send_request_credit()
-                                                    else: 
-                                                        self.cin_represent_file_empty_raise_error()
-                                                else: 
-                                                    self.cr_represent_file_empty_raise_error()
+                                                self.send_request_credit()
                                             else: 
                                                 self.rib_file_empty_raise_error()
                                         else: 
