@@ -1,0 +1,15 @@
+<odoo>
+  <data>
+
+
+    <record id="action_server_add_document_partner" model="ir.actions.server">
+      <field name="name">Mise à jour des documents</field>
+      <field name="model_id" ref="model_res_partner"/>
+      <field name="binding_model_id" ref="model_res_partner"/>
+      <field name="binding_view_types">form</field>
+      <field name="state">code</field>
+      <field name="code">action = records.add_doc_partner_from_wizard()</field>
+    </record>
+    <!-- <menuitem id="test" name="mgance" parent="contacts.menu_contacts" sequence="10" action="viseo_add_document_partner.action_wizard_add_doc"/> -->
+  </data>
+</odoo>

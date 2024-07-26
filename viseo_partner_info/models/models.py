@@ -18,7 +18,8 @@ class PartnerInformationDocument(models.Model):
 
     cif_document_partner = fields.Binary(string='Document CIF', attachment=True)
     cif_document_partner_filename = fields.Char(string='Nom du document CIF')
-    cif_expiration_date = fields.Date(string="Date d'expiration de CIF")
+    cif_expiration_date = fields.Date(string="CIF Expire le")
+    cif_declaration_date = fields.Date(string="CIF Du")
     required_cif=fields.Boolean(default=False, compute='compute_required_cif')
 
     nif_document_partner = fields.Binary(string='Document NIF', attachment=True)
@@ -26,16 +27,21 @@ class PartnerInformationDocument(models.Model):
 
     rcs_document_partner = fields.Binary(string='Document RCS', attachment=True)
     rcs_document_partner_filename = fields.Char(string='Nom du document RCS')
-    rcs_expiration_date = fields.Date(string="Date d'expiration de RCS ")
+    rcs_expiration_date = fields.Date(string="RCS Expire le")
+    rcs_declaration_date = fields.Date(string="RCS Du")
     required_rcs=fields.Boolean(default=False, compute='compute_required_rcs')
 
     stat_document_partner = fields.Binary(string='Document STAT', attachment=True)
     stat_document_partner_filename = fields.Char(string='Nom du document STAT')
 
-    cin_document_partner_represent = fields.Binary(string='CIN Représentant ', attachment=True)
-    cin_document_partner_filename_represent = fields.Char(string='Nom du document CIN Représentant')
-
-    cr_document_partner_represent = fields.Binary(string='Certificat de Résidence Représentant', attachment=True)
+    # cin_document_partner_represent = fields.Binary(string='CIN Représentant ', attachment=True)
+    # cin_document_partner_represent = fields.Many2many('ir.attachment', string='CIN Représentant')
+    # cin_document_partner_filename_represent = fields.Char(string='Nom du document CIN Représentant')
+    document_partner_represent = fields.One2many(
+        comodel_name='viseo_document_partner.partner_document', 
+        inverse_name='partner_id', 
+        string='Document du représentant'
+    )
     cr_document_partner_filename_represent = fields.Char(string='Nom du document RIB Représentant')
 
     @api.depends('rcs_document_partner')
@@ -59,8 +65,20 @@ class PartnerInformationDocument(models.Model):
         else :
             self.required_cif =False
             
- 
-    
+    # def abcd(self):
+    #     field_name = 'x_new_field'
+    #     self.env['ir.model.fields'].create({
+    #         'name': field_name,
+    #         'model': 'model.name',
+    #         'model_id': self.env['ir.model']._get_id('model.name'),
+    #         'field_description': 'New Field',
+    #         'ttype': 'char',
+    #     })
+    #     return {
+    #         'type': 'ir.actions.client',
+    #         'tag': 'reload',
+    #     }
+    @api.model
     def create(self, values):
         if values.get('rcs_document_partner'):
             if not values.get('rcs_expiration_date'):

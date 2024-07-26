@@ -1,7 +1,7 @@
-
 from odoo import models, fields, api, exceptions
 from odoo.exceptions import ValidationError
-
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 from odoo import models, fields, api
 
 class WizardCreditApplication(models.TransientModel):
@@ -15,8 +15,14 @@ class WizardCreditApplication(models.TransientModel):
         ('all', 'Tous')],
         string='Type de blocage', required=True, copy=False, default='amount_limited', track_visibility=True
     )
-    payment_condition_wizard = fields.Many2one('account.payment.term', string='condition de payement')
-    company_wizard = fields.Many2one('res.company', string='Société')
+    payment_condition_wizard = fields.Many2one('account.payment.term', string='Condition de paiement', domain=[('name', '!=', "Comptant espèce")])
+    company_wizard = fields.Many2one(
+        'res.company',
+        string='Société',
+        domain=lambda self: [('id', 'in', self.env.user.company_ids.ids)],
+        required=True,
+        default=lambda self: self.env.user.company_id.id
+    )
     requester_wizard= fields.Many2one('res.users', string='Demandeur')
     def send_application_credit_from_wizard(self):
         self.ensure_one()
@@ -36,7 +42,7 @@ class WizardCreditApplication(models.TransientModel):
 class ViseoCreditApplication(models.Model):
     _inherit = 'res.partner'
 
-    plafond_credit = fields.Float(string='Plafond de crédit', required=True)
+    plafond_credit = fields.Float(string='Plafond de crédit')
     blocage_type = fields.Selection([
         ('none', 'Aucun'),
         ('blocked', 'Bloque'),
@@ -45,8 +51,12 @@ class ViseoCreditApplication(models.Model):
         ('all', 'Tous')],
         string='Type de Blocage', required=True, copy=False, default='amount_limited', track_visibility=True
     )
-    payment_condition = fields.Many2one('account.payment.term', string='Condition de payement')
-    company= fields.Many2one('res.company', string='Société')
+    payment_condition = fields.Many2one('account.payment.term', string='Condition de paiement')
+    company= fields.Many2one(
+        'res.company',
+        string='Société',
+        domain=lambda self: [('id', 'in', self.env.user.company_ids.ids)],
+    )
     state_application_credit = fields.Selection([
         ('draft', 'Brouillon'),
         ('request', 'Demande en cours'),
@@ -485,32 +495,33 @@ class ViseoCreditApplication(models.Model):
         else :
             if self.cif_document_partner :
                 if self.rcs_document_partner:
-                    if self.stat_document_partner:
-                        if self.nif_document_partner:
-                            if self.rib_document_partner:
-                                if self.cr_document_partner_represent:
-                                    if self.cin_document_partner_represent:
-                                        self.send_request_credit()
-                                    else: 
-                                        # self.rejected_request()
-                                        self.cin_represent_file_empty_raise_error()
+                    if self.rcs_declaration_date:
+                        date_fin_declaration_rcs = self.rcs_declaration_date + relativedelta(months=3)
+                        if date_fin_declaration_rcs > datetime.now().date():
+                            if self.cif_declaration_date:
+                                date_fin_declaration_cif = self.cif_declaration_date + relativedelta(months=3)
+                                if date_fin_declaration_cif > datetime.now().date():
+                                    if self.stat_document_partner:
+                                        if self.nif_document_partner:
+                                            if self.rib_document_partner:
+                                                self.send_request_credit()
+                                            else: 
+                                                self.rib_file_empty_raise_error()
+                                        else: 
+                                            self.nif_file_empty_raise_error()  
+                                    else:  
+                                        self.stat_file_empty_raise_error()
                                 else: 
-                                    # self.rejected_request()
-                                    self.cr_represent_file_empty_raise_error()
+                                    self.cif_date_du_raise_error()
                             else: 
-                                # self.rejected_request()
-                                self.rib_file_empty_raise_error()
+                                self.du_date_raise_error()
                         else: 
-                            # self.rejected_request()
-                            self.nif_file_empty_raise_error()  
-                    else:  
-                        # self.rejected_request() 
-                        self.stat_file_empty_raise_error()
-                else: 
-                    # self.rejected_request() 
+                            self.rcs_date_du_raise_error()
+                    else: 
+                        self.du_date_raise_error()
+                else:  
                     self.rcs_file_empty_raise_error()
             else: 
-                # self.rejected_request() 
                 self.cif_file_empty_raise_error()
 
 
@@ -540,6 +551,15 @@ class ViseoCreditApplication(models.Model):
 
     def cr_represent_file_empty_raise_error(self):
        raise exceptions.UserError("Pour le client Société, Il faut ajouter la Cértificat de Résidence(CR) du représentant dans l'onglet 'Document' dans la fiche partner")
+    
+    def rcs_date_du_raise_error(self):
+       raise exceptions.UserError("Pour le client Société, la date de déclaration du 'Document RCS' est plus de 3 mois")
+
+    def cif_date_du_raise_error(self):
+       raise exceptions.UserError("Pour le client Société, la date de déclaration du 'Document CIF' est plus de 3 mois")
+    
+    def du_date_raise_error(self):
+       raise exceptions.UserError("Pour le client Société, la date de déclaration des 'Document CIF et RCS' sont obligatoires")
 
     def send_application_credit(self):
         if self.state_application_credit !='request':

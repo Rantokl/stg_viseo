@@ -380,7 +380,8 @@ class viseo_rdv_mobile(models.Model):
     def _check_validator(self):
         current_user = self.env.user.id
         responsables = self.responsable_atelier_id.ids
-        if current_user == responsables or self.env.user.id == 2:
+        # if current_user == responsables or self.env.user.id == 2:
+        if current_user in responsables or self.env.user.id == 2:
             self.validator = True
         else:
             self.validator = False

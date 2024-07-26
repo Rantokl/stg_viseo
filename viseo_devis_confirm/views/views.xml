@@ -1,0 +1,60 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+<!--
+    <record model="ir.ui.view" id="viseo_devis_confirm.list">
+      <field name="name">viseo_devis_confirm list</field>
+      <field name="model">viseo_devis_confirm.viseo_devis_confirm</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+-->
+
+    <!-- actions opening views on models -->
+<!--
+    <record model="ir.actions.act_window" id="viseo_devis_confirm.action_window">
+      <field name="name">viseo_devis_confirm window</field>
+      <field name="res_model">viseo_devis_confirm.viseo_devis_confirm</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+-->
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="viseo_devis_confirm.action_server">
+      <field name="name">viseo_devis_confirm server</field>
+      <field name="model_id" ref="model_viseo_devis_confirm_viseo_devis_confirm"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="viseo_devis_confirm" id="viseo_devis_confirm.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="viseo_devis_confirm.menu_1" parent="viseo_devis_confirm.menu_root"/>
+    <menuitem name="Menu 2" id="viseo_devis_confirm.menu_2" parent="viseo_devis_confirm.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="viseo_devis_confirm.menu_1_list" parent="viseo_devis_confirm.menu_1"
+              action="viseo_devis_confirm.action_window"/>
+    <menuitem name="Server to list" id="viseo_devis_confirm" parent="viseo_devis_confirm.menu_2"
+              action="viseo_devis_confirm.action_server"/>
+-->
+  </data>
+</odoo>

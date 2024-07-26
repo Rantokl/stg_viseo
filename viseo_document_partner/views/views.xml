@@ -1,0 +1,60 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+<!--
+    <record model="ir.ui.view" id="viseo_document_partner.list">
+      <field name="name">viseo_document_partner list</field>
+      <field name="model">viseo_document_partner.viseo_document_partner</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+-->
+
+    <!-- actions opening views on models -->
+<!--
+    <record model="ir.actions.act_window" id="viseo_document_partner.action_window">
+      <field name="name">viseo_document_partner window</field>
+      <field name="res_model">viseo_document_partner.viseo_document_partner</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+-->
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="viseo_document_partner.action_server">
+      <field name="name">viseo_document_partner server</field>
+      <field name="model_id" ref="model_viseo_document_partner_viseo_document_partner"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="viseo_document_partner" id="viseo_document_partner.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="viseo_document_partner.menu_1" parent="viseo_document_partner.menu_root"/>
+    <menuitem name="Menu 2" id="viseo_document_partner.menu_2" parent="viseo_document_partner.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="viseo_document_partner.menu_1_list" parent="viseo_document_partner.menu_1"
+              action="viseo_document_partner.action_window"/>
+    <menuitem name="Server to list" id="viseo_document_partner" parent="viseo_document_partner.menu_2"
+              action="viseo_document_partner.action_server"/>
+-->
+  </data>
+</odoo>
