@@ -1,24 +1,20 @@
 <odoo>
-    <data>
-<!--
-        <template id="listing">
-          <ul>
-            <li t-foreach="objects" t-as="object">
-              <a t-attf-href="#{ root }/objects/#{ object.id }">
-                <t t-esc="object.display_name"/>
-              </a>
-            </li>
-          </ul>
+
+            <template id="template_maintenance_tools" inherit_id="viseo_maintenance_equipement.viseo_maintenance_equipement_form">
+                <xpath expr="//div[@class='image_container']" position="inside">
+                    <t t-foreach="docs" t-as="doc">
+                        <t t-set="context" t-value="doc.get_view_context()"/>
+                        <t t-if="context['equipment_type'] == 'group'">
+                            <img src="/viseo_maintenance_equipement/static/img/groupe.jpg" class="image group_img" style="width: 100%; min-width: 200px; max-width: 550px; max-height: auto;" alt="group_img"/>
+                        </t>
+                        <t t-if="context['equipment_type'] == 'pont'">
+                            <img src="/viseo_maintenance_equipement/static/img/pont.png" class="image pont_img" style="width: 100%; min-width: 200px; max-width: 550px; max-height: auto;" alt="pont_img"/>
+                        </t>
+                        <t t-if="context['equipment_type'] == 'tools'">
+                            <img src="/viseo_maintenance_equipement/static/img/bulle.jpg" class="image bulle_img" style="width: 100%; min-width: 200px; max-width: 550px; max-height: auto;" alt="bulle_img"/>
+                        </t>
+                    </t>
+                </xpath>
         </template>
-        <template id="object">
-          <h1><t t-esc="object.display_name"/></h1>
-          <dl>
-            <t t-foreach="object._fields" t-as="field">
-              <dt><t t-esc="field"/></dt>
-              <dd><t t-esc="object[field]"/></dd>
-            </t>
-          </dl>
-        </template>
--->
-    </data>
+
 </odoo>

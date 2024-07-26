@@ -1,3 +1,10 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_equipement_bike_tools,equipement_bike_tools,model_equipement_bike_tools,base.group_user,1,1,1,1
 access_model_equipment,model_equipment,model_model_equipment,base.group_user,1,1,1,1
+access_maintenance_bike_tools,maintenance_bike_tools,model_maintenance_bike_tools,base.group_user,1,1,1,1
+access_maintenance_diagnostic,maintenance_diagnostic,model_maintenance_diagnostic,base.group_user,1,1,1,1
+access_maintenance_service_work,maintenance_service_work,model_maintenance_service_work,base.group_user,1,1,1,1
+access_maintenance_product_list,maintenance_product_list,model_maintenance_product_list,base.group_user,1,1,1,1
+access_maintenance_servicesline,maintenance_servicesline,model_maintenance_servicesline,base.group_user,1,1,1,1
+access_maintenance_picking_product_line,maintenance_picking_product_line,model_maintenance_picking_product_line,base.group_user,1,1,1,1
+access_maintenance_repair_rules,maintenance_repair_rules,model_maintenance_repair_rules,base.group_user,1,1,1,1

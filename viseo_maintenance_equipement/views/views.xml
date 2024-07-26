@@ -8,13 +8,300 @@
         <tree>
           <field name="name"/>
           <field name="model"/>
-          <field name="owner"/>
+          <field name="owner_id"/>
           <field name="serial_number"/>
         </tree>
       </field>
     </record>
 
-    <record model="ir.ui.view" id="viseo_maintenance_equipement.form">
+      <record model="ir.ui.view" id="viseo_maintenance_interne_list">
+      <field name="name">Liste des maintenance</field>
+      <field name="model">maintenance.bike.tools</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="tools_id"/>
+          <field name="customer_id"/>
+          <field name="state"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="viseo_maintenance_equipement_form">
+      <field name="name">Maintenance des equipements</field>
+      <field name="model">maintenance.bike.tools</field>
+      <field name="arch" type="xml">
+        <form>
+            <header>
+                <field name="state" widget="statusbar"/>
+            </header>
+            <sheet>
+
+                            <div class="oe_button_box" name="button_box">
+
+                <button name="action_prelevement" type="object" class="oe_stat_button" icon="fa-cogs" >
+                            <field name="prelevement" widget="statinfo" string="Prélevement"/>
+                        </button>
+           <button name="action_note_frais" type="object" class="oe_stat_button" icon="fa-shopping-cart" help="show the contract for this vehicle">
+                            <field name="ndf" widget="statinfo" string="Note de  frais"/>
+                        </button>
+                <button name="ask_purchase_maintenance" type="object" class="oe_stat_button" icon="fa-shopping-cart">
+                    <field string="Achats" name="purchase" widget="statinfo"/>
+                </button>
+                <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-usd"  help="show the fuel logs for this vehicle">
+                            <field name="sale" widget="statinfo" string="Devis"/>
+                        </button>
+                <button name="action_view_cost_logs" type="object" class="oe_stat_button" icon="fa-money"  groups="fleet.fleet_group_manager">
+                            <field name="invoice" widget="statinfo" string="Facture"/>
+                        </button>
+            </div>
+                <div>
+                    <field name="is_outside_control_done" invisible="1"/>
+                </div>
+
+                <group class="row">
+                    <group class="col">
+                        <field name="customer_id" />
+                        <field name="tools_id"/>
+                        <field name="equipment_type" invisible="1"/>
+                    </group>
+                    <group class="col">
+                      <label for="address" name="address_name"/>
+                            <div class="o_address_format">
+                                <field name="address" placeholder="Street..." class="o_address_street" />
+                                <field name="street2" placeholder="Street 2..." class="o_address_street" />
+                                <field name="city" placeholder="City" class="o_address_city" />
+<!--                                <field name="state_id" class="o_address_state" placeholder="State"/>-->
+                            </div>
+                      <field name="previous_date"/>
+                      <field name="end_date"/>
+                      <field name="invoice_date"/>
+                  </group>
+                </group>
+
+<!--                                <group class="row">-->
+                        <group class="row" attrs="{'invisible' : [('equipment_type', '!=', 'group')]}">
+                            <group class="col">
+                                <div style="overflow-x: auto;" class="image_container" >
+                                    <img src="/viseo_maintenance_equipement/static/img/groupe.jpg" style="width:100%;min-width:200px;max-width:550px;max-height:auto;" alt="group_img"/>
+
+
+                                </div>
+<!--                                <div style="flex: 1; overflow-x: auto;" class="image_container" attrs="{'invisible' : [('equipment_type', '!=', 'pont')]}">-->
+<!--                                    <img src="/viseo_maintenance_equipement/static/img/pont.png" style="width:100%;min-width:200px;max-width:550px;max-height:auto;" alt="group_img"/>-->
+
+
+<!--                                </div>-->
+                            </group>
+                            <group col="2">
+                                <group>
+                                    <field name="oil"/>
+                                <field name="freeze_liquid"/>
+                                <field name="battery"/>
+                                <field name="courroie"/>
+                                <field name="air_filter"/>
+                                <field name="radiator"/>
+                                </group>
+                                     <label for="visual_comments" string="Observations/Commentaires" style="font-weight:bold;"/>
+                                <field name="visual_comments" no_label="1"/>
+                            </group>
+                        </group>
+                <group class="row" attrs="{'invisible' : [('equipment_type', '!=', 'pont')]}">
+                            <group class="col">
+                                <div style="overflow-x: auto;" class="image_container" >
+                                    <img src="/viseo_maintenance_equipement/static/img/pont.png" style="width:100%;min-width:200px;max-width:550px;max-height:auto;" alt="group_img"/>
+
+
+                                </div>
+
+                            </group>
+                            <group col="2">
+                                <group>
+                                    <field name="fixation"/>
+                                <field name="arm"/>
+                                <field name="roulement"/>
+                                <field name="verin"/>
+                                <field name="synchronisme"/>
+                                <field name="poulie"/>
+                                    <field name="cable"/>
+                                    <field name="alim"/>
+                                    <field name="stop_urgency"/>
+
+                                </group>
+                                     <label for="visual_comments" string="Observations/Commentaires" style="font-weight:bold;"/>
+                                <field name="visual_comments" no_label="1"/>
+                            </group>
+                        </group>
+
+                <div attrs="{'invisible': [('tools_id', '=', False)]}">
+                    <separator rowspan="0" colspan="0" string="Désignation des travaux" />
+                    <div class="comments_reception">
+                        <field  name="reception_comments" placeholder="Commentaire de reception....." class="apply_dimension" style="min-height: 100px !important;"/>
+                    </div>
+
+                    <button name="action_outside_control_done"   string="Controle visuel terminé" type="object" class="btn btn-primary btn-sm" width="20%" attrs="{'invisible': ['|', ('state','!=','draft'),('is_outside_control_done', '=', True)]}"/>
+
+                </div>
+
+
+
+
+                <div>
+                    <label for="diagnostic" string="Ligne(s) de diagnostics" style="font-weight:bold;"/>
+                    <field name="diagnostic">
+                            <tree editable="bottom">
+                                <control>
+                                    <create name="add_line_control" string="Ajouter une ligne"/>
+                                    <create name="add_section_control" string="Ajouter une section" invisible="1"/>
+                                </control>
+                            <field name="name" widget="section_and_note_text" no_label="1"/>
+                            </tree>
+                        </field>
+                </div>
+
+                <group style="background-color: #F1F1F1; color: #454748;padding: 0;margin: 0;" col="2">
+                        <group>
+                            <field name="service_work_id" options="{'no_create':True,'no_create_edit':True,'limit':1}" />
+                        </group>
+                    </group>
+
+                <field name="product_list_id" widget="section_and_note_one2many" nolabel="1">
+                        <tree editable="bottom">
+                            <control>
+                                <create name="add_line_control" string="Ajouter une ligne"/>
+
+                            </control>
+                            <field name="display_type" invisible="1"/>
+                            <field name="operation_done" width="12%"/>
+                            <field name="time_done" width="12%"/>
+                            <field name="name" widget="section_and_note_text" width="12%" />
+                            <field name="product_id" width="12%" />
+                            <field name="product_qty" width="12%" />
+                            <field name="product_uom" width="12%" />
+                            <field name="observation" width="12%"/>
+                            <field name="technician" widget="many2many_tags" width="12%"/>
+                        </tree>
+                    </field>
+
+                 <button name="action_diag_done" string="Terminer diagnostique" type="object" class="btn btn-primary btn-sm ml-4 mr-2" width="20%" attrs=""/>
+                    <button name="action_additive_need" string="Besoin additif" type="object" class="btn btn-primary btn-sm ml-4" width="10%" attrs=""/>
+
+                <!--              <group col="2" style="background-color: #F1F1F1; color: #454748;padding: 0;margin: 0;">-->
+<!--                         <group style="padding: 0;margin: 0;">-->
+<!--                             <label for="time_mo"/>-->
+<!--                                <div class="o_row">-->
+<!--                                    <field name="time_mo" attrs="{'readonly': ['|',('is_outside_control_done','=',False),('is_diag_done','=',True)]}"/>-->
+<!--                                    <field name="time_mo_unit" attrs="{'readonly': ['|',('is_outside_control_done','=',False),('is_diag_done','=',True)]}"/>-->
+<!--                                </div>-->
+<!--                         </group>-->
+<!--                        <group style="padding: 0;margin: 0;">-->
+<!--                             <field name="contributors" options="{'no_create_edit':True}" widget="many2many_tags" attrs="{'readonly': ['|',('is_outside_control_done','=',False),('is_diag_done','=',True)]}"/>-->
+<!--                        </group>-->
+<!--                     </group>-->
+<!--                    <button name="action_diag_done" string="Terminer diagnostique" type="object" class="btn btn-primary btn-sm ml-4 mr-2" width="20%" attrs="{'invisible': ['|', '|', ('state_ro','=','cancel'), ('is_diag_done', '=', True), ('is_outside_control_done', '=', False)]}" groups="viseo_repair_order.group_or_diag_done"/>-->
+<!--                    <button name="action_additive_need" string="Besoin additif" type="object" class="btn btn-primary btn-sm ml-4" width="10%" attrs="{'invisible': ['|',('is_diag_done','=',False),('state_ro','in',['trying','invoice','done','cancel'])]}" groups="viseo_repair_order.group_or_need_add"/>  -->
+
+                <separator rowspan="0" colspan="0" string="Devis" />
+                    <group col="2" style="padding: 0;margin: 0;">
+                        <group style="padding: 0;margin: 0;">
+                            <div class="oe_title">
+                                <label for="validity_date" style="font-size: 15px;font-weight: bold;"/>
+                                <field name="validity_date" style="color: red; font-size: 15px; font-weight: bold;"/>
+                            </div>
+<!--                            <field name="validity_date" style="color: red; font-size: 15px "/>-->
+                        </group>
+                        <group style="padding: 0;margin: 0;">
+                            <field name="payment_term_id"/>
+                        </group>
+                    </group>
+
+    <field name="sale_service_id" nolabel="1" widget="section_and_note_one2many" >
+                        <tree editable="bottom" decoration-muted="product_uom_qty == 0" decoration-warning="product_uom_qty != rest_qty" decoration-success="product_uom_qty &gt; 0 and rest_qty == product_uom_qty" decoration-danger="product_uom_qty &gt; 0 and rest_qty == 0">
+                            <control>
+                                <create name="add_line_control" string="Ajouter une ligne"/>
+                                <create name="add_section_control" string="Ajouter une section" context="{'default_display_type': 'line_section'}" invisible="1"/>
+                            </control>
+                            <field name="sale_id" invisible="1"/>
+                            <field name="count_total" string=" "/>
+                            <field name="pieces" attrs="{'readonly': [('sale_id','!=',False)]}"/>
+                            <field name="product_id" attrs="{'readonly': [('sale_id','!=',False)]}"/>
+                            <field name="brand_id"/>
+                            <field name="name" widget="section_and_note_text" attrs="{'readonly': [('sale_id','!=',False)]}"/>
+                            <field name="display_type" invisible="1"/>
+                            <field name="product_uom_qty" attrs="{'readonly': [('sale_id','!=',False)]}"/>
+                            <field name="rest_qty" readonly="1"/>
+                            <field name="available_quantity" attrs="{'readonly': [('sale_id','!=',False)]}"/>
+                            <field name="qty_prel" attrs="{'readonly': [('sale_id','!=',False)]}"/>
+                            <field name="discount" attrs="{'readonly': [('sale_id','!=',False)]}"/>
+                            <field name="tax_id" widget="many2many_tags" attrs="{'readonly': [('sale_id','!=',False)]}"/>
+                            <field name="price_unit" attrs="{'readonly': [('sale_id','!=',False)]}"/>
+                            <field name="company_id" invisible="1"/>
+                        </tree>
+                    </field>
+
+                <div class="text-right">
+                        <label for="amount_total"/>:
+                        <field name="amount_total"/>
+                    </div>
+                    <group style="padding: 0;margin: 0;">
+                            <field name="quotation_note"/>
+                    </group>
+
+                <separator rowspan="0" colspan="0" string="Livraison de pièces" />
+<!--                    <group >-->
+                    <div style="background-color: #F1F1F1; color: #454748;">
+                        <field name="product_lines" nolabel="1">
+                            <tree delete="false" create="0" >
+                                <field name="is_return_mg_ok" invisible="1"/>
+                                <field name="is_return_sav_ok" invisible="1"/>
+                                <field name="is_transfert_mg_ok" invisible="1"/>
+                                <field name="is_transfert_sav_ok" invisible="1"/>
+                                <field name="maintenance" invisible="1"  width="1%"/>
+                                <field name="location_id" invisible="1" width="1%"/>
+                                <field name="location_name" width="10%"/>
+<!--                                <field name="product_id" width="20%"/>
+                                <field name="product_ref" invisible="1" width="1%"/>
+                                <field name="product_name" invisible="1" width="1%"/>
+                                <field name="qty" width="10%"/>
+                                <field name="rest_qty" width="10%"/>-->
+                                <field name="picking_magasinier" width="10%" widget="many2one"/><!--attrs="{'column_invisible': [('parent.is_to_mg', '=', False)]}" -->
+                                <field name="picking_sav" width="10%" widget="many2one"/>
+                                <field name="picking_return_sav" width="10%" optional="show" widget="many2one"/>
+                                <field name="picking_return_mg" width="10%" optional="show" widget="many2one"/>
+                            </tree>
+
+                        </field>
+                    </div>
+<!--                    </group>-->
+                    <button name="action_transfert_done" string="Transfert terminé" type="object" class="btn btn-primary btn-sm" width="20%" attrs="" groups=""/>
+                    <button name="action_start_repair" string="Commencer réparation" class="btn btn-primary btn-sm" type="object" attrs="" groups=""/>
+                    <button name="action_done_repair" string="Réparation terminée" class="btn btn-primary btn-sm" type="object" attrs="" groups=""/>
+                    <group name="washing_and_dg">
+                        <group style="padding: 0;margin: 0;">
+<!--                            <field name="date_livraison" readonly="1"/>-->
+<!--                            <field name="is_washed"/>-->
+                        </group>
+                        <group style="padding: 0;margin: 0;">
+                            <button name="action_ask_validation_dg" string="Soumettre à la direction" class="oe_highlight" type="object" attrs="" groups=""/>
+                        </group>
+
+                    </group>
+
+
+
+       </sheet>
+            <div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+						<field name="message_ids" widget="mail_thread" options='{"thread_level": 1}'/>
+					</div>
+        </form>
+
+
+
+      </field>
+    </record>
+
+      <record model="ir.ui.view" id="viseo_maintenance_equipement.form">
       <field name="name">Formulaire des equipement</field>
       <field name="model">equipement.bike.tools</field>
       <field name="arch" type="xml">
@@ -31,7 +318,7 @@
            <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-book" help="show the contract for this vehicle">
                             <field name="contract_count" widget="statinfo" string="Contrats"/>
                         </button>
-                <button name="ask_maintenance" type="action" class="oe_stat_button" icon="fa-wrench">
+                <button name="return_action_to_open_maintenance" type="object" class="oe_stat_button" icon="fa-wrench">
                     <field string="Maintenance" name="maintenance_count" widget="statinfo"/>
                 </button>
                 <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-flask"  help="show the fuel logs for this vehicle">
@@ -49,7 +336,7 @@
          <group class="row">
           <group class="col">
               <field name="model"/>
-              <field name="owner"/>
+              <field name="owner_id"/>
               <field name="date_start"/>
             <field name="cost_reported"/>
             <field name="emplacement"/>
@@ -60,16 +347,18 @@
               <field name="year_model"/>
               <field name="partner_id"/>
               <field name="expire_date"/>
+              <field name="equipment_type" widget='radio' options="{'horizontal': true}"/>
           </group>
 
         </group>
 
+
+
        </sheet>
-            <div class="oe_chatter">
-                    <field name="message_follower_ids" widget="mail_followers"/>
-                    <field name="activity_ids" widget="mail_activity"/>
-                    <field name="message_ids" widget="mail_thread"/>
-                </div>
+           <div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+						<field name="message_ids" widget="mail_thread" options='{"thread_level": 1}'/>
+					</div>
         </form>
 
 
@@ -77,13 +366,61 @@
       </field>
     </record>
 
+      <record model="ir.ui.view" id="viseo_maintenance_regle_list">
+      <field name="name">Liste des règles</field>
+      <field name="model">maintenance.repair.rules</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+
+        </tree>
+      </field>
+    </record>
+
+      <record model="ir.ui.view" id="viseo_maintenance_regle_form">
+      <field name="name">Règle</field>
+      <field name="model">maintenance.repair.rules</field>
+      <field name="arch" type="xml">
+        <form>
+            <sheet>
+                <group>
+                    <field name="name"/>
+                <field name="visual_control" widget="many2many_tags"/>
+                <field name="operation" widget="many2many_tags"/>
+                <field name="automotive" widget="many2many_tags"/>
+                <field name="bt_chief" widget="many2many_tags"/>
+                </group>
+
+
+
+            </sheet>
+
+             <div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+						<field name="message_ids" widget="mail_thread" options='{"thread_level": 1}'/>
+					</div>
+        </form>
+      </field>
+    </record>
+
     <!-- actions opening views on models -->
     <record model="ir.actions.act_window" id="viseo_maintenance_equipement.action_window">
-      <field name="name">Maintenance bike &amp; tools</field>
+      <field name="name">Equipements bike &amp; tools</field>
       <field name="res_model">equipement.bike.tools</field>
       <field name="view_mode">tree,form</field>
     </record>
 
+      <record model="ir.actions.act_window" id="viseo_maintenance_action_window">
+      <field name="name">Maintenance bike &amp; tools</field>
+      <field name="res_model">maintenance.bike.tools</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+      <record model="ir.actions.act_window" id="viseo_maintenance_rule_action_window">
+      <field name="name">Règle bike &amp; tools</field>
+      <field name="res_model">maintenance.repair.rules</field>
+      <field name="view_mode">tree,form</field>
+    </record>
     <!-- server action to the one above -->
 <!--
     <record model="ir.actions.server" id="viseo_maintenance_equipement.action_server">
@@ -107,9 +444,15 @@
         web_icon="viseo_maintenance_equipement,static/description/odoo_icon.png"
         sequence="110"/>
 
-      <menuitem name="Maintenance" id="viseo_maintenance_equipement.menu_1" parent="viseo_maintenance_equipement.menu_bike_tools_title"/>
-      <menuitem name="Equipements" id="viseo_maintenance_equipement.menu_2" parent="viseo_maintenance_equipement.menu_bike_tools_title"
+
+      <menuitem name="Equipements" id="viseo_maintenance_equipement_menu_2" parent="viseo_maintenance_equipement.menu_bike_tools_title"
         action="viseo_maintenance_equipement.action_window"/>
+      <menuitem name="Maintenance" id="viseo_maintenance_equipement_menu_1" parent="viseo_maintenance_equipement.menu_bike_tools_title"
+         action="viseo_maintenance_action_window" sequence="15"/>
+      <menuitem name="Configuration" id="viseo_maintenance_equipement_config" parent="viseo_maintenance_equipement.menu_bike_tools_title"
+          sequence="20"/>
+      <menuitem name="Règle Bike &amp; Tools" id="viseo_equipement_config" parent="viseo_maintenance_equipement.viseo_maintenance_equipement_config"
+         action="viseo_maintenance_rule_action_window" sequence="10"/>
 <!--
     <menuitem name="viseo_maintenance_equipement" id="viseo_maintenance_equipement.menu_root"/>
 -->
