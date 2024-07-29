@@ -244,6 +244,14 @@ class MaintenanceBT(models.Model):
         action['context'] = dict(self._context, default_maintenance_id=self.id)
         return action
 
+    def action_view_prelevement(self):
+        action = self.env.ref('viseo_maintenance_equipement.prelevement_bike_view_action').read()[0]
+        domain = [('tools_dest', '=', self.tools_id.id),('repair_id','=',self.id)]
+        action['domain'] = domain
+        # action['context'] = dict(self._context, default_vin_src=self.lot_id.id, default_vehicle_src=self.lot_id.product_id.id)
+        action['context'] = dict(self._context, default_tools_dest=self.tools_id.id, default_repair_id=self.id)
+        return action
+
     def action_outside_control_done(self):
         # Notif
         self.notification_rma(u"Contrôle visuel terminé.", 'visual_control')
@@ -553,6 +561,15 @@ class MaintenanceExpensePurchase(models.Model):
 
     maintenance_id = fields.Many2one('maintenance.bike.tools', "Ref maintenance")
     is_maint_valid_by_direction = fields.Boolean("Maintenance validé par la Direction")
+
+class MaintenancePrelevement(models.Model):
+    _inherit = 'prelevement.pieces'
+
+    maintenance_id = fields.Many2one('maintenance.bike.tools', "Ref maintenance")
+    tools_dest = fields.Many2one('equipement.bike.tools', "Equipement destinataire")
+    sn_dest=fields.Char("Numéro de série", related="tools_dest.serial_number")
+    tools_source = fields.Many2one('equipement.bike.tools', "Equipement source")
+    sn_source = fields.Char("Numéro de série",related="tools_source.serial_number")
 
 
 

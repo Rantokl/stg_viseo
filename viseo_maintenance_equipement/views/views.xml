@@ -39,7 +39,7 @@
 
                             <div class="oe_button_box" name="button_box">
 
-                <button name="action_prelevement" type="object" class="oe_stat_button" icon="fa-cogs" >
+                <button name="action_view_prelevement" type="object" class="oe_stat_button" icon="fa-cogs" >
                             <field name="prelevement" widget="statinfo" string="Prélevement"/>
                         </button>
            <button name="action_note_frais" type="object" class="oe_stat_button" icon="fa-shopping-cart" help="show the contract for this vehicle">

@@ -28,7 +28,9 @@
         'views/views.xml',
         'views/templates.xml',
         'views/sequence.xml',
-        'views/expense.xml'
+        'views/expense.xml',
+        'views/prelevement.xml',
+        'views/group.xml'
     ],
     # only loaded in demonstration mode
     'demo': [

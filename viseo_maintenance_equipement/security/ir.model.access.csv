@@ -8,3 +8,5 @@ access_maintenance_product_list,maintenance_product_list,model_maintenance_produ
 access_maintenance_servicesline,maintenance_servicesline,model_maintenance_servicesline,base.group_user,1,1,1,1
 access_maintenance_picking_product_line,maintenance_picking_product_line,model_maintenance_picking_product_line,base.group_user,1,1,1,1
 access_maintenance_repair_rules,maintenance_repair_rules,model_maintenance_repair_rules,base.group_user,1,1,1,1
+access_tools_pieces,tools_pieces,model_tools_pieces,base.group_user,1,1,1,1
+access_prelevement_pieces_bike,prelevement_pieces_bike,model_prelevement_pieces_bike,base.group_user,1,1,1,1
