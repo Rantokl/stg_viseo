@@ -10,3 +10,4 @@ access_maintenance_picking_product_line,maintenance_picking_product_line,model_m
 access_maintenance_repair_rules,maintenance_repair_rules,model_maintenance_repair_rules,base.group_user,1,1,1,1
 access_tools_pieces,tools_pieces,model_tools_pieces,base.group_user,1,1,1,1
 access_prelevement_pieces_bike,prelevement_pieces_bike,model_prelevement_pieces_bike,base.group_user,1,1,1,1
+access_equipment_log_contract,equipment_log_contract,model_equipment_log_contract,base.group_user,1,1,1,1

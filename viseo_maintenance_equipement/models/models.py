@@ -50,6 +50,37 @@ class EquipementBT(models.Model):
             maint = self.env['maintenance.bike.tools'].sudo().search([('tools_id', '=', s.id)])
             s.maintenance_count = len(maint)
 
+    def return_action_to_open(self):
+        """ This opens the xml view specified in xml_id for the current vehicle """
+        self.ensure_one()
+        xml_id = self.env.context.get('xml_id')
+        if xml_id:
+            res = self.env['ir.actions.act_window'].for_xml_id('fleet', xml_id)
+            res.update(
+                context=dict(self.env.context, default_equipement_id=self.id, default_customer_id=self.owner_id.id, group_by=False),
+                domain=[('equipement_id', '=', self.id)],
+                view_mode='tree,form',
+                views=[(False, 'tree'), (False, 'form')],
+            )
+            return res
+        return False
+
+
+    def return_action_to_open_contrat(self):
+
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Contrat',
+            'view_mode': 'tree,form',
+            'res_model': 'equipment.log.contract',
+            'domain':[('equipment_id','=',self.id),('contract_owner','=',self.owner_id.id)],
+            'context': {'default_equipment_id': self.id,
+                        'default_contract_owner': self.owner_id.id,
+
+                        },
+        }
+
     def return_action_to_open_maintenance(self):
 
         self.ensure_one()
@@ -136,6 +167,11 @@ class MaintenanceBT(models.Model):
     cable = fields.Boolean("Cable")
     alim = fields.Boolean("Alimentation")
     stop_urgency = fields.Boolean("Arrêt d\'urgence")
+
+    #Tools
+    soupape = fields.Boolean("Soupape de sécurité")
+    freeze_system = fields.Boolean("Système de refroidissement")
+    pression = fields.Boolean("Pression et régulation")
 
     validity_date = fields.Date(string="Date d'expiration devis", track_visibility='onchange', copy=False)
     payment_term_id = fields.Many2one('account.payment.term', 'Conditions de règlement')
@@ -354,14 +390,14 @@ class MaintenanceBT(models.Model):
             self.message_subscribe(partner_ids=self.env.user.partner_id.ids)
             self.is_diag_done = True
             self.user_diag = self.get_current_user().id
-            contract = self.env['fleet.vehicle.log.contract'].search(
+            contract = self.env['equipment.log.contract'].search(
                 [('state', 'in', ['open', 'diesoon']), ('cost_subtype_id.name', '=', 'Contrat Sav'),
-                 ('vehicle_id', '=', self.vehicle_id.id)], order='id desc', limit=1)
+                 ('equipement_id', '=', self.tools_id.id)], order='id desc', limit=1)
             type_work = contract.type_work_ids.filtered(
                 lambda x: x.servicing_id == self.service_work_id and x.is_reserved == True and x.is_done == False)
             for list in self.product_list_id:
                 product_contract = type_work.product_ids.filtered(lambda x:x.product_id == list.product_id)
-                order_line = self.env['fleet.servicesline']
+                order_line = self.env['maintenance.servicesline']
                 vals = {
                     'pieces': list.name,
                     'product_uom_qty': list.product_qty,
@@ -562,14 +598,8 @@ class MaintenanceExpensePurchase(models.Model):
     maintenance_id = fields.Many2one('maintenance.bike.tools', "Ref maintenance")
     is_maint_valid_by_direction = fields.Boolean("Maintenance validé par la Direction")
 
-class MaintenancePrelevement(models.Model):
-    _inherit = 'prelevement.pieces'
 
-    maintenance_id = fields.Many2one('maintenance.bike.tools', "Ref maintenance")
-    tools_dest = fields.Many2one('equipement.bike.tools', "Equipement destinataire")
-    sn_dest=fields.Char("Numéro de série", related="tools_dest.serial_number")
-    tools_source = fields.Many2one('equipement.bike.tools', "Equipement source")
-    sn_source = fields.Char("Numéro de série",related="tools_source.serial_number")
+
 
 
 

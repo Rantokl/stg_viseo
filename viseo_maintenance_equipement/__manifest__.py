@@ -30,7 +30,8 @@
         'views/sequence.xml',
         'views/expense.xml',
         'views/prelevement.xml',
-        'views/group.xml'
+        'views/group.xml',
+        'views/contrat.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

@@ -87,11 +87,7 @@
 
 
                                 </div>
-<!--                                <div style="flex: 1; overflow-x: auto;" class="image_container" attrs="{'invisible' : [('equipment_type', '!=', 'pont')]}">-->
-<!--                                    <img src="/viseo_maintenance_equipement/static/img/pont.png" style="width:100%;min-width:200px;max-width:550px;max-height:auto;" alt="group_img"/>-->
 
-
-<!--                                </div>-->
                             </group>
                             <group col="2">
                                 <group>
@@ -126,6 +122,33 @@
                                     <field name="cable"/>
                                     <field name="alim"/>
                                     <field name="stop_urgency"/>
+
+                                </group>
+                                     <label for="visual_comments" string="Observations/Commentaires" style="font-weight:bold;"/>
+                                <field name="visual_comments" no_label="1"/>
+                            </group>
+                        </group>
+
+                <group class="row" attrs="{'invisible' : [('equipment_type', '!=', 'tools')]}">
+                            <group class="col">
+                                <div style="overflow-x: auto;" class="image_container" >
+                                    <img src="/viseo_maintenance_equipement/static/img/compressor.jpg" style="width:100%;min-width:200px;max-width:550px;max-height:auto;" alt="group_img"/>
+
+
+                                </div>
+
+                            </group>
+                            <group col="2">
+                                <group>
+                                    <field name="oil"/>
+                                <field name="poulie"/>
+                                <field name="cable"/>
+                                <field name="alim"/>
+                                <field name="soupape"/>
+                                <field name="freeze_system"/>
+                                    <field name="pression"/>
+                                    <field name="air_filter"/>
+<!--                                    <field name="stop_urgency"/>-->
 
                                 </group>
                                      <label for="visual_comments" string="Observations/Commentaires" style="font-weight:bold;"/>
@@ -315,7 +338,7 @@
                 <button name="action_schedule_meeting" type="object" class="oe_stat_button" icon="fa-calendar" >
                             <field name="meeting_count" widget="statinfo" string="Rendez-vous"/>
                         </button>
-           <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-book" help="show the contract for this vehicle">
+           <button name="return_action_to_open_contrat" type="object" class="oe_stat_button" icon="fa-book" help="show the contract for this vehicle">
                             <field name="contract_count" widget="statinfo" string="Contrats"/>
                         </button>
                 <button name="return_action_to_open_maintenance" type="object" class="oe_stat_button" icon="fa-wrench">
