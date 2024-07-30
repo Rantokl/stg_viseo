@@ -18,8 +18,8 @@ class WizardCreditApplication(models.TransientModel):
 
     cif_document_partner = fields.Binary(string='Document CIF', attachment=True)
     cif_document_partner_filename = fields.Char(string='Nom du document CIF')
-    cif_expiration_date = fields.Date(string="Expire le")
-    cif_declaration_date = fields.Date(string="Du")
+    cif_expiration_date = fields.Date(string="CIF Expire le")
+    cif_declaration_date = fields.Date(string="CIF Du")
     
 
     nif_document_partner = fields.Binary(string='Document NIF', attachment=True)
@@ -27,8 +27,8 @@ class WizardCreditApplication(models.TransientModel):
 
     rcs_document_partner = fields.Binary(string='Document RCS', attachment=True)
     rcs_document_partner_filename = fields.Char(string='Nom du document RCS')
-    rcs_expiration_date = fields.Date(string="Expire le")
-    rcs_declaration_date = fields.Date(string="Du")
+    rcs_expiration_date = fields.Date(string="RCS Expire le")
+    rcs_declaration_date = fields.Date(string="RCS Du")
 
     stat_document_partner = fields.Binary(string='Document STAT', attachment=True)
     stat_document_partner_filename = fields.Char(string='Nom du document STAT')
@@ -44,9 +44,9 @@ class WizardCreditApplication(models.TransientModel):
     company_type= fields.Selection([('person','Particulier'),('company','Société')], store=True)
 
     def button_add_doc_partner_from_wizard(self):
+
         # ===========================MISE A JOUR DES CHAMPS DANS L'ONGLET DOCUMENT ==============================
         self.partner_id.sudo().update({
-            "cin_document_partner":self.cin_document_partner,
             "cif_document_partner":self.cif_document_partner,
             "rcs_document_partner":self.rcs_document_partner,
             "rib_document_partner":self.rib_document_partner,
@@ -57,7 +57,7 @@ class WizardCreditApplication(models.TransientModel):
             "rcs_expiration_date":self.rcs_expiration_date,
             "cif_declaration_date":self.cif_declaration_date,
             "rcs_declaration_date":self.rcs_declaration_date,
-            'document_partner_represent': [(5, 0, 0)] + [(0, 0, {
+            'document_partner_represent': [(5 ,0 ,0 )] +[(0, 0, {
                 'cin_represent': doc.cin_represent,
                 'cr_represent': doc.cr_represent,   
             }) for doc in self.document_partner_represent]
@@ -67,6 +67,7 @@ class viseo_add_document_partner(models.Model):
     _inherit = 'res.partner'
 
     def add_doc_partner_from_wizard(self):
+        
         document_partner_represent_data = []
         for document in self.document_partner_represent:
             document_partner_represent_data.append((0, 0, {
@@ -89,7 +90,31 @@ class viseo_add_document_partner(models.Model):
        # =======================================================================================================================================
     #    action = self.env.ref('viseo_add_document_partner.new_partner_action_').read()[0]
 
-        action = self.env.ref('viseo_add_document_partner.new_partner_action_').read()[0]
-        action["res_id"] = self.id
-        return action
-        
+        # =======================================================================================================================================
+        # action = self.env.ref('viseo_add_document_partner.new_partner_action_').read()[0]
+        # action["res_id"] = self.id
+        # return action
+        # =======================================================================================================================================
+        return{
+            'type': 'ir.actions.act_window',
+            'res_model': 'add_doc_partner.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_partner_id': self.id,
+                'default_rcs_document_partner': self.rcs_document_partner,
+                'default_company_type': self.company_type,
+                'default_rcs_declaration_date': self.rcs_declaration_date,
+                'default_rcs_expiration_date': self.rcs_expiration_date,
+                'default_cif_document_partner': self.cif_document_partner,
+                'default_cif_declaration_date': self.cif_declaration_date,
+                'default_cif_expiration_date': self.cif_expiration_date,
+                'default_cin_document_partner': self.cin_document_partner,
+                'default_rib_document_partner': self.rib_document_partner,
+                'default_cr_document_partner': self.cr_document_partner,
+                'default_nif_document_partner': self.nif_document_partner,
+                'default_stat_document_partner': self.stat_document_partner,
+                'default_document_partner_represent': document_partner_represent_data
+            },
+            'name': f'Ajout Document de {self.name}'
+        }
