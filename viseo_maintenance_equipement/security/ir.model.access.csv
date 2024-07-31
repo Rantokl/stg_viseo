@@ -11,3 +11,6 @@ access_maintenance_repair_rules,maintenance_repair_rules,model_maintenance_repai
 access_tools_pieces,tools_pieces,model_tools_pieces,base.group_user,1,1,1,1
 access_prelevement_pieces_bike,prelevement_pieces_bike,model_prelevement_pieces_bike,base.group_user,1,1,1,1
 access_equipment_log_contract,equipment_log_contract,model_equipment_log_contract,base.group_user,1,1,1,1
+access_equipment_cost,equipment_cost,model_equipment_cost,base.group_user,1,1,1,1
+access_type_services_equipment_contract,type_services_equipment_contract,model_type_services_equipment_contract,base.group_user,1,1,1,1
+access_product_for_tools_contracts,product_for_tools_contracts,model_product_for_tools_contracts,base.group_user,1,1,1,1

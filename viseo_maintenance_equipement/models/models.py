@@ -392,7 +392,7 @@ class MaintenanceBT(models.Model):
             self.user_diag = self.get_current_user().id
             contract = self.env['equipment.log.contract'].search(
                 [('state', 'in', ['open', 'diesoon']), ('cost_subtype_id.name', '=', 'Contrat Sav'),
-                 ('equipement_id', '=', self.tools_id.id)], order='id desc', limit=1)
+                 ('equipment_id', '=', self.tools_id.id)], order='id desc', limit=1)
             type_work = contract.type_work_ids.filtered(
                 lambda x: x.servicing_id == self.service_work_id and x.is_reserved == True and x.is_done == False)
             for list in self.product_list_id:
@@ -401,13 +401,13 @@ class MaintenanceBT(models.Model):
                 vals = {
                     'pieces': list.name,
                     'product_uom_qty': list.product_qty,
-                    'fleet_servicesline_id': list.repair_id.id,
+                    # 'fleet_servicesline_id': list.repair_id.id,
                     'price_unit': product_contract.price_unit,
                     'name': list.product_id.name if not list.display_type else list.name,
                     'tax_id': list.product_id.taxes_id,
                     'product_id': list.product_id.id,
                     'display_type': list.display_type,
-                    'is_product_from_contract': True
+                    # 'is_product_from_contract': True
                 }
                 order_line.create(vals)
         else:

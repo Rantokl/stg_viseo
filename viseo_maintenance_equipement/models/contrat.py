@@ -3,10 +3,139 @@ from odoo.exceptions import UserError
 
 from dateutil.relativedelta import relativedelta
 
+class ProductContracts(models.Model):
+    _name = 'product.for.tools.contracts'
+
+
+    type_svc_id = fields.Many2one('type.services.vehicle.contract', string="Type entretien")
+    company_id = fields.Many2one('res.company', string='Société')
+    product_id = fields.Many2one('product.product', string="Article") #, domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]"
+    qty = fields.Float(string="Qté")
+    price_unit = fields.Float(string="Prix unitaire")
+    price_subtotal = fields.Float(string="Prix total")
+
+    @api.onchange('price_unit')
+    def _onchange_price_subtotal(self):
+        self.price_subtotal = self.price_unit * self.qty
+
+
+    def _create_stock_moves_transfer(self, picking):
+        moves = self.env['stock.move']
+        done = self.env['stock.move'].browse()
+        for line in self:
+            template = {
+                'name': line.product_id.name or '',
+                'product_id': line.product_id.id,
+                'product_uom': line.product_id.uom_id.id,
+                'product_uom_qty': line.qty,
+                'location_id': picking.location_id.id,
+                'location_dest_id': picking.location_dest_id.id,
+                'picking_id': picking.id,
+                'state': 'draft',
+                'company_id': line.company_id.id,
+                'picking_type_id': picking.picking_type_id.id,
+                'warehouse_id': picking.picking_type_id.warehouse_id.id,
+            }
+
+            done += moves.create(template)
+        return done
+
+
+class TypeWorkServiceToolsContracts(models.Model):
+    _name = 'type.services.equipment.contract'
+
+    contract_id = fields.Many2one('equipment.contract', string='Contrat')
+    model_type_work_id = fields.Many2one('type.services.contract', string='Type ')
+    servicing_id = fields.Many2one('fleet.service.work', string="Type entretien", required=True)
+    order_servicing = fields.Integer("Nom", related='servicing_id.level')
+    model_vehicle_id = fields.Many2one('fleet.vehicle.model', string="Modèle vehicule")
+    product_ids = fields.One2many('product.for.tools.contracts', 'type_svc_id', string="Articles")
+    company_id = fields.Many2one('res.company', string='société')
+    amount_total = fields.Float("Montant total")
+    is_reserved = fields.Boolean("Est reservé")
+    is_done = fields.Boolean("Est déjà utilisé")
+
+    @api.onchange('model_type_work_id')
+    def get_domain_type_work(self):
+        domain = []
+        type_work_ids = self.model_vehicle_id.type_work_ids.ids
+        if len(type_work_ids) > 0:
+            domain += [('id', 'in', type_work_ids)]
+        else:
+            domain += [('id', 'in', False)]
+        return {'domain': {'model_type_work_id': domain}}
+
+class EquipementCost(models.Model):
+    _name = 'equipment.cost'
+    _description = 'Cost related to a equipment'
+    _order = 'date desc, vehicle_id asc'
+
+    name = fields.Char(related='equipment_id.name', string='Name', store=True, readonly=False)
+    equipment_id = fields.Many2one('equipement.bike.tools', 'Vehicle', required=True, help='Vehicle concerned by this log')
+    cost_subtype_id = fields.Many2one('fleet.service.type', 'Type', help='Cost type purchased with this cost')
+    amount = fields.Float('Total Price')
+    cost_type = fields.Selection([
+        ('contract', 'Contract'),
+        ('services', 'Services'),
+        ('fuel', 'Fuel'),
+        ('other', 'Other')
+        ], 'Category of the cost', default="other", help='For internal purpose only', required=True)
+    parent_id = fields.Many2one('fleet.vehicle.cost', 'Parent', help='Parent cost to this current cost')
+    cost_ids = fields.One2many('fleet.vehicle.cost', 'parent_id', 'Included Services', copy=True)
+    odometer_id = fields.Many2one('fleet.vehicle.odometer', 'Odometer', help='Odometer measure of the vehicle at the moment of this log')
+    odometer = fields.Float( string='Odometer Value',
+        help='Odometer measure of the vehicle at the moment of this log')
+    # odometer_unit = fields.Selection(related='vehicle_id.odometer_unit', string="Unit", readonly=True)
+    date = fields.Date(help='Date when the cost has been executed')
+    contract_id = fields.Many2one('fleet.vehicle.log.contract', 'Contract', help='Contract attached to this cost')
+    auto_generated = fields.Boolean('Automatically Generated', readonly=True)
+    description = fields.Char("Cost Description")
+    company_id = fields.Many2one('res.company', 'Company', default=lambda self: self.env.company)
+    currency_id = fields.Many2one('res.currency', related='company_id.currency_id')
+
+    def _get_odometer(self):
+        self.odometer = 0.0
+        for record in self:
+            record.odometer = False
+            if record.odometer_id:
+                record.odometer = record.odometer_id.value
+
+    def _set_odometer(self):
+        for record in self:
+            if not record.odometer:
+                raise UserError(_('Emptying the odometer value of a vehicle is not allowed.'))
+            odometer = self.env['fleet.vehicle.odometer'].create({
+                'value': record.odometer,
+                'date': record.date or fields.Date.context_today(record),
+                'vehicle_id': record.vehicle_id.id
+            })
+            self.odometer_id = odometer
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for data in vals_list:
+            # make sure that the data are consistent with values of parent and contract records given
+            if 'parent_id' in data and data['parent_id']:
+                parent = self.browse(data['parent_id'])
+                data['vehicle_id'] = parent.vehicle_id.id
+                data['date'] = parent.date
+                data['cost_type'] = parent.cost_type
+            if 'contract_id' in data and data['contract_id']:
+                contract = self.env['fleet.vehicle.log.contract'].browse(data['contract_id'])
+                data['vehicle_id'] = contract.vehicle_id.id
+                data['cost_subtype_id'] = contract.cost_subtype_id.id
+                data['cost_type'] = contract.cost_type
+            if 'odometer' in data and not data['odometer']:
+                # if received value for odometer is 0, then remove it from the
+                # data as it would result to the creation of a
+                # odometer log with 0, which is to be avoided
+                del data['odometer']
+        return super(EquipementCost, self).create(vals_list)
+
 
 class EquipmentLogContract(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    _inherits = {'fleet.vehicle.cost': 'cost_id'}
+    _inherits = {'equipment.cost': 'cost_id'}
     _name = 'equipment.log.contract'
     _description = 'Contract information on a equipment'
     _order = 'state desc,expiration_date'
@@ -34,6 +163,7 @@ class EquipmentLogContract(models.Model):
     active = fields.Boolean(default=True)
     contract_owner = fields.Many2one('res.partner', string="Titulaire du contrat")
     user_id = fields.Many2one('res.users', 'Responsible', default=lambda self: self.env.user, index=True)
+    type_work_ids = fields.One2many('type.services.equipment.contract', 'contract_id', string="Type de travaux")
     start_date = fields.Date('Contract Start Date', default=fields.Date.context_today,
         help='Date when the coverage of the contract begins')
     equipment_id = fields.Many2one('equipement.bike.tools', "Equipement")
