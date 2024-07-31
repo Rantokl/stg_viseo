@@ -13,6 +13,20 @@
         </tree>
       </field>
     </record>
+      <record model="ir.ui.view" id="viseo_maintenance_model_equipement_form">
+      <field name="name">Formulaire des models</field>
+      <field name="model">model.equipment</field>
+      <field name="arch" type="xml">
+        <form>
+            <group>
+                <field name="name"/>
+                <field name="marque"/>
+
+            </group>
+
+        </form>
+      </field>
+    </record>
 
       <record model="ir.ui.view" id="viseo_maintenance_interne_list">
       <field name="name">Liste des maintenance</field>
@@ -48,7 +62,7 @@
                 <button name="ask_purchase_maintenance" type="object" class="oe_stat_button" icon="fa-shopping-cart">
                     <field string="Achats" name="purchase" widget="statinfo"/>
                 </button>
-                <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-usd"  help="show the fuel logs for this vehicle">
+                <button name="action_open_sale" type="object" class="oe_stat_button" icon="fa-usd"  help="show the fuel logs for this vehicle">
                             <field name="sale" widget="statinfo" string="Devis"/>
                         </button>
                 <button name="action_view_cost_logs" type="object" class="oe_stat_button" icon="fa-money"  groups="fleet.fleet_group_manager">
@@ -57,6 +71,14 @@
             </div>
                 <div>
                     <field name="is_outside_control_done" invisible="1"/>
+                    <field name="is_quotation_created" invisible="1"/>
+                        <field name="is_automotive_ok" invisible="1"/>
+                        <field name="is_pieces_ok" invisible="1"/>
+                    <field name="is_diag_done" invisible="1"/>
+                    <field name="is_additive_quotation" invisible="1"/>
+                    <field name="can_start_repair" invisible="1"/>
+                    <field name="is_transfert_done" invisible="1"/>
+
                 </div>
 
                 <group class="row">
@@ -206,7 +228,7 @@
                         </tree>
                     </field>
 
-                 <button name="action_diag_done" string="Terminer diagnostique" type="object" class="btn btn-primary btn-sm ml-4 mr-2" width="20%" attrs=""/>
+                 <button name="action_diag_done" string="Terminer diagnostique" type="object" class="btn btn-primary btn-sm ml-4 mr-2" width="20%" attrs="{'invisible': ['|', '|', ('state','=','cancel'), ('is_diag_done', '=', True), ('is_outside_control_done', '=', False)]}"/>
                     <button name="action_additive_need" string="Besoin additif" type="object" class="btn btn-primary btn-sm ml-4" width="10%" attrs=""/>
 
                 <!--              <group col="2" style="background-color: #F1F1F1; color: #454748;padding: 0;margin: 0;">-->
@@ -269,6 +291,15 @@
                     <group style="padding: 0;margin: 0;">
                             <field name="quotation_note"/>
                     </group>
+                <span attrs="{'invisible':[('is_diag_done','=',False)]}">
+                        <button name="action_automotive_done" string="Automotive Terminé" type="object" class="btn btn-primary btn-sm mr-2" width="15%" attrs="{'invisible':['|','|',('state','in',['done','cancel']),('is_pieces_ok','=',True),('is_automotive_ok','=',True)]}" groups="viseo_maintenance_equipement.tools_group_or_automotive_ok"/>
+                        <button name="action_valid_pieces" string="Valider liste pièces" type="object" class="btn btn-primary btn-sm mr-2" width="15%" attrs="{'invisible':['|','|',('state','in',['done','cancel']),('is_pieces_ok','=',True)]}" groups="viseo_maintenance_equipement.tools_group_or_pieces_ok"/>
+                        <button name="unlock_modif_automotive" string="Autoriser Automotive à modifier" type="object" class="btn btn-primary btn-sm mr-2" width="20%" attrs="{'invisible':['|',('state','in',['done','cancel']),('is_pieces_ok','=',False)]}" groups="viseo_maintenance_equipement.tools_group_director_operation"/>
+                        <button name="action_quotation_create" string="Créer devis" type="object" class="btn btn-primary btn-sm mr-2" width="10%" attrs="{'invisible':['|','|',('is_quotation_created', '=', True),('is_pieces_ok','=',False),('state','in',['done','cancel'])]}" groups="viseo_maintenance_equipement.tools_group_or_create_quote"/>
+                        <button name="action_quotation_create_additive" string="Devis additif" type="object" class="btn btn-primary btn-sm mr-2" width="10%" attrs="{'invisible':['|',('is_additive_quotation','=',False),('state','in',['done','cancel'])]}" groups="viseo_maintenance_equipement.tools_group_or_create_quote"/>
+<!--                        <button name="action_quotation_refuse" string="Cloturer RMA et facturer diagnostic" type="object" class="btn btn-danger btn-sm mr-2" width="20%" attrs="{'invisible':['|',('state','in',['done','cancel']),('is_pieces_ok','=',False)]}" groups="viseo_repair_order.group_or_refuse_quote"/>-->
+                        <button name="action_quotation_refuse" string="Cloturer RMA et facturer diagnostic" type="object" class="btn btn-danger btn-sm mr-2" width="20%" attrs="{'invisible':[('state','in',['done','cancel'])]}" groups="viseo_maintenance_equipement.tools_group_or_refuse_quote"/>
+                    </span>
 
                 <separator rowspan="0" colspan="0" string="Livraison de pièces" />
 <!--                    <group >-->
@@ -296,16 +327,16 @@
                         </field>
                     </div>
 <!--                    </group>-->
-                    <button name="action_transfert_done" string="Transfert terminé" type="object" class="btn btn-primary btn-sm" width="20%" attrs="" groups=""/>
-                    <button name="action_start_repair" string="Commencer réparation" class="btn btn-primary btn-sm" type="object" attrs="" groups=""/>
-                    <button name="action_done_repair" string="Réparation terminée" class="btn btn-primary btn-sm" type="object" attrs="" groups=""/>
+                    <button name="action_transfert_done" string="Transfert terminé" type="object" class="btn btn-primary btn-sm" width="20%" attrs="{'invisible': ['|',('is_transfert_done', '=', True),('state','in',['done','cancel'])]}" groups="viseo_maintenance_equipement.tools_group_or_transfer_done"/>
+                    <button name="action_start_repair" string="Commencer réparation" class="btn btn-primary btn-sm" type="object" attrs="{'invisible': ['|', ('can_start_repair', '=', True), ('is_transfert_done', '=', False), '|', ('state', '!=', 'repair')]}" groups="viseo_maintenance_equipement.tools_group_or_begin_repair"/>
+                    <button name="action_done_repair" string="Réparation terminée" class="btn btn-primary btn-sm" type="object" attrs="{'invisible': ['|', ('can_start_repair', '=', False), ('state', '!=', 'repair')]}" groups="viseo_maintenance_equipement.tools_group_or_repair_done"/>
                     <group name="washing_and_dg">
                         <group style="padding: 0;margin: 0;">
 <!--                            <field name="date_livraison" readonly="1"/>-->
 <!--                            <field name="is_washed"/>-->
                         </group>
                         <group style="padding: 0;margin: 0;">
-                            <button name="action_ask_validation_dg" string="Soumettre à la direction" class="oe_highlight" type="object" attrs="" groups=""/>
+                            <button name="action_ask_validation_dg" string="Soumettre à la direction" class="oe_highlight" type="object" attrs="" groups="viseo_maintenance_equipement.tools_group_ask_validation_dg"/>
                         </group>
 
                     </group>
@@ -344,7 +375,7 @@
                 <button name="return_action_to_open_maintenance" type="object" class="oe_stat_button" icon="fa-wrench">
                     <field string="Maintenance" name="maintenance_count" widget="statinfo"/>
                 </button>
-                <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-flask"  help="show the fuel logs for this vehicle">
+                <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-flask"  help="show the fuel logs for this vehicle" attrs="{'invisible':[('equipment_type','!=','group')]}">
                             <field name="fuel_logs_count" widget="statinfo" string="Carburants"/>
                         </button>
                 <button name="action_view_cost_logs" type="object" class="oe_stat_button" icon="fa-usd"  groups="fleet.fleet_group_manager">
@@ -464,6 +495,7 @@
        <menuitem
         id="menu_bike_tools_title"
         name="Bike &amp; Tools"
+        groups="viseo_maintenance_equipement.tools_bike_group_user"
         web_icon="viseo_maintenance_equipement,static/description/odoo_icon.png"
         sequence="110"/>
 

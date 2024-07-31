@@ -42,7 +42,7 @@ class EquipementBT(models.Model):
     equipment_type = fields.Selection(string="Tyde d'equipement", selection=[
         ('group','Groupe'),
         ('pont','Pont'),
-        ('tools', 'Accessoires')
+        ('compressor', 'Compresseur')
     ])
 
     def _compute_maint(self):
@@ -100,7 +100,8 @@ class EquipementBT(models.Model):
 class ModelEquipement(models.Model):
     _name = 'model.equipment'
 
-    name = fields.Char()
+    name = fields.Char("Modèle")
+    marque = fields.Many2one('viseo.brand', string="Marque")
 
 
 class MaintenanceBT(models.Model):
@@ -122,7 +123,7 @@ class MaintenanceBT(models.Model):
     state = fields.Selection(string="Status", selection=[
         ('draft', 'Réception'),
         ('diag', 'Diagnostique'),
-        ('repared','Réparattion'),
+        ('repair','Réparation'),
         ('try','Essaie OK'),
         ('invoice','Facturation'),
         ('done','Livraison')
@@ -178,16 +179,21 @@ class MaintenanceBT(models.Model):
 
     amount_total = fields.Float('Montant HT', compute='compute_amount_ht')
     quotation_note = fields.Text('Note')
+    is_automotive_ok = fields.Boolean(default=False, string="Automotive Terminé")
 
+    def _set_default_company(self):
+        return self.env.company.id
+    company_id = fields.Many2one('res.company', 'société',default=_set_default_company)
 
     product_lines = fields.One2many('maintenance.picking.product.line', 'maintenance', string="Livraison pièces", readonly=True)
-
+    is_additive_quotation = fields.Boolean(string="need_additive_quotation")
     is_outside_control_done = fields.Boolean(default=False, copy=False, string='Contrôle visuel terminé')
     user_outside_controle = fields.Many2one('res.users', string='Controle extérieur par')
     time_user_outside_controle = fields.Datetime()
     is_diag_done = fields.Boolean(default=False, copy=False, string='Diagnostic terminé')
     user_diag = fields.Many2one('res.users', string='Diagnostic par')
     time_user_diag = fields.Datetime()
+    is_pieces_ok = fields.Boolean(default=False, string="Pièces validés")
     is_transfert_done = fields.Boolean(default=False, copy=False, string='Transfert terminé')
     user_transfert_done = fields.Many2one('res.users', string='Transfert terminé par')
     time_user_transfert = fields.Datetime()
@@ -205,6 +211,8 @@ class MaintenanceBT(models.Model):
     is_invoiced = fields.Boolean(default=False, copy=False, string='Ordre de réparation facturé')
     user_invoiced = fields.Many2one('res.users', string='Créateur facture')
     time_user_invoiced = fields.Datetime()
+    is_quotation_created = fields.Boolean(default=False, string="Devis crée")
+
     # is_under_warranty = fields.Boolean(default=False, related='vehicle_id.is_under_warranty', store=True)
     is_valid_by_direction = fields.Boolean(default=False, string="Validation DG")
     time_user_valid_by_direction = fields.Datetime()
@@ -241,6 +249,40 @@ class MaintenanceBT(models.Model):
     def get_current_user(self):
         current_user = self.env.user
         return current_user
+
+    def action_done_repair(self):
+        # Notif
+        self.notification_rma(u"Réparation terminée.", 'end_repair')
+
+        return self.write({'is_repair_ok': True, 'state': 'try', 'user_repair_ok': self.env.user.id,
+                           'time_user_repair_ok': datetime.today()})
+
+    def _create_invoices(self, grouped=False, final=False):
+        for order in self:
+            if not order.deblocage_daf and not order.force_sale:
+                order.check_limit()
+        if sum(self.order_line.mapped('product_uom_qty'))>0:
+            invoices = super(MaintenanceBT, self)._create_invoices()
+            for invoice in invoices :
+                if bool(self.repair_id):
+                    invoice.write({'repair_id': self.repair_id.id})
+                    self.repair_id.state_ro = 'invoice'
+            return invoices
+        else:
+            invoices = self.env['account.move']
+            return invoices
+
+    def action_start_repair(self):
+        # Notif
+        self.notification_rma(u"Début de la réparation", 'start_repair')
+
+        return self.write({'can_start_repair': True, 'state': 'repair', 'user_start_repair' : self.env.user.id, 'time_user_start_repair': datetime.today()})
+
+    def action_transfert_done(self):
+        # Notif
+        self.notification_rma(u"Transfert terminé.", 'transfert_done')
+
+        return self.write({'is_transfert_done': True, 'user_transfert_done' : self.env.user.id, 'time_user_transfert': datetime.today()})
 
     def _count_values(self):
         invoices = self.env['account.move'].sudo().search([('repair_id', '=', self.id), ('state', '!=', 'cancel'), ('type', '=', 'out_invoice')])
@@ -288,6 +330,55 @@ class MaintenanceBT(models.Model):
         action['context'] = dict(self._context, default_tools_dest=self.tools_id.id, default_repair_id=self.id)
         return action
 
+    def action_automotive_done(self):
+        # Notif
+        self.notification_rma(u"Automotive Terminé", 'automotive_done')
+        self.message_subscribe(partner_ids=self.env.user.partner_id.ids)
+        # Additive need
+        if self.is_pieces_ok:
+            self.update({
+                'is_pieces_ok': False,
+            })
+
+        self.write({
+            'is_automotive_ok': True,
+            'time_user_automotive_ok' : datetime.today(),
+            'user_automotive_ok': self.env.user.id,
+        })
+
+    def action_open_sale(self):
+        action = self.env.ref('sale.action_quotations_with_onboarding').read()[0]
+
+        domain = [
+                  ('maintenance_id', '=', self.id)]  # ('partner_id', '=', self.customer_id.id),
+        order = self.env['sale.order'].search(domain)
+
+        if len(order) > 1 or len(order) == 0:
+            action['domain'] = domain
+        elif order:
+            form_view = [(self.env.ref('sale.view_order_form').id, 'form')]
+            action['views'] = form_view
+            action['res_id'] = order.id
+        action['context'] = dict(self._context, default_repair_id=self.id, )
+        return action
+
+    def action_valid_pieces(self):
+        if not bool(self.sale_service_id):
+            raise UserError("Vous ne pouvez pas valider pièces sans ligne de devis")
+        # Notif
+        self.notification_rma(u"Liste des pièces validées.", 'pieces_done')
+        self.message_subscribe(partner_ids=self.env.user.partner_id.ids)
+
+        # Additive need
+        if self.is_quotation_created:
+            self.update({'is_additive_quotation': True, 'time_user_quotation_created': datetime.today(), 'user_is_quotation_created': self.env.user.id})
+
+        self.write({
+            'is_pieces_ok': True,
+            'time_user_pieces_ok': datetime.today(),
+            'user_pieces_ok': self.env.user.id,
+        })
+
     def action_outside_control_done(self):
         # Notif
         self.notification_rma(u"Contrôle visuel terminé.", 'visual_control')
@@ -314,7 +405,7 @@ class MaintenanceBT(models.Model):
                 raise UserError("Veuillez demander à l'administrateur de configurer les utilisateurs dans automotive")
             users = rules[0].automotive
         elif button in ['automotive_done','pieces_done']:
-            sav_responsible = rules[0].sav_chief
+            sav_responsible = rules[0].bt_chief
             users = self.user_outside_controle + self.user_diag + sav_responsible
         elif button in ['transfert_done','start_repair']:
             users = self.user_outside_controle + self.user_diag + self.user_pieces_ok
@@ -344,13 +435,92 @@ class MaintenanceBT(models.Model):
                            "</div>")%(message))
         self.message_post(body = body_message, subject = u"Ordre de réparation", partner_ids = to_notify.partner_id.ids)
 
-    is_additive_quotation = fields.Boolean(string="need_additive_quotation")
+
+    hide_ref = fields.Boolean('Afficher les références', default=False)
+    display_discount = fields.Boolean('Afficher remise', default=False)
+    time_user_quotation_created = fields.Datetime()
+    def _get_dict_value(self, product, order_line, requests, fournisseur, repair_id, user_id=None):
+        company = self.env.company.id
+        team = self.env['crm.team'].search([('company_id', '=', company)]). \
+                   filtered(lambda m: self.env.user.id in m.member_ids.mapped('id')) \
+               or self.env['crm.team'].search([('company_id', '=', company)], limit=1)
+        currency = self.env['res.currency'].search([('name', 'ilike', '%MGA%'), ('active', '=', True)], limit=1,
+                                                   order='id ASC') or self.env['res.currency'].search(
+            [('active', '=', True)], limit=1)
+        if len(team) > 1:
+            team = team[0]
+        if requests == 'order':
+            # get default value for product_id
+            vals = dict(partner_id=self.customer_id.id, payment_term_id=self.payment_term_id.id,
+                        note=self.quotation_note, from_mrp_operation=True, company_id=company, team_id=team.id,
+                        maintenance_id=repair_id, hide_ref=self.hide_ref, display_discount=self.display_discount)
+        elif requests == 'purchase':
+            vals = dict(partner_id=fournisseur, from_mrp_operation=True, company_id=company, repair_id=repair_id,
+                        type_demande='revente', currency_id=currency.id, user_id=user_id.id)
+        else:
+            vals = {}
+        return vals
+
+
+    def create_order_line_with_this_so_po(self, so, product, order_type, date_planned, product_record=None):
+        # name = so.get('name')
+
+        order_lines = self.env['sale.order.line']
+        purchase_line = self.env['purchase.order.line']
+        for c in product:
+            order = self.env['sale.order'].search([('name', 'ilike', so.get('name'))], limit=1)
+            # forcer l'existance de 'order'
+            order_quants = self.sale_service_id.filtered(
+                lambda j: j.state in ['none'] and j.product_id.id == c.id)
+
+            # ===============================================================================================================
+            #
+            # ===============================================================================================================
+
+            for qt in order_quants:
+                line = dict(
+                    order_id=order.id,
+                    product_id=c.id,
+                    name=qt.name,
+                    state='draft',
+                    product_uom=c.uom_id.id,
+                    product_uom_qty=sum(qt.mapped('product_uom_qty')),
+                    tax_id=qt.tax_id,
+                    discount=max(qt.mapped('discount') or [0]),
+                    price_unit=qt.price_unit,
+                )
+                if order and order_type == 'order':
+                    order_lines.sudo().create(line)
+
+            if product_record:
+                purchase = self.env['purchase.order'].search([('name', 'ilike', so.get('name'))], limit=1)
+                purchase_quants = product_record.filtered(
+                    lambda j: j.to_purchase and j.product_id.id == c.id and not j.is_purchase)
+
+                for rec in purchase_quants:
+                    purchase_order_line = dict(
+                        order_id=purchase.id,
+                        product_id=c.id,
+                        name=rec.name,
+                        state='purchase',
+                        partner_id=self.customer_id.id,
+                        product_uom=c.uom_id.id,
+                        product_uom_qty=sum(rec.mapped('product_uom_qty')),
+                        product_qty=sum(rec.mapped('product_uom_qty')),
+                        discount=max(rec.mapped('discount') or [0]),
+                        price_unit=rec.price_unit,
+                        date_planned=date_planned,
+                        taxes_id=rec.tax_id,
+                    )
+                    if purchase and order_type == 'purchase':
+                        purchase_line.create(purchase_order_line)
+        return True
 
     def action_quotation_create(self):
         # Notif
         # TODO notification Magasinier
 
-        product = self.fleet_servicesline_ids.filtered(lambda j: j.state in ['none']).mapped('product_id')
+        product = self.sale_service_id.filtered(lambda j: j.state in ['none']).mapped('product_id')
         sale_order = self.env['sale.order']
 
         # create order for an existing product
@@ -364,7 +534,7 @@ class MaintenanceBT(models.Model):
 
         so = self._get_dict_value(product, order_line, 'order', fournisseur=None, repair_id=self.id)
 
-        current_fleet_servicesline = self.fleet_servicesline_ids.filtered(lambda j: j.state in ['none'])
+        current_fleet_servicesline = self.sale_service_id.filtered(lambda j: j.state in ['none'])
 
         if current_fleet_servicesline:
             order_id = sale_order.sudo().create(so)
@@ -385,33 +555,25 @@ class MaintenanceBT(models.Model):
         })
 
     def action_diag_done(self):
-        if  not self.is_additive_quotation:
-            self.notification_rma(u"Diagnostic terminé", 'diag_done')
-            self.message_subscribe(partner_ids=self.env.user.partner_id.ids)
-            self.is_diag_done = True
-            self.user_diag = self.get_current_user().id
-            contract = self.env['equipment.log.contract'].search(
-                [('state', 'in', ['open', 'diesoon']), ('cost_subtype_id.name', '=', 'Contrat Sav'),
-                 ('equipment_id', '=', self.tools_id.id)], order='id desc', limit=1)
-            type_work = contract.type_work_ids.filtered(
-                lambda x: x.servicing_id == self.service_work_id and x.is_reserved == True and x.is_done == False)
-            for list in self.product_list_id:
-                product_contract = type_work.product_ids.filtered(lambda x:x.product_id == list.product_id)
-                order_line = self.env['maintenance.servicesline']
-                vals = {
-                    'pieces': list.name,
-                    'product_uom_qty': list.product_qty,
-                    # 'fleet_servicesline_id': list.repair_id.id,
-                    'price_unit': product_contract.price_unit,
-                    'name': list.product_id.name if not list.display_type else list.name,
-                    'tax_id': list.product_id.taxes_id,
-                    'product_id': list.product_id.id,
-                    'display_type': list.display_type,
-                    # 'is_product_from_contract': True
-                }
-                order_line.create(vals)
-        else:
-            return super(MaintenanceBT, self).action_diag_done()
+        # Notif
+        self.notification_rma(u"Diagnostic terminé", 'diag_done')
+        self.message_subscribe(partner_ids=self.env.user.partner_id.ids)
+        self.is_diag_done = True
+        self.user_diag = self.get_current_user().id
+        for list in self.product_list_id:
+            order_line = self.env['maintenance.servicesline']
+            vals = {
+                'pieces': list.name,
+                'product_uom_qty': list.product_qty,
+                'id_maintenance': list.repair_id.id,
+                'price_unit': list.product_id.list_price if list.product_id else 0,
+                'name': list.product_id.name if not list.display_type else list.name,
+                'tax_id': list.product_id.taxes_id,
+                'product_id': list.product_id.id,
+                'display_type': list.display_type,
+            }
+            order_line.create(vals)
+
 
     def get_view_context(self):
         self.ensure_one()
@@ -493,6 +655,21 @@ class MaintenanceLogServicesLine(models.Model):
 
     #####################################################################""
     #   Ajout du champ pour l'article dans le devis
+
+    def _compute_company_id(self):
+        for line in self:
+            line.company_id = line.id_maintenance.company_id
+
+    @api.depends('product_id')
+    def _compute_qty_in_stock(self):
+        for line in self:
+            availables = 0
+            domain = [('product_id', '=', line.product_id.id), ('location_id.usage', '=', 'internal'),
+                      ('location_id.name', 'not in', ['SAVOT', 'SAVCA'])]
+            quants = self.env['stock.quant'].search(domain)
+            for quant in quants:
+                availables += quant.available_quantity
+            line.available_quantity = availables
 
     state = fields.Selection(string=u'Etat', selection=[('devis', 'devis'), ('none', 'aucun'), ], default='none')
     is_purchase = fields.Boolean()
@@ -597,6 +774,12 @@ class MaintenanceExpensePurchase(models.Model):
 
     maintenance_id = fields.Many2one('maintenance.bike.tools', "Ref maintenance")
     is_maint_valid_by_direction = fields.Boolean("Maintenance validé par la Direction")
+
+class MaintenanceSaleOrder(models.Model):
+    _inherit = 'sale.order'
+
+    maintenance_id = fields.Many2one('maintenance.bike.tools', "Ref maintenance")
+
 
 
 
