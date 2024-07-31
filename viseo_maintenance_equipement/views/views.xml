@@ -229,7 +229,7 @@
                     </field>
 
                  <button name="action_diag_done" string="Terminer diagnostique" type="object" class="btn btn-primary btn-sm ml-4 mr-2" width="20%" attrs="{'invisible': ['|', '|', ('state','=','cancel'), ('is_diag_done', '=', True), ('is_outside_control_done', '=', False)]}"/>
-                    <button name="action_additive_need" string="Besoin additif" type="object" class="btn btn-primary btn-sm ml-4" width="10%" attrs=""/>
+<!--                    <button name="action_additive_need" string="Besoin additif" type="object" class="btn btn-primary btn-sm ml-4" width="10%" attrs=""/>-->
 
                 <!--              <group col="2" style="background-color: #F1F1F1; color: #454748;padding: 0;margin: 0;">-->
 <!--                         <group style="padding: 0;margin: 0;">-->
