@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_others_type_form" model="ir.ui.view">
+    <field name="name">other.type.form</field>
+    <field name="model">prospect.other.model</field>
+    <field name="arch" type="xml">
+        <form string="Autres">
+            <group>
+                <field name="description"/>
+            </group>
+            <footer>
+                <button string="Save" type="object" name="action_save" class="btn-primary"/>
+                <button string="Cancel" class="btn-secondary" special="cancel"/>
+            </footer>
+        </form>
+    </field>
+    </record>
+        <record id="action_others_type" model="ir.actions.act_window">
+        <field name="name">Autres</field>
+        <field name="res_model">prospect.other.model</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
