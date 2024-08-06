@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_viseo_crm,access_viseo_crm,model_viseo_crm,base.group_user,1,1,1,1
+access_crm_client_line,access_crm_client_line,model_crm_client_line,base.group_user,1,1,1,1
+access_crm_order_line,access_crm_order_line,model_crm_order_line,base.group_user,1,1,1,1
+access_prospect_crm,access_prospect_crm,model_prospect_crm,base.group_user,1,1,1,1
+access_social_media_model,access_social_media_model,model_social_media_model,base.group_user,1,1,1,1
+access_prospect_telephone_model,access_prospect_telephone_model,model_prospect_telephone_model,base.group_user,1,1,1,1
+access_prospect_other_model,access_prospect_other_model,model_prospect_other_model,base.group_user,1,1,1,1
+access_prospect_email_model,access_prospect_email_model,model_prospect_email_model,base.group_user,1,1,1,1

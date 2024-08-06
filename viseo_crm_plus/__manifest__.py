@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "viseo_partner_info",
+    'name': "viseo_crm_plus",
 
     'summary': """
-        Short (1 phrase/line) summary of the module's purpose, used as
-        subtitle on modules listing or apps.openerp.com""",
+       The new CRM""",
 
     'description': """
         Long description of module's purpose
@@ -20,18 +19,22 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','account','contacts','sale'],
+    'depends': ['base','crm','mail','portal','sale', 'viseo_stock', 'sale_management', 'viseo_repair_order'],
 
     # always loaded
     'data': [
         'security/ir.model.access.csv',
-        'views/docAdd.xml',
-        'views/views.xml',
-        'views/templates.xml',
+        'views/crm.xml',
+        #'views/viseo_crm.xml',
+        #'views/sale_order.xml',
+        'views/pop_up.xml',
+        'views/email.xml',
+        'views/other.xml',
+        'views/social_media.xml',
+        'views/telephone.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',
     ],
-    'sequence':'-99',
 }

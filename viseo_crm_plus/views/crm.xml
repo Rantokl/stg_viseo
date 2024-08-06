@@ -1,0 +1,115 @@
+<odoo>
+    <record id="viseo_crm_plus_view_form" model="ir.ui.view">
+        <field name="name">viseo_crm_plus_view_form</field>
+        <field name="model">viseo.crm</field>
+        <field name="arch" type="xml">
+            <form string="viseo_crm_plus_form">
+                <header>
+
+                    <!-- Define your button here -->
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_client_sleeping"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-moon-o"
+                                attrs="">
+                         <field name="client_sleeping" widget="statinfo" string="Clients Dormants"/>
+                        </button>
+                    </div>
+                      <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom du pipe"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="vendeur"/>
+                            <field name="partner_ids" widget="many2many_tags" string="Sous Lead"/>
+                            <field name="company_id"/>
+                        </group>
+                        <group>
+                            <label for="begin_date" string="Date de validité"/>
+                            <div class="o_row"><field name="begin_date"/> à <field name="date_end"/></div>
+                            <field name="currency_id"/>
+                             <field name="canal" widget="selection_with_popup" options="{'no_open': True}" nolabel="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Prospect">
+                            <field name="prosprects_line">
+                                <tree string="Prospect Lines" editable="bottom">
+                                    <field name="is_invisible" invisible="1"/>
+                                    <field name="name" attrs="{'invisible': [('is_invisible', '=', True)]}"/>
+                                    <field name="adress" attrs="{'invisible': [('is_invisible', '=', True)]}"/> <!-- corrected 'adress' to 'address' -->
+                                    <field name="company_type" attrs="{'invisible': [('is_invisible', '=', True)]}"/>
+                                    <field name="country" attrs="{'invisible': [('is_invisible', '=', True)]}"/>
+                                    <field name="number" attrs="{'invisible': [('is_invisible', '=', True)]}"/>
+                                    <field name="telephone" attrs="{'invisible': [('is_invisible', '=', True)]}"/>
+                                    <field name="email" attrs="{'invisible': [('is_invisible', '=', True)]}"/>
+                                    <field name="canal" attrs="{'invisible': [('is_invisible', '=', True)]}"  options="{'no_open': True}" nolabel="1"/>
+                                    <field name="state" attrs="{'invisible': [('is_invisible', '=', True)]}"/>
+                                    <button string="DEVIS" name="create_devis" type="object" class="btn btn-primary" attrs="{'invisible': [('is_invisible', '=', True)]}"/>
+                                    <button string="Devenir Client" name="put_into_client" type="object" class="btn btn-warning" attrs="{'invisible': [('is_invisible', '=', True)]}"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Clients">
+                             <field name="client_line_ids">
+                                    <tree string="Client Lines" editable="bottom"  decoration-primary="pricelist_generated">
+                                        <field name="partner_ids"/>
+                                        <field name="company_type"/>
+                                        <field name="country_id"/>
+                                        <field name="phone"/>
+                                        <field name="email"/>
+                                        <field name="mobile"/>
+                                         <field name="pricelist_generated" invisible="1"/>
+                                        <button string="DEVIS" name="generate_pricelist" type="object" class="btn-primary" attrs="{'invisible': [('pricelist_generated', '=', True)]}"/>
+                                    </tree>
+                            </field>
+                        </page>
+                        <page string="Articles">
+                            <field name="order_line_ids">
+                                    <tree string="Order Lines" editable="bottom">
+                                        <field name="product_id" string="Articles"/>
+                                         <field name="description"/>
+                                        <field name="product_qty"/>
+                                        <field name="qty_min" string="Quantité minimale"/>
+                                        <field name="qty_max"/>
+                                        <field name="price_ht"/>
+                                        <field name="qty_dispo" invisible="1"/>
+                                        <field name="product_uom_id"/>
+                                        <field name="discount" string="Remise %"/>
+                                        <field name="price"/>
+                                    </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="viseo_crm_plus_view_tree" model="ir.ui.view">
+        <field name="name">viseo_crm_plus_view_tree</field>
+        <field name="model">viseo.crm</field>
+        <field name="arch" type="xml">
+            <tree string="_tree">
+                <field name="name"/>
+                <field name="vendeur" string="Commercial"/>
+                <field name="begin_date" string="Date de début"/>
+                <field name="date_end" string="Date de fin"/>
+                <field name="state" string="Etats"/>
+            </tree>
+        </field>
+    </record>
+    <record id="crm_plus_action" model="ir.actions.act_window">
+        <field name="name">CRM</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">viseo.crm</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- This Menu Item must have a parent and an action -->
+    <menuitem id="crm_plus_menu" name="Pipeline" parent="crm.crm_menu_root" action="viseo_crm_plus.crm_plus_action" sequence="0"/>
+</odoo>
