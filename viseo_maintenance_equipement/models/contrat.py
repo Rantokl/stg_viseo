@@ -3,11 +3,16 @@ from odoo.exceptions import UserError
 
 from dateutil.relativedelta import relativedelta
 
+class TypeServicetools(models.Model):
+    _name = 'type.services.tools.contract'
+
+    name = fields.Char('Type de service')
+
 class ProductContracts(models.Model):
     _name = 'product.for.tools.contracts'
 
 
-    type_svc_id = fields.Many2one('type.services.vehicle.contract', string="Type entretien")
+    type_svc_id = fields.Many2one('type.services.tools.contract', string="Type entretien")
     company_id = fields.Many2one('res.company', string='Société')
     product_id = fields.Many2one('product.product', string="Article") #, domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]"
     qty = fields.Float(string="Qté")
@@ -44,7 +49,7 @@ class ProductContracts(models.Model):
 class TypeWorkServiceToolsContracts(models.Model):
     _name = 'type.services.equipment.contract'
 
-    contract_id = fields.Many2one('equipment.contract', string='Contrat')
+    contract_id = fields.Many2one('equipment.log.contract', string='Contrat')
     model_type_work_id = fields.Many2one('type.services.contract', string='Type ')
     servicing_id = fields.Many2one('fleet.service.work', string="Type entretien", required=True)
     order_servicing = fields.Integer("Nom", related='servicing_id.level')

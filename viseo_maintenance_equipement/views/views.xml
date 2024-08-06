@@ -47,7 +47,12 @@
       <field name="arch" type="xml">
         <form>
             <header>
+                <button name="action_validate_trying" string="Essai OK" class="oe_highlight"
+                        type="object" attrs="{'invisible': ['|', ('is_trying_ok', '=', True), ('state', '!=', 'try')]}" groups="viseo_repair_order.group_or_essai_ok"/>
+                <button name="action_send_to_invoice" string="Envoyer à la facturation" class="oe_highlight"
+                        type="object" attrs="{'invisible': [ '|', '|', ('is_invoiced', '=', True), ('state', '!=', 'try'), ('is_trying_ok', '=', False)]}" groups="viseo_repair_order.group_or_send_invoice"/>
                 <field name="state" widget="statusbar"/>
+
             </header>
             <sheet>
 
@@ -65,7 +70,7 @@
                 <button name="action_open_sale" type="object" class="oe_stat_button" icon="fa-usd"  help="show the fuel logs for this vehicle">
                             <field name="sale" widget="statinfo" string="Devis"/>
                         </button>
-                <button name="action_view_cost_logs" type="object" class="oe_stat_button" icon="fa-money"  groups="fleet.fleet_group_manager">
+                <button name="action_open_invoices" type="object" class="oe_stat_button" icon="fa-money"  groups="fleet.fleet_group_manager">
                             <field name="invoice" widget="statinfo" string="Facture"/>
                         </button>
             </div>
@@ -78,6 +83,10 @@
                     <field name="is_additive_quotation" invisible="1"/>
                     <field name="can_start_repair" invisible="1"/>
                     <field name="is_transfert_done" invisible="1"/>
+                    <field name="is_trying_ok" invisible="1"/>
+                    <field name="is_invoiced" invisible="1"/>
+                    <field name="delivery" invisible="1"/>
+                    <field name="can_invoice" invisible="1"/>
 
                 </div>
 
@@ -85,6 +94,7 @@
                     <group class="col">
                         <field name="customer_id" />
                         <field name="tools_id"/>
+                        <field name="company_id"/>
                         <field name="equipment_type" invisible="1"/>
                     </group>
                     <group class="col">
@@ -310,7 +320,7 @@
                                 <field name="is_return_sav_ok" invisible="1"/>
                                 <field name="is_transfert_mg_ok" invisible="1"/>
                                 <field name="is_transfert_sav_ok" invisible="1"/>
-                                <field name="maintenance" invisible="1"  width="1%"/>
+                                <field name="maintenance_id" invisible="1"  width="1%"/>
                                 <field name="location_id" invisible="1" width="1%"/>
                                 <field name="location_name" width="10%"/>
 <!--                                <field name="product_id" width="20%"/>
@@ -320,8 +330,8 @@
                                 <field name="rest_qty" width="10%"/>-->
                                 <field name="picking_magasinier" width="10%" widget="many2one"/><!--attrs="{'column_invisible': [('parent.is_to_mg', '=', False)]}" -->
                                 <field name="picking_sav" width="10%" widget="many2one"/>
-                                <field name="picking_return_sav" width="10%" optional="show" widget="many2one"/>
-                                <field name="picking_return_mg" width="10%" optional="show" widget="many2one"/>
+<!--                                <field name="picking_return_sav" width="10%" optional="show" widget="many2one"/>-->
+<!--                                <field name="picking_return_mg" width="10%" optional="show" widget="many2one"/>-->
                             </tree>
 
                         </field>
@@ -475,6 +485,22 @@
       <field name="res_model">maintenance.repair.rules</field>
       <field name="view_mode">tree,form</field>
     </record>
+
+
+      <record id="maintenance_sale_order_view_form" model="ir.ui.view">
+        <field name="name">maintenance.sale_order.view.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='repair_id']" position="after">
+
+                    <field name="maintenance_id" />
+<!--                attrs="{'invisible':['|',('repair_id','=',True),('maintenance_id','!=',False)]}"-->
+
+
+            </xpath>
+        </field>
+    </record>
     <!-- server action to the one above -->
 <!--
     <record model="ir.actions.server" id="viseo_maintenance_equipement.action_server">
@@ -494,7 +520,7 @@
     <!-- Top menu item -->
        <menuitem
         id="menu_bike_tools_title"
-        name="Bike &amp; Tools"
+        name="Maintenance des équipements"
         groups="viseo_maintenance_equipement.tools_bike_group_user"
         web_icon="viseo_maintenance_equipement,static/description/odoo_icon.png"
         sequence="110"/>

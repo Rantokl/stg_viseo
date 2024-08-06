@@ -33,7 +33,7 @@ class EquipementBT(models.Model):
     serial_number = fields.Char('Numéro de série')
     year_model = fields.Char('Année du modèle')
     partner_id = fields.Many2one('res.partner', string="Fournisseur")
-    expire_date = fields.Date("Date d'expiration de garantie" )
+    expire_date = fields.Date("Date d'expiration de garantie", compute='_compute_date_waranty' )
     meeting_count = fields.Integer()
     contract_count = fields.Integer()
     fuel_logs_count= fields.Integer()
@@ -44,6 +44,15 @@ class EquipementBT(models.Model):
         ('pont','Pont'),
         ('compressor', 'Compresseur')
     ])
+
+
+    def _compute_date_waranty(self):
+        contract = self.env['equipment.log.contract'].sudo().search([('equipment_id','=',self.id)])
+        if contract:
+            self.expire_date = contract.expiration_date
+        else:
+            self.expire_date = None
+
 
     def _compute_maint(self):
         for s in self:
@@ -132,7 +141,7 @@ class MaintenanceBT(models.Model):
     prelevement = fields.Integer('Prélevement')
     ndf = fields.Integer("Note de frais")
     purchase = fields.Integer("Achats")
-    sale = fields.Integer("Devis")
+    sale = fields.Integer("Devis", compute='_count_sale_order')
     invoice = fields.Integer("Facture")
     equipment_type = fields.Selection(string="Tyde d'equipement", selection=[
         ('group', 'Groupe'),
@@ -169,6 +178,8 @@ class MaintenanceBT(models.Model):
     alim = fields.Boolean("Alimentation")
     stop_urgency = fields.Boolean("Arrêt d\'urgence")
 
+    order_line_ids = fields.Many2many('sale.order', compute="_get_lines_devis")
+
     #Tools
     soupape = fields.Boolean("Soupape de sécurité")
     freeze_system = fields.Boolean("Système de refroidissement")
@@ -181,11 +192,17 @@ class MaintenanceBT(models.Model):
     quotation_note = fields.Text('Note')
     is_automotive_ok = fields.Boolean(default=False, string="Automotive Terminé")
 
+
+    def _count_sale_order(self):
+        for rec in self:
+            quotations = self.env['sale.order'].search([('maintenance_id','=',rec.id),('state', 'not in', ['expired', 'cancel'])])
+            rec.sale = sum([quotation.amount_total for quotation in quotations])
+
     def _set_default_company(self):
         return self.env.company.id
-    company_id = fields.Many2one('res.company', 'société',default=_set_default_company)
+    company_id = fields.Many2one('res.company', 'Société',default=_set_default_company)
 
-    product_lines = fields.One2many('maintenance.picking.product.line', 'maintenance', string="Livraison pièces", readonly=True)
+    product_lines = fields.One2many('maintenance.picking.product.line', 'maintenance_id', string="Livraison pièces", readonly=True)
     is_additive_quotation = fields.Boolean(string="need_additive_quotation")
     is_outside_control_done = fields.Boolean(default=False, copy=False, string='Contrôle visuel terminé')
     user_outside_controle = fields.Many2one('res.users', string='Controle extérieur par')
@@ -230,6 +247,8 @@ class MaintenanceBT(models.Model):
     user_quote_refuse = fields.Many2one('res.users', string="Devis refusé par")
     delivery = fields.Boolean(string='Transfert', compute='_compute_picking_ids')
     prelev_count = fields.Integer(string="Prélèvement", compute='_compute_prelev')
+    can_invoice = fields.Boolean(string="Deblocage Facturation", default=False, track_visibility='onchange', copy=False)
+
     # delivery_count_sav = fields.Integer(string='SAV', compute='_compute_picking_ids')
     # delivery_count_mg = fields.Integer(string='Delivery Orders', compute='_compute_picking_ids')
 
@@ -256,6 +275,100 @@ class MaintenanceBT(models.Model):
 
         return self.write({'is_repair_ok': True, 'state': 'try', 'user_repair_ok': self.env.user.id,
                            'time_user_repair_ok': datetime.today()})
+
+    def action_validate_trying(self):
+        # Notif
+        self.notification_rma(u"Essai OK", 'essai_ok')
+
+        return self.write({'is_trying_ok' : True, 'user_trying' : self.env.user.id, 'time_user_trying': datetime.today()})
+
+    def check_transferts(self):
+        if self.product_lines:
+            for line in self.product_lines:
+                if line.picking_magasinier.state != 'cancel' and (not bool(line.picking_sav) or line.picking_sav.state != 'done'):
+                    raise UserError("Vous ne pouvez envoyer à la facturation si les articles ne sont pas tous recus")
+
+    def action_send_to_invoice(self):
+        order_line_ids = self.env['sale.order'].search([('maintenance_id', '=', self.id), ('state', 'in', ['sale', 'done'])])
+        if not bool(order_line_ids):
+            raise UserError("Vous ne pouvez pas envoyer à la facturation un maintenance sans devis")
+        else:
+            invoices = self.env['account.move'].search([('maintenance_id', '=', self.id), ('state', '!=', 'cancel'), ('type', '=', 'out_invoice')])
+            if bool(invoices):
+                self.write({'user_invoiced': self.env.user.id,
+                            'time_user_invoiced': datetime.today(),
+                            'is_invoiced':True})
+                return
+        if not self.can_invoice:
+            self.check_transferts()
+        return {
+            'name': 'Choisissez la mode de facturation pour cette RMA',
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'invoice.choice.wizard',
+            'target': 'new',
+            'context': {
+                'default_maintenance_id': self.id, }
+        }
+
+
+    def action_open_invoices(self):
+        action = self.env.ref('account.action_move_out_invoice_type').read()[0]
+        domain = [('maintenance_id', '=', self.id)]
+        move = self.env['account.move'].search(domain)
+        if len(move) > 1 :
+            action['domain'] = domain
+        elif len(move) == 0:
+            action['domain'] = [('id', 'in', False)]
+        elif move:
+            form_view = [(self.env.ref('account.view_move_form').id, 'form')]
+            action['views'] = form_view
+            action['res_id'] = move.id
+        action['context'] = dict(self._context, default_maintenance_id=self.id, )
+        return action
+
+
+    def get_pickings_sav(self):
+        transits = self.env['stock.location'].search(
+            [('usage', '=', 'transit'), ('name', 'like', 'Emplacement de Transit%')]).ids
+        savs = self.env['stock.location'].search(
+            [('usage', '=', 'internal'),
+             ('name', 'like', 'Tools%')]).ids
+        order_line_ids = self.env['sale.order'].search([('maintenance_id', '=', self.id)])
+        pickings = order_line_ids.picking_ids
+        pickings_sav = pickings.filtered(lambda li: ((li.location_id.id in transits and li.location_dest_id.id in savs) or (li.location_id.id in savs and li.location_dest_id.id in transits)))
+        pickings_client = pickings.filtered(
+            lambda li: li.location_dest_id.id == 5 or li.location_id.id == 5)
+        return pickings_sav, pickings_client
+
+    def _get_lines_devis(self):
+        for rma in self:
+            order = self.env['sale.order'].search(
+                [('partner_id', '=', rma.customer_id.id),
+                 ('maintenance_id', '=', rma.id)])
+            for rec in order:
+                rma.order_line_ids += rec
+            return rma.order_line_ids
+
+    @api.depends('order_line_ids.picking_ids')
+    def _compute_picking_ids(self):
+        for repair in self:
+            picking_lines = repair.product_lines.mapped('picking_magasinier')
+            order_line_ids = self.env['sale.order'].search([('maintenance_id', '=', repair.id)])
+            # all_pickings = repair.order_line_ids.picking_ids
+            all_pickings = order_line_ids.picking_ids
+            mag_pickings = all_pickings - self.get_pickings_sav()[0] - self.get_pickings_sav()[1] - picking_lines
+            new_pickings = mag_pickings.filtered(
+                lambda pick: pick.state != 'cancel' and pick.location_id.id not in [741, 746])
+            if bool(new_pickings):
+                for picking in new_pickings:
+                    vals = {'maintenance_id': repair.id,
+                            'location_id': picking.location_id.id,
+                            'picking_magasinier': picking.id,
+                            }
+                    repair.write(
+                        {'product_lines': [(0, 0, vals)]})
+            repair.delivery = True
 
     def _create_invoices(self, grouped=False, final=False):
         for order in self:
@@ -412,9 +525,9 @@ class MaintenanceBT(models.Model):
         elif button == 'end_repair':
             users = self.user_outside_controle + self.user_diag + self.user_pieces_ok + self.user_start_repair
         elif button == 'essai_ok':
-            if not rules[0].sav_chief:
+            if not rules[0].bt_chief:
                 raise UserError("Veuillez demander à l'administrateur de configurer les utilisateurs dans automotive")
-            sav_responsible = rules[0].sav_chief
+            sav_responsible = rules[0].bt_chief
             users = self.user_outside_controle + self.user_diag + self.user_pieces_ok + self.user_start_repair + self.user_repair_ok + sav_responsible
         elif button == 'additive_need':
             if not rules[0].automotive:
@@ -737,14 +850,14 @@ class MaintenanceLogServicesLine(models.Model):
 class MaintenanceWorkType(models.Model):
     _name = 'maintenance.picking.product.line'
 
-    maintenance = fields.Many2one('maintenance.bike.tools')
+    maintenance_id = fields.Many2one('maintenance.bike.tools')
     location_id = fields.Many2one('stock.location', 'Emplacement', required=True, related='picking_magasinier.location_id')
     location_name = fields.Char('Emplacement', related='location_id.name')
     # product_id = fields.Many2one('product.product', 'Article', required=True)
     picking_magasinier = fields.Many2one('stock.picking', 'Livraison vers Atelier', required=True)
     picking_sav = fields.Many2one('stock.picking', 'Reception Atelier')
-    picking_return_sav = fields.Many2one('stock.picking', 'Retour vers Magasin')
-    picking_return_mg = fields.Many2one('stock.picking', 'Reception magasin')
+    # picking_return_sav = fields.Many2one('stock.picking', 'Retour vers Magasin')
+    # picking_return_mg = fields.Many2one('stock.picking', 'Reception magasin')
     # product_ref = fields.Char('Ref interne', related="product_id.default_code")
     # product_name = fields.Char('Désignation', related="product_id.name")
     # qty = fields.Float("Qté")
@@ -778,7 +891,15 @@ class MaintenanceExpensePurchase(models.Model):
 class MaintenanceSaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    maintenance_id = fields.Many2one('maintenance.bike.tools', "Ref maintenance")
+    maintenance_id = fields.Many2one('maintenance.bike.tools', "Document d'origine")
+
+class AccountMoveInheritMaintenance(models.Model):
+    _inherit = 'account.move'
+
+    maintenance_id = fields.Many2one('maintenance.bike.tools')
+
+
+
 
 
 
