@@ -1,0 +1,90 @@
+<odoo>
+  <data>
+<record id="new_contact_form_view_" model="ir.ui.view">
+        <field name="name">Mise à jour des documents</field>
+        <field name="model">add_doc_partner.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="rcs_document_partner" attrs="{'invisible': [('company_type','=','person')], 'readonly': False}"/>
+                        <field name="rcs_declaration_date" attrs="{'invisible': [('company_type','=','person')],'readonly': False}"/>
+                        <field name="rcs_expiration_date" attrs="{'invisible': [('company_type','=','person')],'readonly': False}"/>
+                        <field name="cin_document_partner" attrs="{'invisible': [('company_type','=', 'company')]}"  widget="nt_binary_preview" force_save="1"/>
+                        <field name="cr_document_partner" attrs="{'invisible': [('company_type','=', 'company')]}"/>
+                        <field name="company_type" invisible="1"/>                        
+                    </group>
+                
+                    <group>
+                        <field name="cif_document_partner" attrs="{'invisible': [('company_type', '=', 'person')],'readonly': False}"/>
+                        <field name="cif_declaration_date" attrs="{'invisible': [('company_type','=','person')],'readonly': False}"/>
+                        <field name="cif_expiration_date" attrs="{'invisible': [('company_type','=','person')],'readonly': False}"/>
+                    </group>
+                    <group>
+                        <field name="stat_document_partner" attrs="{'invisible': [('company_type','=', 'person')]}"/>
+                        <field name="rib_document_partner" />
+                        <field name="nif_document_partner" attrs="{'invisible': [('company_type','=', 'person')]}"/>
+                    </group>
+                    <group style="width: 50% !important">
+                            <field name="cr_represent" nolabel="1" attrs="{'invisible': [('company_type','=', 'person')]}">
+                            <tree editable="bottom">
+                                <field name="partner_id" invisible="1"/>
+                                <field name="cr_represent"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group style="width: 50% !important">
+                            <field name="cin_represent" nolabel="1" attrs="{'invisible': [('company_type','=', 'person')]}">
+                            <tree editable="bottom">
+                                <field name="partner_id" invisible="1"/>
+                                <field name="cin_represent"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group style="width: 50% !important">
+                            <field name="rib_represent" nolabel="1" attrs="{'invisible': [('company_type','=', 'person')]}">
+                            <tree editable="bottom">
+                                <field name="partner_id" invisible="1"/>
+                                <field name="rib_represent"/>
+                            </tree>
+                        </field>
+                    </group>
+            <footer>
+                <button string="Annuler" special="cancel"/>
+                <button string="Sauvegarder"
+                        type="object" 
+                        name="_add_doc_partner" 
+                        class="oe_highlight"/>
+            </footer>
+                </group>
+            </form>  
+        </field>
+    </record>
+    <!-- <record id="action_server_add_document_partner" model="ir.actions.server">
+      <field name="name">Ajout document</field>
+      <field name="model_id" ref="model_res_partner"/>
+      <field name="binding_model_id" ref="model_res_partner"/>
+      <field name="binding_view_types">form</field>
+      <field name="state">code</field>
+      <field name="code">action = records.add_doc_partner_from_wizard()</field>
+    </record> -->
+    <record id="new_partner_action_" model="ir.actions.act_window">
+        <field name="name">Mise à jour des documents</field>
+        <field name="res_model">add_doc_partner.wizard</field>
+        <field name="view_id" ref="viseo_partner_info.new_contact_form_view_"/>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <!-- <field name="view_ids" eval="[(5, 0, 0),
+        	(0, 0, {'view_mode': 'form', 'view_id': ref('viseo_add_document_partner.new_contact_form_view_')})]"/> -->
+    </record>
+
+    <record id="action_server_add_document_partner" model="ir.actions.server">
+      <field name="name">Mise à jour des documents</field>
+      <field name="model_id" ref="model_res_partner"/>
+      <field name="binding_model_id" ref="model_res_partner"/>
+      <field name="binding_view_types">form</field>
+      <field name="state">code</field>
+      <field name="code">action = records.add_doc_partner_from_wizard()</field>
+    </record>
+      </data>
+</odoo>

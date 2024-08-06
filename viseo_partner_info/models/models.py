@@ -37,10 +37,20 @@ class PartnerInformationDocument(models.Model):
     # cin_document_partner_represent = fields.Binary(string='CIN Représentant ', attachment=True)
     # cin_document_partner_represent = fields.Many2many('ir.attachment', string='CIN Représentant')
     # cin_document_partner_filename_represent = fields.Char(string='Nom du document CIN Représentant')
-    document_partner_represent = fields.One2many(
-        comodel_name='viseo_document_partner.partner_document', 
+    cin_represent = fields.One2many(
+        comodel_name='cin.represent', 
         inverse_name='partner_id', 
-        string='Document du représentant'
+        string='CIN du représentant'
+    )
+    cr_represent = fields.One2many(
+        comodel_name='cr.represent', 
+        inverse_name='partner_id', 
+        string='CR du représentant'
+    )
+    rib_represent = fields.One2many(
+        comodel_name='rib.represent', 
+        inverse_name='partner_id', 
+        string='RIB du représentant'
     )
     cr_document_partner_filename_represent = fields.Char(string='Nom du document RIB Représentant')
 
@@ -78,6 +88,7 @@ class PartnerInformationDocument(models.Model):
     #         'type': 'ir.actions.client',
     #         'tag': 'reload',
     #     }
+    
     @api.model
     def create(self, values):
         if values.get('rcs_document_partner'):
@@ -369,7 +380,7 @@ class PartnerInformationDocumentCheck(models.Model):
             raise exceptions.UserError(f"Une règle avec la même type de Client '{existing_records.selection_company_type}' existe déjà.")
         return super(PartnerInformationDocumentCheck, self).create(values)
 
-# ============================= CREATE PARTNER IN DEVIS ==================================================================
+# ============================================================ CREATE PARTNER IN DEVIS ==================================================================
 
 class PartnerCreationInDevis(models.Model):
     _inherit='sale.order'

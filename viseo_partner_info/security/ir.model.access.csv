@@ -1,2 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_viseo_partner_info_create_config_model,viseo_partner_info.create_config_model user,model_viseo_partner_info_create_config_model,base.group_user,1,1,1,1
+access_cin_represent,cin.represent user,model_cin_represent,base.group_user,1,1,1,1
+access_cr_represent,cr.represent user,model_cr_represent,base.group_user,1,1,1,1
+access_rib_represent,rib.represent user,model_rib_represent,base.group_user,1,1,1,1
