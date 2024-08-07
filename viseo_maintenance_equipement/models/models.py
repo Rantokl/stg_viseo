@@ -893,10 +893,230 @@ class MaintenanceSaleOrder(models.Model):
 
     maintenance_id = fields.Many2one('maintenance.bike.tools', "Document d'origine")
 
+
+
+    def _action_confirm(self):
+        res = super(MaintenanceSaleOrder, self)._action_confirm()
+        # Ajouter le rma sur le transfert
+        if self.maintenance_id:
+            for picking in self.picking_ids:
+                if picking.state not in ('done', 'cancel', 'split', 'partially_available'):
+                    picking.sudo().write({'maintenance_id': self.maintenance_id.id})
+        return res
+
+    def action_confirm(self):
+
+        res = super(MaintenanceSaleOrder, self).action_confirm()
+
+        if self.maintenance_id:
+            for picking in self.picking_ids:
+                if picking.state not in ('done', 'cancel', 'split', 'partially_available'):
+                    picking.sudo().write({'maintenance_id': self.maintenance_id.id})
+
+        # Ajouter le rma sur le transfert
+
+        return res
+
 class AccountMoveInheritMaintenance(models.Model):
     _inherit = 'account.move'
 
     maintenance_id = fields.Many2one('maintenance.bike.tools')
+
+class StockPickingMaintenance(models.Model):
+    _inherit = 'stock.picking'
+
+    maintenance_id = fields.Many2one('maintenance.bike.tools')
+
+    def internal_transfer_viseo(self):
+        des_location_mg = self.get_temp_location(self.company_id.id).id
+        if self.picking_type_id.code == 'internal' and self.location_id.id != des_location_mg:
+            location_id = des_location_mg
+            original_destination_id = self.location_dest_id
+            self.write({'location_dest_id': location_id})
+
+            for move_line in self.move_line_ids_without_package:
+                move_line.write({'location_dest_id': location_id})
+
+            line_moves = []
+            # if self.location_dest_id.id != des_location_mg.id:
+            if original_destination_id.id != des_location_mg:
+                for line in self.move_ids_without_package:
+                    line_moves.append([0, False, {
+                        'name': line.product_id.name,
+                        'product_id': line.product_id.id,
+                        'product_uom_qty': line.quantity_done,
+                        'product_uom': line.product_uom.id,
+                        'date': datetime.today(),
+                        'location_id': location_id,
+                        'location_dest_id': original_destination_id.id,
+                        'company_id': self.company_id.id,
+                        'state': 'draft'}])
+                # ---------- passer valeur sale_id, et repair_id si elles existent -----------
+                vals = {
+                    'group_id': self.group_id.id,
+                    'repair_id': self.repair_id.id or False,
+                    'sale_id' : self.sale_id.id,
+                    'partner_id': self.partner_id.id,
+                    'picking_type_id': self.picking_type_id.id,
+                    'location_id': location_id,
+                    'location_dest_id': original_destination_id.id,
+                    'move_ids_without_package': line_moves,
+                    'origin': self.name,
+                    'company_id': self.company_id.id,
+                    'create_date': datetime.today(),
+                    'write_date': datetime.today(),
+                }
+                if vals['location_id'] != vals['location_dest_id']:
+                    picking = self.create(vals)
+                    picking.action_confirm()
+                    picking.action_assign()
+                    self.write({'bound_picking_id': picking.id, 'location_dest_id': location_id})
+                    if self.repair_id:
+                        if self.repair_id and not self.backorder_id:
+                            transfert_lines = self.repair_id.product_lines
+                            for line_t in transfert_lines:
+                                if line_t.picking_magasinier.id == self.id:
+                                    line_t.picking_sav = picking.id
+                                    break
+
+                            move_lines = self.move_ids_without_package
+                            fleet_servicelines_ids = self.repair_id.fleet_servicesline_ids
+
+                            for mov in move_lines:
+                                for sln in fleet_servicelines_ids:
+                                    if mov.product_id.id == sln.product_id.id:
+                                        # rest_qty = sln.product_uom_qty - mov.quantity_done
+                                        rest_qty = mov.quantity_done
+                                        self.repair_id.sudo().write(
+                                            {'fleet_servicesline_ids': [(1, sln.id, {'rest_qty': rest_qty})]})
+
+                        ############################################# création reliquat SAV‘#########################
+                        else:
+                            if self.repair_id and self.backorder_id:
+                                if self.location_dest_id.id == des_location_mg:
+                                    # picking = self
+                                    transfert_lines = self.repair_id.product_lines
+                                    dest_sav_location = self.env['stock.location'].search(
+                                        [('usage', '=', 'internal'), ('company_id', '=', self.company_id.id),
+                                         ('name', 'like', 'SAV%')],
+                                        limit=1)
+                                    sav_backorder_picking = self.copy()
+                                    sav_backorder_picking.write({'location_id': des_location_mg, 'location_dest_id': dest_sav_location.id})
+                                    for move in sav_backorder_picking.move_lines:
+                                        move.write(
+                                            {'location_id': sav_backorder_picking.location_id.id, 'location_dest_id': sav_backorder_picking.location_dest_id.id})
+                                    # sav_backorder_picking.action_confirm()
+                                    sav_backorder_picking.action_assign()
+                                    ###############################################
+                                    for line_t in transfert_lines:
+                                        if line_t.picking_magasinier.id == self.id:
+                                            line_t.picking_sav = sav_backorder_picking.id
+                                            break
+
+                                    move_lines = self.move_ids_without_package
+                                    fleet_servicelines_ids = self.repair_id.fleet_servicesline_ids
+
+                                    for mov in move_lines:
+                                        for sln in fleet_servicelines_ids:
+                                            if mov.product_id.id == sln.product_id.id:
+                                                # rest_qty = sln.product_uom_qty - (sln.rest_qty + mov.quantity_done)
+                                                rest_qty = sln.rest_qty + mov.quantity_done
+                                                self.repair_id.sudo().write(
+                                                    {'fleet_servicesline_ids': [(1, sln.id, {'rest_qty': rest_qty})]})
+
+                    elif self.maintenance_id:
+                        if self.maintenance_id and not self.backorder_id:
+                            transfert_lines = self.maintenance_id.product_lines
+                            for line_t in transfert_lines:
+                                if line_t.picking_magasinier.id == self.id:
+                                    line_t.picking_sav = picking.id
+                                    break
+
+                            move_lines = self.move_ids_without_package
+                            maintenance_servicelines_ids = self.maintenance_id.sale_service_id
+
+                            for mov in move_lines:
+                                for sln in maintenance_servicelines_ids:
+                                    if mov.product_id.id == sln.product_id.id:
+                                        # rest_qty = sln.product_uom_qty - mov.quantity_done
+                                        rest_qty = mov.quantity_done
+                                        self.maintenance_id.sudo().write(
+                                            {'sale_service_id': [(1, sln.id, {'rest_qty': rest_qty})]})
+
+                        ############################################# création reliquat SAV‘#########################
+                        else:
+                            if self.maintenance_id and self.backorder_id:
+                                if self.location_dest_id.id == des_location_mg:
+                                    # picking = self
+                                    transfert_lines = self.maintenance_id.product_lines
+                                    dest_sav_location = self.env['stock.location'].search(
+                                        [('usage', '=', 'internal'), ('company_id', '=', self.company_id.id),
+                                         ('name', 'like', 'Tools%')],
+                                        limit=1)
+                                    sav_backorder_picking = self.copy()
+                                    sav_backorder_picking.write(
+                                        {'location_id': des_location_mg, 'location_dest_id': dest_sav_location.id})
+                                    for move in sav_backorder_picking.move_lines:
+                                        move.write(
+                                            {'location_id': sav_backorder_picking.location_id.id,
+                                             'location_dest_id': sav_backorder_picking.location_dest_id.id})
+                                    # sav_backorder_picking.action_confirm()
+                                    sav_backorder_picking.action_assign()
+                                    ###############################################
+                                    for line_t in transfert_lines:
+                                        if line_t.picking_magasinier.id == self.id:
+                                            line_t.picking_sav = sav_backorder_picking.id
+                                            break
+
+                                    move_lines = self.move_ids_without_package
+                                    fleet_servicelines_ids = self.maintenance_id.sale_service_id
+
+                                    for mov in move_lines:
+                                        for sln in fleet_servicelines_ids:
+                                            if mov.product_id.id == sln.product_id.id:
+                                                # rest_qty = sln.product_uom_qty - (sln.rest_qty + mov.quantity_done)
+                                                rest_qty = sln.rest_qty + mov.quantity_done
+                                                self.maintenance_id.sudo().write(
+                                                    {'sale_service_id': [(1, sln.id, {'rest_qty': rest_qty})]})
+
+
+class StockRuleMaintenance(models.Model):
+    _inherit = 'stock.rule'
+
+    def _check_rules_and_get_moves(self, src_location, location_id, origin, product_id, values, company_id, product_qty,
+                                   product_uom, name, partner, group_id, date_expected):
+        res = super(StockRuleMaintenance, self)._check_rules_and_get_moves(src_location, location_id, origin, product_id, values, company_id, product_qty,
+                                   product_uom, name, partner, group_id, date_expected)
+
+        sale_id = self.env['sale.order'].search([('name', '=', origin)])
+
+        if sale_id.maintenance_id:
+            destination = self.env['stock.location']
+            dest_loc = destination.search(
+                [('company_id', '=', company_id.id), ('name', '=like', 'Tools%')])
+
+        rules = self.env['stock.rule'].search([('company_id', '=', company_id.id), ('action', '=', 'pull'),
+                                               ('procure_method', '=', 'make_to_stock'),
+                                               ('picking_type_id.name', '=', 'Transferts Internes'),
+                                               ('sequence', '=', 20)])
+
+        if not rules:
+            raise UserError("Aucune règle ne correspond à votre choix d'emplacement, verifier route et/ou emplacement")
+        else:
+            location = src_location.id
+            # if sale_id.from_mrp_operation:
+            location_id = dest_loc
+            rule_id = rules.id
+            picking_type_id = rules.picking_type_id.id
+
+        res.update({
+            'location_id': location,
+            'location_dest_id': location_id.id,
+            'rule_id': rule_id,
+            'picking_type_id': picking_type_id,
+        })
+
+        return res
 
 
 
