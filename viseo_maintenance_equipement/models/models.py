@@ -35,9 +35,10 @@ class EquipementBT(models.Model):
     partner_id = fields.Many2one('res.partner', string="Fournisseur")
     expire_date = fields.Date("Date d'expiration de garantie", compute='_compute_date_waranty' )
     meeting_count = fields.Integer()
-    contract_count = fields.Integer()
+    contract_count = fields.Integer(compute='_compute_contrat')
+    currency_id = fields.Many2one('res.currency', string="Devise", default=lambda self: self.env.company.currency_id)
     fuel_logs_count= fields.Integer()
-    cost_total = fields.Integer()
+    cost_total = fields.Monetary(compute="_compute_invoice")
     maintenance_count = fields.Integer(compute='_compute_maint')
     equipment_type = fields.Selection(string="Tyde d'equipement", selection=[
         ('group','Groupe'),
@@ -45,6 +46,11 @@ class EquipementBT(models.Model):
         ('compressor', 'Compresseur')
     ])
 
+    def _compute_invoice(self):
+        for s in self:
+            invoices = self.env['account.move'].sudo().search(
+                [('maintenance_id.tools_id', '=', self.id), ('state', '!=', 'cancel'), ('type', '=', 'out_invoice')])
+            s.cost_total = sum([invoice.amount_total for invoice in invoices])
 
     def _compute_date_waranty(self):
         contract = self.env['equipment.log.contract'].sudo().search([('equipment_id','=',self.id)])
@@ -55,9 +61,32 @@ class EquipementBT(models.Model):
 
 
     def _compute_maint(self):
+
         for s in self:
+            contrat = self.env['equipment.log.contract'].sudo().search([('equipment_id', '=', s.id)])
             maint = self.env['maintenance.bike.tools'].sudo().search([('tools_id', '=', s.id)])
             s.maintenance_count = len(maint)
+            s.contract_count = len(contrat)
+
+    def _compute_contrat(self):
+
+        for s in self:
+            contrat = self.env['equipment.log.contract'].sudo().search([('equipment_id', '=', s.id)])
+            # maint = self.env['maintenance.bike.tools'].sudo().search([('tools_id', '=', s.id)])
+            # s.maintenance_count = len(maint)
+            s.contract_count = len(contrat)
+
+    def action_view_cost_logs(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Facture',
+            'view_mode': 'tree,form',
+            'res_model': 'account.move',
+            'domain': [('maintenance_id.tools_id', '=', self.id)],
+
+        }
+
 
     def return_action_to_open(self):
         """ This opens the xml view specified in xml_id for the current vehicle """
@@ -128,6 +157,7 @@ class MaintenanceBT(models.Model):
     previous_date = fields.Date('Date prévisionnelle')
     end_date= fields.Date('Date fin')
     invoice_date = fields.Date('Date de  facturation')
+    date_livraison = fields.Datetime("Date de livraison", required=False, track_visibility='onchange')
 
     state = fields.Selection(string="Status", selection=[
         ('draft', 'Réception'),
@@ -135,14 +165,20 @@ class MaintenanceBT(models.Model):
         ('repair','Réparation'),
         ('try','Essaie OK'),
         ('invoice','Facturation'),
-        ('done','Livraison')
+        ('done','Terminé'),
+        ('cancel', 'Annulé')
     ], default='draft')
 
+
+    cancel_reason = fields.Text(copy=False, track_visibility=True, string="Motif de l'annulation")
+    last_state = fields.Char(string="Etat avant annulation")
+
     prelevement = fields.Integer('Prélevement')
-    ndf = fields.Integer("Note de frais")
-    purchase = fields.Integer("Achats")
-    sale = fields.Integer("Devis", compute='_count_sale_order')
-    invoice = fields.Integer("Facture")
+    currency_id = fields.Many2one('res.currency', string="Devise", default=lambda self: self.env.company.currency_id)
+    ndf = fields.Monetary("Note de frais",compute='_count_sale_order')
+    purchase = fields.Monetary("Achats",compute='_count_sale_order')
+    sale = fields.Monetary("Devis", compute='_count_sale_order')
+    invoice = fields.Monetary("Facture",compute='_count_sale_order')
     equipment_type = fields.Selection(string="Tyde d'equipement", selection=[
         ('group', 'Groupe'),
         ('pont', 'Pont'),
@@ -192,11 +228,90 @@ class MaintenanceBT(models.Model):
     quotation_note = fields.Text('Note')
     is_automotive_ok = fields.Boolean(default=False, string="Automotive Terminé")
 
+    def action_quotation_refuse(self):
+        self.message_subscribe(partner_ids=self.env.user.partner_id.ids)
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'quotation.refuse.maintenance',
+            'view_mode': 'form',
+            'context': {'default_maintenance_id': self.id},
+            'views': [(False, 'form')],
+            'target': 'new',
+            'name': 'Facture de diagnostic maintenance'
+        }
+
+    def action_ask_validation_dg(self):
+        # admin = self.env['res.users'].search([('login','=','admin')])
+        # groups = self.env.ref('viseo_repair_order.group_direction_validator')
+        # users = groups.users.filtered(lambda x:x.company_id == self.company_id)
+        # to_subscribe = users - admin
+        to_subscribe = self.env['res.users'].browse(7379)
+        body_message = (("<div class='col-xs-6'>"
+                           "<ul>"
+                           "<li><i>Demande validation SAV</i></li>"
+                           "</ul>"
+                           "</div>"))
+        self.message_post(body=body_message, subject=u"Demande de validation maintenance", partner_ids = to_subscribe.partner_id.ids)
+        self.message_subscribe(partner_ids=to_subscribe.partner_id.ids)
+        self.write({'asked_valid_direction': True, 'user_asked_valid_direction': self.env.user.id, 'time_user_asked_valid_direction': datetime.today(),})
+
+    def action_validation_dg(self):
+        #Avoid double validation
+        if self.is_valid_by_direction:
+            return
+        #----------------------------------
+        ndf = self.env['hr.expense'].search([('maintenance_id', '=', self.id)])
+        if ndf:
+            for note in ndf:
+                note.write({'is_valid_by_direction': True})
+        po = self.env['purchase.order'].search([('maintenance_id', '=', self.id)])
+        if po:
+            for purchase in po:
+                purchase.write({'is_valid_by_direction': True})
+        devis = self.env['sale.order'].search([('maintenance_id', '=', self.id)])
+        if devis:
+            for so in devis:
+                so.write({'is_valid_by_direction': True})
+        body_message = (("<div class='col-xs-6' style='color:red'>"
+                           "<ul>"
+                           "<li><i>Validé par direction</i></li>"
+                           "</ul>"
+                           "</div>"))
+        # users = self.create_uid + self.user_asked_valid_direction + self.user_add_need + self.user_transfert_done + self.user_diag + self.user_automotive_ok + self.user_pieces_ok + self.user_add_need + self.user_outside_controle + self.user_pieces_ok
+        self.message_post(body=body_message, subject=u"Validation DG", partner_ids = self.message_partner_ids.ids)
+        self.write({'is_valid_by_direction': True, 'direction_validator' : self.get_current_user().id, 'time_user_valid_by_direction': datetime.today(),})
+
+
+    def action_operations_done(self):
+        self.message_subscribe(partner_ids=self.env.user.partner_id.ids)
+        body_message = (("<div class='col-xs-6' style='color:red'>"
+                         "<ul>"
+                         "<li><i>Ordre de réparation terminé</i></li>"
+                         "</ul>"
+                         "</div>"))
+        self.message_post(body=body_message, subject=u"Ordre de reparation", partner_ids=self.message_partner_ids.ids)
+
+    def action_deliver_vehicle(self):
+        self.write({
+            'date_livraison': datetime.now(),
+            'is_delivered': True,
+            'state':'done',
+        })
+
 
     def _count_sale_order(self):
         for rec in self:
+            invoices = self.env['account.move'].sudo().search(
+                [('maintenance_id', '=', self.id), ('state', '!=', 'cancel'), ('type', '=', 'out_invoice')])
             quotations = self.env['sale.order'].search([('maintenance_id','=',rec.id),('state', 'not in', ['expired', 'cancel'])])
+            expenses = self.env['hr.expense'].search(
+                [('maintenance_id', '=', rec.id), ('state', '=', 'done')])
+            purchases = self.env['purchase.order'].sudo().search(
+                [('maintenance_id', '=', self.id), ('state', 'in', ['purchase', 'done'])])
             rec.sale = sum([quotation.amount_total for quotation in quotations])
+            rec.ndf =sum([expense.amount_total for expense in expenses])
+            rec.invoice = sum([invoice.amount_total for invoice in invoices])
+            rec.purchase = sum([purchase.amount_total for purchase in purchases])
 
     def _set_default_company(self):
         return self.env.company.id
@@ -246,6 +361,7 @@ class MaintenanceBT(models.Model):
     time_user_pieces_ok = fields.Datetime()
     user_quote_refuse = fields.Many2one('res.users', string="Devis refusé par")
     delivery = fields.Boolean(string='Transfert', compute='_compute_picking_ids')
+    is_delivered = fields.Boolean(string="Livré")
     prelev_count = fields.Integer(string="Prélèvement", compute='_compute_prelev')
     can_invoice = fields.Boolean(string="Deblocage Facturation", default=False, track_visibility='onchange', copy=False)
 
@@ -264,6 +380,15 @@ class MaintenanceBT(models.Model):
         # place_pont = f"Place: {sequence.get('place_id')}" if sequence['place_id'] else f"Pont: {sequence.get('pont_id')}"
         sequence['name'] = f"{sequence['name']}"
         return super(MaintenanceBT, self).create(sequence)
+
+    def _count_values(self):
+        invoices = self.env['account.move'].sudo().search([('maintenance_id', '=', self.id), ('state', '!=', 'cancel'), ('type', '=', 'out_invoice')])
+        purchases = self.env['purchase.order'].sudo().search([('maintenance_id', '=', self.id), ('state', 'in', ['purchase', 'done'])])
+        expenses = self.env['hr.expense'].sudo().search([('maintenance_id', '=', self.id), ('state', '=', 'done')])
+        # in_requests = self.env['internal.request'].search([('repair_id', '=', self.id), ('state', '!=', 'rejected')])
+        self.invoice = sum(invoices.mapped('amount_total'))
+        self.purchase = sum(purchases.mapped('amount_total'))
+        self.ndf = sum(expenses.mapped('total_amount'))
 
     def get_current_user(self):
         current_user = self.env.user
@@ -302,10 +427,10 @@ class MaintenanceBT(models.Model):
         if not self.can_invoice:
             self.check_transferts()
         return {
-            'name': 'Choisissez la mode de facturation pour cette RMA',
+            'name': 'Choisissez la mode de facturation pour cette Maintenance',
             'type': 'ir.actions.act_window',
             'view_mode': 'form',
-            'res_model': 'invoice.choice.wizard',
+            'res_model': 'invoice.choice.maintenance.wizard',
             'target': 'new',
             'context': {
                 'default_maintenance_id': self.id, }
@@ -534,9 +659,9 @@ class MaintenanceBT(models.Model):
                 raise UserError("Veuillez demander à l'administrateur de configurer les utilisateurs dans automotive")
             users = self.user_automotive_ok if self.user_automotive_ok else rules[0].automotive
         elif button == 'quote_refused':
-            if not rules[0].sav_chief:
+            if not rules[0].bt_chief:
                 raise UserError("Veuillez demander à l'administrateur de configurer les utilisateurs dans automotive")
-            sav_responsible = rules[0].sav_chief
+            sav_responsible = rules[0].bt_chief
             users = self.user_outside_controle + sav_responsible
 
         to_notify = users - admin
@@ -1117,6 +1242,117 @@ class StockRuleMaintenance(models.Model):
         })
 
         return res
+
+
+class InvoiceChoiceMaintenance(models.TransientModel):
+    _name = 'invoice.choice.maintenance.wizard'
+
+    maintenance_id = fields.Many2one('maintenance.bike.tools')
+    advance_invoice_method = fields.Selection([
+        ('one_invoice', 'Une Seule facture'),
+        ('multi_invoice', 'Une facture par devis')
+    ], string='Créer facture', default='one_invoice', required=True,
+        help="Une seule facture suffit pour une maintenance mais si en cas de besoin vous pouvez choisir une facture par devis")
+
+    def action_validate(self):
+
+        sale_orders = self.env['sale.order'].search([('maintenance_id', '=', self.maintenance_id.id), ('state', 'in', ['sale', 'done']), ('is_quote_expired', '=', False)])
+        account_department_id = sale_orders[0].account_department_id
+        if self.advance_invoice_method == 'one_invoice':
+            invoice = sale_orders._create_invoices(grouped=False, final=True)
+            invoice.write({'account_department_id' : account_department_id.id, 'maintenance_id' : self.maintenance_id.id})
+            self.maintenance_id.write({'is_invoiced': True,
+                                'user_invoiced': self.env.user.id,
+                                'time_user_invoiced': datetime.today(),
+                                'state': 'invoice'})
+        else:
+            invoices = self.env['account.move']
+            for sale in sale_orders:
+                invoices |= sale._create_invoices(grouped=True, final=True)
+            self.repair_id.write({'is_invoiced': True,
+                                   'user_invoiced': self.env.user.id,
+                                  'time_user_invoiced': datetime.today(),
+                                  'state_ro': 'invoice'})
+
+            for inv in invoices:
+                inv.write({'account_department_id': account_department_id.id, 'maintenance_id' : self.maintenance_id.id})
+
+
+class QuotationRefuseMaintenance(models.TransientModel):
+    _name = 'quotation.refuse.maintenance'
+
+
+    line_ids = fields.One2many('quotation.refuse.line', 'quotation_refuse_id', string="Ligne à facturer")
+    amount_untaxed = fields.Float(string="Montant HT", compute="compute_amount_ht")
+    note = fields.Text(string="Observation")
+
+    maintenance_id = fields.Many2one('maintenance.bike.tools', strng="Ref maintenance")
+
+    @api.depends('line_ids')
+    def compute_amount_ht(self):
+        amount = 0
+        for record in self.line_ids:
+            amount += record.price_unit
+        self.amount_untaxed = amount
+
+    def action_confirm(self):
+
+        if self.maintenance_id:
+            self.maintenance_id.update({
+                'user_quote_refuse': self.env.user.id,
+            })
+
+            invoice_line = []
+            for line in self.line_ids:
+                invoice_line.append((
+                    0, None, {
+                        'name': line.description if line.description else line.product_id.name,
+                        'product_id': line.product_id.id,
+                        'quantity': 1,
+                        'price_unit': line.price_unit,
+                        'tax_ids': line.tax_ids.ids,
+                    }
+                ))
+
+            sales = self.env['sale.order'].sudo().search([('maintenance_id','=',self.maintenance_id.id)])
+
+            if invoice_line:
+                move = self.env['account.move'].create({
+                    'type': 'out_invoice',
+                    'partner_id': self.maintenance_id.customer_id.id,
+                    'partner_shipping_id': self.maintenance_id.customer_id.id,
+                    'invoice_payment_term_id': self.maintenance_id.customer_id.property_payment_term_id.id,
+                    'maintenance_id': self.maintenance_id.id,
+                    'invoice_origin': self.maintenance_id.name,
+                    'narration': self.note,
+                    'invoice_line_ids': invoice_line,
+                    })
+
+                # Notif
+                self.maintenance_id.notification_rma(u'Facture de diagnostic créée.', 'quote_refused')
+                self.maintenance_id.update({
+                    'state': 'done',
+                    'is_invoiced': True,
+                    'date_livraison': datetime.now(),
+                    'is_delivered': True,
+                })
+
+            elif sales:
+                self.maintenance_id.update({
+                    'state': 'done',
+                    'is_invoiced': True,
+                    'date_livraison': datetime.now(),
+                    'is_delivered': True,
+                })
+
+            else:
+                self.maintenance_id.update({
+                    'state': 'cancel',
+                    'last_state': self.maintenance_id.state,
+                    'cancel_reason': self.note,
+                })
+
+
 
 
 

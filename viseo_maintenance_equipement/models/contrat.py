@@ -166,8 +166,9 @@ class EquipmentLogContract(models.Model):
 
     name = fields.Text(compute='_compute_contract_name', store=True)
     active = fields.Boolean(default=True)
+    cost_subtype_id_tools = fields.Many2one('tools.service.type', 'Type', help='Cost type purchased with this cost')
     contract_owner = fields.Many2one('res.partner', string="Titulaire du contrat")
-    user_id = fields.Many2one('res.users', 'Responsible', default=lambda self: self.env.user, index=True)
+    user_id = fields.Many2one('res.users', 'Responsable', default=lambda self: self.env.user, index=True)
     type_work_ids = fields.One2many('type.services.equipment.contract', 'contract_id', string="Type de travaux")
     start_date = fields.Date('Contract Start Date', default=fields.Date.context_today,
         help='Date when the coverage of the contract begins')
@@ -359,3 +360,9 @@ class EquipmentLogContract(models.Model):
     def run_scheduler(self):
         self.scheduler_manage_auto_costs()
         self.scheduler_manage_contract_expiration()
+
+
+class Tools_service_type(models.Model):
+    _name = 'tools.service.type'
+
+    name= fields.Char('Type de contrat')

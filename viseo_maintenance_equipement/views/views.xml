@@ -47,10 +47,14 @@
       <field name="arch" type="xml">
         <form>
             <header>
+                <button name="action_validation_dg" string="Validation DG" class="oe_highlight" type="object" attrs="{'invisible': ['|', '|', ('state','in',['done','cancel']), ('is_valid_by_direction', '=', True), ('asked_valid_direction', '=', False)]}" groups="viseo_maintenance_equipement.tools_group_direction_validator"/>
                 <button name="action_validate_trying" string="Essai OK" class="oe_highlight"
-                        type="object" attrs="{'invisible': ['|', ('is_trying_ok', '=', True), ('state', '!=', 'try')]}" groups="viseo_repair_order.group_or_essai_ok"/>
+                        type="object" attrs="{'invisible': ['|', ('is_trying_ok', '=', True), ('state', '!=', 'try')]}" groups="viseo_maintenance_equipement.tools_group_or_essai_ok"/>
                 <button name="action_send_to_invoice" string="Envoyer à la facturation" class="oe_highlight"
-                        type="object" attrs="{'invisible': [ '|', '|', ('is_invoiced', '=', True), ('state', '!=', 'try'), ('is_trying_ok', '=', False)]}" groups="viseo_repair_order.group_or_send_invoice"/>
+                        type="object" attrs="{'invisible': [ '|', '|', ('is_invoiced', '=', True), ('state', '!=', 'try'), ('is_trying_ok', '=', False)]}" groups="viseo_maintenance_equipement.tools_group_or_send_invoice"/>
+                 <button name="action_operations_done" string="Ordre de reparation terminée" class="oe_highlight" type="object" attrs="{'invisible': ['|', ('is_invoiced', '=', False), ('state', 'in', ['done','cancel'])]}" groups="viseo_maintenance_equipement.tools_group_or_or_done"/>
+                        <button name="action_deliver_vehicle" string="Livrer" class="oe_highlight" attrs="{'invisible': ['|',('is_delivered','=',True),('state','!=','done')]}" type="object" />
+<!--                attrs="{'invisible': ['|',('is_delivered','=',True),('state','!=','done')]}"-->
                 <field name="state" widget="statusbar"/>
 
             </header>
@@ -76,6 +80,7 @@
             </div>
                 <div>
                     <field name="is_outside_control_done" invisible="1"/>
+                    <field name="asked_valid_direction" invisible="1"/>
                     <field name="is_quotation_created" invisible="1"/>
                         <field name="is_automotive_ok" invisible="1"/>
                         <field name="is_pieces_ok" invisible="1"/>
@@ -87,6 +92,8 @@
                     <field name="is_invoiced" invisible="1"/>
                     <field name="delivery" invisible="1"/>
                     <field name="can_invoice" invisible="1"/>
+                    <field name="is_delivered" invisible="1"/>
+                    <field name="is_valid_by_direction" invisible="1"/>
 
                 </div>
 
@@ -302,9 +309,9 @@
                             <field name="quotation_note"/>
                     </group>
                 <span attrs="{'invisible':[('is_diag_done','=',False)]}">
-                        <button name="action_automotive_done" string="Automotive Terminé" type="object" class="btn btn-primary btn-sm mr-2" width="15%" attrs="{'invisible':['|','|',('state','in',['done','cancel']),('is_pieces_ok','=',True),('is_automotive_ok','=',True)]}" groups="viseo_maintenance_equipement.tools_group_or_automotive_ok"/>
+<!--                        <button name="action_automotive_done" string="Automotive Terminé" type="object" class="btn btn-primary btn-sm mr-2" width="15%" attrs="{'invisible':['|','|',('state','in',['done','cancel']),('is_pieces_ok','=',True),('is_automotive_ok','=',True)]}" groups="viseo_maintenance_equipement.tools_group_or_automotive_ok"/>-->
                         <button name="action_valid_pieces" string="Valider liste pièces" type="object" class="btn btn-primary btn-sm mr-2" width="15%" attrs="{'invisible':['|','|',('state','in',['done','cancel']),('is_pieces_ok','=',True)]}" groups="viseo_maintenance_equipement.tools_group_or_pieces_ok"/>
-                        <button name="unlock_modif_automotive" string="Autoriser Automotive à modifier" type="object" class="btn btn-primary btn-sm mr-2" width="20%" attrs="{'invisible':['|',('state','in',['done','cancel']),('is_pieces_ok','=',False)]}" groups="viseo_maintenance_equipement.tools_group_director_operation"/>
+<!--                        <button name="unlock_modif_automotive" string="Autoriser Automotive à modifier" type="object" class="btn btn-primary btn-sm mr-2" width="20%" attrs="{'invisible':['|',('state','in',['done','cancel']),('is_pieces_ok','=',False)]}" groups="viseo_maintenance_equipement.tools_group_director_operation"/>-->
                         <button name="action_quotation_create" string="Créer devis" type="object" class="btn btn-primary btn-sm mr-2" width="10%" attrs="{'invisible':['|','|',('is_quotation_created', '=', True),('is_pieces_ok','=',False),('state','in',['done','cancel'])]}" groups="viseo_maintenance_equipement.tools_group_or_create_quote"/>
                         <button name="action_quotation_create_additive" string="Devis additif" type="object" class="btn btn-primary btn-sm mr-2" width="10%" attrs="{'invisible':['|',('is_additive_quotation','=',False),('state','in',['done','cancel'])]}" groups="viseo_maintenance_equipement.tools_group_or_create_quote"/>
 <!--                        <button name="action_quotation_refuse" string="Cloturer RMA et facturer diagnostic" type="object" class="btn btn-danger btn-sm mr-2" width="20%" attrs="{'invisible':['|',('state','in',['done','cancel']),('is_pieces_ok','=',False)]}" groups="viseo_repair_order.group_or_refuse_quote"/>-->
@@ -346,7 +353,8 @@
 <!--                            <field name="is_washed"/>-->
                         </group>
                         <group style="padding: 0;margin: 0;">
-                            <button name="action_ask_validation_dg" string="Soumettre à la direction" class="oe_highlight" type="object" attrs="" groups="viseo_maintenance_equipement.tools_group_ask_validation_dg"/>
+                            <button name="action_ask_validation_dg" string="Soumettre à la direction" class="oe_highlight" type="object"
+                                    attrs="{'invisible': ['|',('state','in',['done','cancel']),('asked_valid_direction', '=', True)]}" groups="viseo_maintenance_equipement.tools_group_ask_validation_dg"/>
                         </group>
 
                     </group>
@@ -385,9 +393,9 @@
                 <button name="return_action_to_open_maintenance" type="object" class="oe_stat_button" icon="fa-wrench">
                     <field string="Maintenance" name="maintenance_count" widget="statinfo"/>
                 </button>
-                <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-flask"  help="show the fuel logs for this vehicle" attrs="{'invisible':[('equipment_type','!=','group')]}">
-                            <field name="fuel_logs_count" widget="statinfo" string="Carburants"/>
-                        </button>
+<!--                <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-flask"  help="show the fuel logs for this vehicle" attrs="{'invisible':[('equipment_type','!=','group')]}">-->
+<!--                            <field name="fuel_logs_count" widget="statinfo" string="Carburants"/>-->
+<!--                        </button>-->
                 <button name="action_view_cost_logs" type="object" class="oe_stat_button" icon="fa-usd"  groups="fleet.fleet_group_manager">
                             <field name="cost_total" widget="statinfo" string="Coûts"/>
                         </button>

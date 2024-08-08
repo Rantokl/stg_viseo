@@ -3,7 +3,7 @@
     <data>
 
         <record model="ir.module.category" id="tools_bike_category">
-            <field name="name">Bike &amp; Tools</field>
+            <field name="name">Maintenance équipements</field>
             <field name="sequence">1</field>
         </record>
 
@@ -17,6 +17,7 @@
             <field name="name">User</field>
             <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
         </record>
         <record id="tools_bike_group_manager" model="res.groups">
             <field name="name">Administrator</field>

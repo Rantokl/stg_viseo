@@ -11,7 +11,7 @@
                     <field name="expiration_date"/>
                     <field name="days_left" invisible="1"/>
                     <field name="equipment_id"/>
-                    <field name="cost_subtype_id"/>
+                    <field name="cost_subtype_id_tools"/>
                     <field name="insurer_id"/>
                     <field name="purchaser_id"/>
                     <field name="cost_generated"/>
@@ -43,27 +43,27 @@
                             <group string="Contract Informations">
                                 <field name="active" invisible="1"/>
                                 <field name="ins_ref"/>
-                                <field name="cost_subtype_id" required="1" domain="['|',('category','=','contract'),('category','=','both')]"/>
+                                <field name="cost_subtype_id_tools" required="1" />
                                 <field name="insurer_id"/>
                                 <field name="user_id"/>
                             </group>
-                            <group string="Vehicle Informations">
+                            <group string="Equipements Informations">
                                 <field name="equipment_id"/>
                                 <field name="purchaser_id"/>
-                                <label for="odometer"/>
+                                <label for="odometer" invisible="1"/>
                                 <div class="o_row">
-                                    <field name="odometer"/>
-                                    <field name="odometer_unit"/>
+                                    <field name="odometer" invisible="1"/>
+                                    <field name="odometer_unit" invisible="1"/>
                                 </div>
                             </group>
                         </group>
                         <group col="2">
                             <group>
-                                <field name="amount" string="Activation Cost" help="Cost that is paid only once at the creation of the contract" widget="monetary"/>
+                                <field name="amount" invisible="1" string="Activation Cost" help="Cost that is paid only once at the creation of the contract" widget="monetary"/>
                                 <label for="cost_generated"/>
                                 <div class="o_row">
-                                    <field name="cost_generated" attrs="{'invisible': [('cost_frequency','=','no')]}" widget="monetary"/>
-                                    <field name="cost_frequency"/>
+                                    <field name="cost_generated" invisible="1" widget="monetary"/>
+                                    <field name="cost_frequency" invisible="1"/>
                                 </div>
                             </group>
                             <group>

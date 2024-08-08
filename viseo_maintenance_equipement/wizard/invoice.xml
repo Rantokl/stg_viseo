@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="invoice_choice_mode_maintenance_view_form" model="ir.ui.view">
+        <field name="name">invoice.choice.wizard.maintenance.view.form</field>
+        <field name="model">invoice.choice.maintenance.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Choix mode de facturation">
+                <sheet>
+                    <p class="oe_grey">
+                        Les factures générées sont en brouillons, vous pourrez modifier après.
+                    </p>
+                    <group>
+                        <field name="advance_invoice_method" class="oe_inline" widget="radio"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_validate" string="Créer facture(s)" type="object" class="btn btn-primary"/>
+                    <button special="cancel" string="ANNULER" class="btn btn-danger"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

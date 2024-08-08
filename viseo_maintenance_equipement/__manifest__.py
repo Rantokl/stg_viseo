@@ -20,7 +20,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','mail','purchase','uom','viseo_sale','viseo_repair_order'],
+    'depends': ['base','mail','purchase','uom','viseo_sale','viseo_repair_order','viseo_repair'],
 
     # always loaded
     'data': [
@@ -31,7 +31,8 @@
         'views/sequence.xml',
         'views/expense.xml',
         'views/prelevement.xml',
-
+        'wizard/invoice.xml',
+        'wizard/quotation_refuse.xml',
         'views/contrat.xml',
     ],
     # only loaded in demonstration mode

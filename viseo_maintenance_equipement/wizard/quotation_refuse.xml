@@ -1,0 +1,35 @@
+<odoo>
+    <data>
+        <record id="quotation_refuse_maintenance_view_form" model="ir.ui.view">
+        <field name="name">quotation.refuse.maintenance.view.form</field>
+        <field name="model">quotation.refuse.maintenance</field>
+        <field name="arch" type="xml">
+            <form string="Facture de diagnostic maintenance">
+                <sheet>
+                    <group>
+                        <field name="line_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="product_id" options="{'no_create':True}"/>
+                                <field name="description"/>
+                                <field name="tax_ids" widget="many2many_tags" options="{'no_create':True}" invisible="1"/>
+                                <field name="price_unit" readonly="0"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group class="oe_right">
+                        <field name="amount_untaxed"/>
+                    </group>
+                    <group>
+                        <label for="note"/><br/>
+                        <field name="note" nolabel="1"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_confirm" string="Valider" type="object" class="btn btn-sm btn-primary"/>
+                    <button special="cancel" string="ANNULER" class="btn btn-sm btn-danger"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    </data>
+</odoo>
