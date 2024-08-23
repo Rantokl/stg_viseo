@@ -253,7 +253,7 @@ class PrelevementToolsValidation(models.Model):
     is_direction = fields.Boolean(string="Direction")
 
 
-class PrelevementPiecesTools(models.Model):
+class PrelevementPiecesToolsMaintenance(models.Model):
     _inherit = 'prelevement.pieces.bike'
 
     is_sav_chief = fields.Boolean(default=False, compute='_compute_button_validation_visibility')

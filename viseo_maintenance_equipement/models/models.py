@@ -28,6 +28,7 @@ class EquipementBT(models.Model):
     owner_id = fields.Many2one('res.partner', string="Proprietaire")
     date_start = fields.Date('Date mise en service')
     cost_reported = fields.Float('Coût réportée(s)')
+    image = fields.Binary("Image", attachment=True)
     emplacement= fields.Many2one('viseo.vehicle.location')
     address = fields.Char('Adresse')
     serial_number = fields.Char('Numéro de série')
@@ -43,9 +44,11 @@ class EquipementBT(models.Model):
     equipment_type = fields.Selection(string="Tyde d'equipement", selection=[
         ('group','Groupe'),
         ('pont','Pont'),
-        ('compressor', 'Compresseur')
+        ('compressor', 'Compresseur'),
+        ('other', 'Autres')
     ])
 
+    #Calcul des couts
     def _compute_invoice(self):
         for s in self:
             invoices = self.env['account.move'].sudo().search(
@@ -60,6 +63,7 @@ class EquipementBT(models.Model):
             self.expire_date = None
 
 
+    #Compute total des maintenances
     def _compute_maint(self):
 
         for s in self:
@@ -67,6 +71,8 @@ class EquipementBT(models.Model):
             maint = self.env['maintenance.bike.tools'].sudo().search([('tools_id', '=', s.id)])
             s.maintenance_count = len(maint)
             s.contract_count = len(contrat)
+
+
 
     def _compute_contrat(self):
 
@@ -76,6 +82,7 @@ class EquipementBT(models.Model):
             # s.maintenance_count = len(maint)
             s.contract_count = len(contrat)
 
+    #Methode pour ouvrir les factures
     def action_view_cost_logs(self):
         self.ensure_one()
         return {
@@ -89,7 +96,7 @@ class EquipementBT(models.Model):
 
 
     def return_action_to_open(self):
-        """ This opens the xml view specified in xml_id for the current vehicle """
+        """ This opens the xml view specified in xml_id for the current equipement """
         self.ensure_one()
         xml_id = self.env.context.get('xml_id')
         if xml_id:
@@ -119,6 +126,7 @@ class EquipementBT(models.Model):
                         },
         }
 
+    #Vue maintenance
     def return_action_to_open_maintenance(self):
 
         self.ensure_one()
@@ -172,6 +180,7 @@ class MaintenanceBT(models.Model):
 
     cancel_reason = fields.Text(copy=False, track_visibility=True, string="Motif de l'annulation")
     last_state = fields.Char(string="Etat avant annulation")
+    image = fields.Binary(related='tools_id.image', string="Image", readonly=True)
 
     prelevement = fields.Integer('Prélevement')
     currency_id = fields.Many2one('res.currency', string="Devise", default=lambda self: self.env.company.currency_id)
@@ -290,6 +299,8 @@ class MaintenanceBT(models.Model):
                          "</ul>"
                          "</div>"))
         self.message_post(body=body_message, subject=u"Ordre de reparation", partner_ids=self.message_partner_ids.ids)
+        self.write({'state':'done', 'end_date':datetime.now()})
+
 
     def action_deliver_vehicle(self):
         self.write({
