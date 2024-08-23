@@ -55,32 +55,23 @@ class WizardCreditApplication(models.TransientModel):
     company_type= fields.Selection([('person','Particulier'),('company','Société')], store=True)
 
     def _add_doc_partner(self):
-        raise exceptions.UserError("5445613654135136 51361 368 51 3684 369 8138 4 3684")
-        # cin_ids = self.env['cin.represent'].search([('partner_id', '=', self.partner_id.id)])
-        # print("=================================================================================================================="*2)
-        # ids = [record['id'] for record in cin_ids]
-        # print(ids)
-        # print(self.partner_id.id)
-        # cin_ids.unlink()
-        # # self.partner_id.sudo().write({"cin_represent":[(5,0,0)]})
-        # self.partner_id.cin_represent_ids.sudo().unlink()
-        # # =========================== MISE A JOUR DES CHAMPS DANS L'ONGLET DOCUMENT ==============================
-        # self.partner_id.sudo().write({
-        #     "cif_document_partner":self.cif_document_partner,
-        #     "rcs_document_partner":self.rcs_document_partner,
-        #     "rib_document_partner":self.rib_document_partner,
-        #     "nif_document_partner":self.nif_document_partner,
-        #     "stat_document_partner":self.stat_document_partner,
-        #     "cin_document_partner":self.cin_document_partner,
-        #     "cif_expiration_date":self.cif_expiration_date,
-        #     "rcs_expiration_date":self.rcs_expiration_date,
-        #     "cif_declaration_date":self.cif_declaration_date,
-        #     "rcs_declaration_date":self.rcs_declaration_date,
-        #     "cin_represent":[(0, 0, {
-        #         'cin_represent': doc.cin_represent,
-        #         'partner_id': self.partner_id.id
-        #     }) for doc in self.cin_represent]
-        # })
+        # =========================== MISE A JOUR DES CHAMPS DANS L'ONGLET DOCUMENT ==============================
+        self.partner_id.sudo().write({
+            "cif_document_partner":self.cif_document_partner,
+            "rcs_document_partner":self.rcs_document_partner,
+            "rib_document_partner":self.rib_document_partner,
+            "nif_document_partner":self.nif_document_partner,
+            "stat_document_partner":self.stat_document_partner,
+            "cin_document_partner":self.cin_document_partner,
+            "cif_expiration_date":self.cif_expiration_date,
+            "rcs_expiration_date":self.rcs_expiration_date,
+            "cif_declaration_date":self.cif_declaration_date,
+            "rcs_declaration_date":self.rcs_declaration_date,
+            "cin_represent":[(0, 0, {
+                'cin_represent': doc.cin_represent,
+                'partner_id': self.partner_id.id
+            }) for doc in self.cin_represent]
+        })
         # ================================================================================================================
 class viseo_add_document_partner(models.Model):
     _inherit = 'res.partner'
@@ -95,9 +86,9 @@ class viseo_add_document_partner(models.Model):
             cin_represent_data.append((0, 0, {
                 'cin_represent': document.cin_represent,             
                 }))
-        id__=self.env['cin.represent'].search([('partner_id', '=', self.id)]).ids
-        print('$$$$$$$$$$$$$$$'*50) 
-        print(id__)
+        # id__=self.env['cin.represent'].search([('partner_id', '=', self.id)]).ids
+        # print('$$$$$$$$$$$$$$$'*50) 
+        # print(id__)
         # existing_ids = [record.id for record in self.cin_represent.ids]
         # cin_represent_data = [(1, existing_id, {
         #     'cin_represent': document.cin_represent
@@ -111,8 +102,8 @@ class viseo_add_document_partner(models.Model):
             rib_represent_data.append((0, 0, {
                 'rib_represent': document.rib_represent,             
                 }))
-        print('=========='*30) 
-        print    
+        # print('=========='*30) 
+        # print    
         # =============================================== WIZARD ========================================================
         # print('='*50)
         # print(self.env.ref('viseo_add_document_partner.viseo_add_document_partner_action_wizard_add_doc_wizard_form'))
@@ -152,9 +143,9 @@ class viseo_add_document_partner(models.Model):
                 'default_cr_document_partner': self.cr_document_partner,
                 'default_nif_document_partner': self.nif_document_partner,
                 'default_stat_document_partner': self.stat_document_partner,
-                'default_cin_represent': [(6, 0, id__)],
-                # 'default_cr_represent': cr_represent_data,
-                # 'default_rib_represent': rib_represent_data,
+                'default_cin_represent': cin_represent_data,
+                'default_cr_represent': cr_represent_data,
+                'default_rib_represent': rib_represent_data,
             },
             'name': f'Ajout Document de {self.name}'
         }
