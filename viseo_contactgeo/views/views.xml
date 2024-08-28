@@ -1,0 +1,24 @@
+<odoo>
+  <data>
+
+    <!-- Inheritance of the res.partner form view to add geographical fields -->
+    <record id="view_partner_form_inherit_geo" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.geo</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <!-- Ensure the XPath targets the correct position; adjust as needed -->
+            <xpath expr="//field[@name='country_id']" position="before">
+                    <field name="commune"/>
+                    <field name="district"/>
+                    <field name="region"/>
+                    <field name="province"/>
+                
+            </xpath>
+        </field>
+    </record>
+
+    
+
+  </data>
+</odoo>

@@ -1,0 +1,40 @@
+
+<odoo>
+    <data>
+
+        <!-- Formulaire pour le wizard de génération de rapport TVA -->
+        <record model="ir.ui.view" id="wizard_report_TVA_form">
+            <field name="name">Rapport TVA</field>
+            <field name="model">viseo_export_tva.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Wizard for Report Module">
+                    <group>
+                    <field name="du" required="1"/> 
+                        <field name="au" required="1"/>
+                        <field name="compagnie" required="1"/>
+                        <field name="name" invisible="1"/>
+                        <field name="report" filename="name"/>
+                    </group>
+                    <footer>
+                        <button string="Annuler" special="cancel"/>
+                        <button string="Générer le rapport" type="object" name="get_report_TVA_xlsx" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action pour ouvrir le wizard -->
+        <record model="ir.actions.act_window" id="action_wizard_report_TVA">
+            <field name="name">Rapport TVA</field>
+            <field name="res_model">viseo_export_tva.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="wizard_report_TVA_form"/>
+            <field name="target">new</field>
+        </record> 
+
+        <!-- Menu pour accéder au wizard -->
+        <menuitem name="Rapport TVA" id="viseo_export_tva.report_TVA" parent="viseo_import__tva.menu_viseo_export" action="action_wizard_report_TVA"/>
+        
+    </data>
+</odoo>
+

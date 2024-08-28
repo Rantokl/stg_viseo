@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+       
+          
+        <record id="viseo_import_isi_tree_view" model="ir.ui.view">
+            <field name="name">Viseo Import ISI Tree View</field>
+            <field name="model">viseo_import.isi</field>
+            <field name="arch" type="xml">
+                <tree>
+                    
+                    <field name="nom_prenoms"/>
+                    <field name="num_cin"/>
+                    <field name="nature"/>
+                    <field name="detail_transaction"/>
+                    <field name="date_transaction"/>
+                    <field name="montant_transaction"/>
+                    <field name="montant_isi"/>
+                    <field name="province"/>
+                    <field name="region"/>
+                    <field name="district"/>
+                    <field name="commune"/>
+                    <field name="fokontany"/>
+                </tree>
+            </field>
+        </record>
+
+        
+        <record id="viseo_import_isi_form_view" model="ir.ui.view">
+            <field name="name">Viseo Import ISI Form View</field>
+            <field name="model">viseo_import.isi</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="nom_prenoms"/>
+                            <field name="num_cin"/>
+                            <field name="nature"/>
+                            <field name="detail_transaction"/>
+                            <field name="date_transaction"/>
+                            <field name="montant_transaction"/>
+                            <field name="montant_isi"/>
+                            <field name="province"/>
+                            <field name="region"/>
+                            <field name="district"/>
+                            <field name="commune"/>
+                            <field name="fokontany"/>
+                            <field name="file_data" widget='binary' filename='filename'/>
+                        </group>
+                        <footer>
+                            <button name="import_excel_data" type="object" string="Importer des données" class="btn-primary"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        
+        <record id="action_viseo_import_isi" model="ir.actions.act_window">
+            <field name="name">Viseo Import ISI</field>
+            <field name="res_model">viseo_import.isi</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+        </record>
+
+        
+        <record model="ir.ui.view" id="wizard_import_ISI_form">
+            <field name="name">Import ISI</field>
+            <field name="model">viseo_import_isi.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Wizard for import Module">
+                    <group>
+                        <field name="file_data" widget="binary" filename='filename'/>
+                    </group>
+                    <footer>
+                        <button string="Annuler" special="cancel"/>
+                        <button string="Importer" type="object" name="import_excel_data_wizard" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        
+        <record model="ir.actions.act_window" id="action_wizard_import_ISI">
+            <field name="name">Import ISI</field>
+            <field name="res_model">viseo_import_isi.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="wizard_import_ISI_form"/>
+            <field name="target">new</field>
+        </record>
+
+
+        
+       
+        <menuitem id="menu_viseo_import_isi" parent="viseo_import__tva.menu_viseo_import" name="Import ISI" action="action_viseo_import_isi"/>
+        <menuitem id="menu_wizard_import_isi" parent="viseo_import__tva.menu_viseo_import" name="Wizard Import ISI" action="action_wizard_import_ISI"/>
+    </data>
+</odoo>
+
+
+
+
+  

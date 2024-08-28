@@ -1,0 +1,113 @@
+
+<odoo>
+    <data>
+       
+          
+        <record id="viseo_import_tva_tree_view" model="ir.ui.view">
+            <field name="name">Viseo Import TVA Tree View</field>
+            <field name="model">viseo_import.tva</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="deduc_coll"/>
+                    <field name="local_etranger"/>
+                    <field name="num_nif"/>
+                    <field name="raison_sociale"/>
+                    <field name="num_stat"/>
+                    <field name="adresse"/>
+                    <field name="montant_ht"/>
+                    <field name="montant_tva"/>
+                    <field name="ref_facture"/>
+                    <field name="date_facture"/>
+                    <field name="nature"/>
+                    <field name="libelle_operation"/>
+                    <field name="date_paiement"/>
+                    <field name="mois"/>
+                    <field name="annee"/>
+                    <field name="n_dau"/>
+                    <field name="observation"/>
+                    <field name="code_anex"/>
+                    <field name="code_decl"/>
+                </tree>
+            </field>
+        </record>
+
+        
+        <record id="viseo_import_tva_form_view" model="ir.ui.view">
+            <field name="name">Viseo Import TVA Form View</field>
+            <field name="model">viseo_import.tva</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="deduc_coll"/>
+                            <field name="local_etranger"/>
+                            <field name="num_nif"/>
+                            <field name="raison_sociale"/>
+                            <field name="num_stat"/>
+                            <field name="adresse"/>
+                            <field name="montant_ht"/>
+                            <field name="montant_tva"/>
+                            <field name="ref_facture"/>
+                            <field name="date_facture"/>
+                            <field name="nature"/>
+                            <field name="libelle_operation"/>
+                            <field name="date_paiement"/>
+                            <field name="mois"/>
+                            <field name="annee"/>
+                            <field name="n_dau"/>
+                            <field name="observation"/>
+                            <field name="code_anex"/>
+                            <field name="code_decl"/>
+                            <field name="file_data" widget='binary' filename='filename'/>
+                        </group>
+                        <footer>
+                            <button name="import_excel_data" type="object" string="Importer des données" class="btn-primary"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_viseo_import_tva" model="ir.actions.act_window">
+            <field name="name">Viseo Import TVA</field>
+            <field name="res_model">viseo_import.tva</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+        </record>
+
+        
+        <record model="ir.ui.view" id="wizard_import_TVA_form">
+            <field name="name">Import TVA</field>
+            <field name="model">viseo_import_tva.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Wizard for import Module">
+                    <group>
+                        <field name="file_data" widget="binary" filename='filename'/>
+                    </group>
+                    <footer>
+                        <button string="Annuler" special="cancel"/>
+                        <button string="Importer" type="object" name="import_excel_data_wizard" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        
+        <record model="ir.actions.act_window" id="action_wizard_import_TVA">
+            <field name="name">Import TVA</field>
+            <field name="res_model">viseo_import_tva.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="wizard_import_TVA_form"/>
+            <field name="target">new</field>
+        </record>
+
+
+        <menuitem id="menu_viseo_declaration_fiscal" name="Viseo Déclaration Fiscale" />
+        <menuitem id="menu_viseo_export" parent= "menu_viseo_declaration_fiscal" name="Export"/>
+        <menuitem id="menu_viseo_import" parent= "menu_viseo_declaration_fiscal" name="Import"/>
+        <menuitem id="menu_viseo_import_tva" parent="menu_viseo_import" name="Import TVA" action="action_viseo_import_tva"/>
+        <menuitem id="menu_wizard_import_tva" parent="menu_viseo_import" name="Wizard Import TVA" action="action_wizard_import_TVA"/>
+    </data>
+</odoo>
+
+

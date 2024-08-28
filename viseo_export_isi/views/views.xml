@@ -1,0 +1,35 @@
+
+    
+<odoo>
+  <data>  
+   <record model="ir.ui.view" id="wizard_report_ISI_form">
+      <field name="name">Rapport ISI</field>
+      <field name="model">viseo_export_isi.wizard</field>
+      <field name="arch" type="xml">
+          <form string="Wizard for Report Module">
+              <group>
+                  <field name="du" required="1"/>
+                  <field name="au" required="1"/>
+                  <field name="compagnie" required="1"/>
+                  <field name="name" invisible="1"/>
+                  <field name="report" filename="name"/>
+              </group>
+              <footer>
+                  <button string="Annuler" special="cancel"/>
+                  <button string="Generer le rapport" type="object" name="get_report_ISI_xlsx" class="oe_highlight"/>
+              </footer>
+          </form>
+      </field>
+    </record>
+    <record model="ir.actions.act_window" id="action_wizard_report_ISI">
+      <field name="name">Rapport ISI</field>
+      <field name="res_model">viseo_export_isi.wizard</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="wizard_report_ISI_form"/>
+      <field name="target">new</field>
+    </record> 
+
+  
+  <menuitem name="Rapport ISI" id="viseo_export_isi.report_ISI" parent="viseo_import__tva.menu_viseo_export" action="action_wizard_report_ISI"/>
+  </data>
+</odoo>
