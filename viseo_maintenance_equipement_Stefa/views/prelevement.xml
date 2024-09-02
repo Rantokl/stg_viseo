@@ -1,0 +1,157 @@
+<odoo>
+    <data>
+        <record id="maintenance_prelevement_view_form" model="ir.ui.view">
+        <field name="name">maintenance.prelevement.view.form</field>
+        <field name="model">prelevement.pieces.bike</field>
+<!--        <field name="inherit_id" ref="viseo_prelevement_pieces.prelevement_pieces_view_form"/>-->
+        <field name="arch" type="xml">
+<!--            <xpath expr="//form" position="replace">-->
+                <form >
+                    <header>
+                        <button name="button_request" string="Demande de confirmation pièces" class="oe_highlight" attrs="{'invisible':['|',('is_first_confirm','=',False),('state','!=','task')]}" type="object"/>
+                        <button name="button_chief_sav" string="Confirmation chef SAV" class="oe_highlight" attrs="{'invisible':['|',('is_sav_chief','=',False),('state','!=','request')]}" type="object"/>
+                        <button name="button_automotive" string="Confirmer pièces" class="oe_highlight" attrs="{'invisible':['|',('is_automotive','=',False),('state','!=','confirmed')]}" type="object"/>
+    <!--                    <button name="button_dg" string="Confirmer DG" class="oe_highlight" attrs="{'invisible':['|',('is_automotive','=',False),('state','!=','confirmed')]}" type="object"/>-->
+                        <button name="button_vn" string="Valider VIN" class="oe_highlight" type="object" attrs="{'invisible':['|',('is_vn','=',False),('state','!=','vin')]}"/>
+                        <button name="button_confirm" string="Autoriser ordre de prélèvement" class="oe_highlight" type="object" attrs="{'invisible':['|',('is_direction','=',False),('state','!=','validate')]}"/>
+                        <button name="action_done" string="Prélever" class="oe_highlight" type="object" attrs="{'invisible':[('state','!=','withdraw')]}"/>
+                        <button name="action_state_task" string="Remettre etat demande" type="object" attrs="{'invisible':[('state','!=', 'cancel')]}"/>
+                        <button name="action_cancel" string="Annuler" type="object" attrs="{'invisible':[('state','in', ['cancel', 'withdraw', 'done'])]}"/>
+                        <button name="action_return_pieces" class="oe_highlight" string="Remise de(s) pièce(s) prélevé(s)" type="object" attrs="{'invisible':['|',('state','!=', 'done'),('state_return','in', ['automotive_validate','sav_validate','vn_validate','returned'])]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="task,request,vin,validate,withdraw,done,cancel" attrs="{'invisible':[('state_return','in', ['automotive_validate','sav_validate','vn_validate','returned'])]}"/>
+                        <field name="state_return" widget="statusbar" statusbar_visible="automotive_validate,sav_validate,vn_validate,returned" attrs="{'invisible':[('state','in', ['task','request','vin','confirmed','validate','withdraw','cancel'])]}"/>
+                        <button name="button_automotive2" string="Autoriser retour pièce(s)" class="oe_highlight" attrs="{'invisible':['|',('is_automotive','=',False),('state_return','!=','automotive_validate')]}" type="object"/>
+                        <button name="button_chief_sav2" string="Confirmer retour pièce(s)" class="oe_highlight" attrs="{'invisible':['|',('is_sav_chief','=',False),('state_return','!=','sav_validate')]}" type="object"/>
+                        <button name="button_vn2" string="Valider remise en état voiture" class="oe_highlight" type="object" attrs="{'invisible':['|',('is_vn','=',False),('state_return','!=','vn_validate')]}"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" class="oe_inline" readonly="True"/>
+                            </h1>
+                        </div>
+                    <div class="row">
+                            <div class="col-6">
+                                <group>
+                                    <field name="is_first_confirm" invisible="1"/>
+                                    <field name="is_sav_chief" invisible="1"/>
+                                    <field name="is_automotive" invisible="1"/>
+                                    <field name="is_vn" invisible="1"/>
+                                    <field name="is_direction" invisible="1"/>
+                                    <field name="demandeur"/>
+                                    <field name="company_id"/>
+<!--                                    <field name="repair_id" attrs="{'invisible':[('repair_id','=',False)]}"/>-->
+                                    <field name="repair_id" />
+                                    <field name="has_mygroup" invisible="1"/>
+    <!--                                <field nam="current_user" invisible="1"/>-->
+                                </group>
+                            </div>
+                            <div class="col-6">
+                                <group>
+                                    <field name="date" attrs="{'readonly':[('state','not in', 'cancel')]}"/>
+                                    <field name="forcast_return_date" placeholder="Date retour en stock" attrs="{'required':[('state','not in', ['task', 'request'])], 'readonly':[('state','!=', 'confirmed')]}"/>
+                                    <field name="po_link" attrs="{'required':[('state','not in', ['task', 'request']), ('has_mygroup', '!=', True)], 'readonly':[('state','in', ['task', 'request', 'done', 'cancel'])]}"/>
+                                    <field name="is_taken_from_livrable" attrs="{'readonly':[('state','not in', ['confirmed', 'vin', 'withdraw'])]}"/>
+                                </group>
+                            </div>
+                    </div>
+                    <separator rowspan="0" colspan="0" string="Pièce(s) à prélèver" style="font-size:11pt;font-weight: bold"/>
+                        <group rowspan="0" colspan="0">
+                                <group rowspan="0" colspan="0">
+                                    <field name="piece_ids" widget="many2many_tags" attrs="{'readonly':[('state','!=', 'task')]}" nolabel="1"/>
+                                </group>
+                            <group rowspan="0" colspan="0">
+                                <field name="reference_ids" nolabel="1">
+                                    <tree editable="bottom" create="0">
+                                        <field name="prelevement_id" invisible="1"/>
+                                        <field name="purchase_line_id" invisible="1"/>
+                                        <field name="product_id" readonly="1"/>
+                                        <field name="qty_cmd" readonly="1"/>
+                                        <field name="qty_affected" attrs="{'readonly':[('parent.state','!=','vin')]}"/>
+                                    </tree>
+                                </field>
+<!--                            </div>-->
+                            </group>
+                        </group>
+                    <!-- <separator rowspan="0" colspan="0" string="Voiture à prelever pièces" style="font-size:12pt;font-weight: bold" attrs="{'invisible':[('state','in', ['task','request', 'confirmed'])]}"/> -->
+                        <separator rowspan="0" colspan="0" string="Equipement à prelever pièces" style="font-size:12pt;font-weight: bold"/>
+                        <div class="row">
+                            <div class="col-10">
+                                <group>
+                                        <div class="form-group">
+                                            <div>
+                                                <field name="tools_source" placeholder="Choisir Equipement...." attrs="{'required':[('state','=', 'vin')], 'readonly':[('state','!=', 'vin')]}" force_save="1"/>
+    <!--                                            <field name="vehicle_src" placeholder="Choisir Voiture...." force_save="1" invisible="1"/>-->
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div>
+                                                <field name="sn_src" options="{'no_create':1,'no_create_edit':1}" placeholder="Numéro de série" readonly="1" force_save="1"/>
+                                            </div>
+                                        </div>
+                                </group>
+                            </div>
+                        </div>
+                        <separator rowspan="0" colspan="0" string="Equipement de destination pièces" style="font-size:12pt;font-weight: bold"/>
+                        <div class="row">
+                            <div class="col-10">
+                                <group>
+                                        <div class="form-group">
+                                            <div>
+                                                <field name="tools_dest" placeholder="Choisir equipement....." readonly="1" force_save="1"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div>
+                                                <field name="sn_dest" options="{'no_create':1,'no_create_edit':1}" placeholder="Numéro de série" readonly="1" force_save="1"/>
+                                            </div>
+                                        </div>
+                                </group>
+                            </div>
+                        </div>
+
+
+                </sheet>
+                <div class="oe_chatter">
+                <field name="message_follower_ids" widget="mail_followers"/>
+                <field name="message_ids" widget="mail_thread"/>
+              </div>
+                </form>
+<!--            </xpath>-->
+        </field>
+
+        </record>
+
+        <record id="prelevement_tools_pieces_view_tree" model="ir.ui.view">
+        <field name="name">prelevement_tools_pieces_view_tree</field>
+        <field name="model">prelevement.pieces.bike</field>
+        <field name="arch" type="xml">
+            <tree string="prelevement_pieces_tree">
+                <field name="name" />
+                <field name="demandeur" />
+                <field name="tools_source" />
+                <field name="piece_ids" widget="many2many_tags" string="Pièces"/>
+                <field name="forcast_return_date"/>
+                <field name="po_link" />
+                <field name="state" />
+                <field name="state_return"/>
+            </tree>
+        </field>
+    </record>
+
+
+        <record id="prelevement_bike_view_action" model="ir.actions.act_window">
+        <field name="name">Demande de prélèvement pièces</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">prelevement.pieces.bike</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Cliquez sur le bouton créer pour créer un enregistrement de prélèvement
+            </p>
+        </field>
+    </record>
+    </data>
+
+</odoo>
+

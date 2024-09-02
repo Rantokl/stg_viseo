@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.module.category" id="tools_bike_category">
+            <field name="name">Maintenance équipements</field>
+            <field name="sequence">1</field>
+        </record>
+
+<!--        <record id="group_tools_pieces_po" model="res.groups">-->
+<!--            <field name="name">Confirmation pièce(s) sans PO (prélèvement)</field>-->
+<!--            <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>-->
+<!--            <field name="users" eval="[(4, ref('base.user_admin'))]"/>-->
+<!--        </record>-->
+
+        <record id="tools_bike_group_user" model="res.groups">
+            <field name="name">User</field>
+            <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+        <record id="tools_bike_group_manager" model="res.groups">
+            <field name="name">Administrator</field>
+            <field name="implied_ids" eval="[(4, ref('fleet.fleet_group_user'))]"/>
+            <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+
+
+<!--        <?xml version="1.0" encoding="utf-8"?>-->
+<!--<odoo>-->
+<!--    <record model="ir.module.category" id="module_category_service_repair">-->
+<!--        <field name="name">Service après vente</field>-->
+<!--    </record>-->
+
+
+
+    <record id="tools_group_or_essai_ok" model="res.groups">
+        <field name="name">Essai OK</field>
+        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+    <record id="tools_group_or_send_invoice" model="res.groups">
+        <field name="name">Envoie facturation</field>
+        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+    <record id="tools_group_or_or_done" model="res.groups">
+        <field name="name">OR terminée</field>
+        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+    <record id="tools_group_or_visual_ok" model="res.groups">
+        <field name="name">Controle visuel</field>
+        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+    <record id="tools_group_or_diag_done" model="res.groups">
+        <field name="name">Terminer diagnostique</field>
+        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+    <record id="tools_group_or_need_add" model="res.groups">
+        <field name="name">Besoin additif</field>
+        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+    <record id="tools_group_or_automotive_ok" model="res.groups">
+        <field name="name">Automotive terminé</field>
+        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+    <record id="tools_group_or_pieces_ok" model="res.groups">
+        <field name="name">Valider liste pièces</field>
+        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+    <record id="tools_group_or_refuse_quote" model="res.groups">
+        <field name="name">Refuser devis</field>
+        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+    <record id="tools_group_or_create_quote" model="res.groups">
+        <field name="name">Créer devis</field>
+        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+    <record id="tools_group_or_transfer_done" model="res.groups">
+        <field name="name">Transfert terminé</field>
+        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+    <record id="tools_group_or_begin_repair" model="res.groups">
+        <field name="name">Commencer réparation</field>
+        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+    <record id="tools_group_or_repair_done" model="res.groups">
+        <field name="name">Réparation terminée</field>
+        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+    <record id="tools_group_unlock_to_invoice" model="res.groups">
+        <field name="name">Peut débloquer facturation</field>
+        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+<!--    <record id="tools_group_assistant_sav" model="res.groups">-->
+<!--        <field name="name">Assistant SAV</field>-->
+<!--        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>-->
+<!--        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>-->
+<!--    </record>-->
+    <record id="tools_group_workshop_receiver" model="res.groups">
+        <field name="name">Réceptionnaire Atelier</field>
+        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+    <record id="tools_group_workshop_chief" model="res.groups">
+        <field name="name">Chef d'atelier</field>
+        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+    <record id="tools_group_automotive_store" model="res.groups">
+        <field name="name">Automotive / magasin</field>
+        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+    <record id="tools_group_director_operation" model="res.groups">
+        <field name="name">Directeur des opérations</field>
+        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+        <record id="tools_group_ask_validation_dg" model="res.groups">
+        <field name="name">Bouton soumettre à la direction</field>
+        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+        <record id="tools_group_direction_validator" model="res.groups">
+        <field name="name">Validation DG</field>
+        <field name="category_id" ref="viseo_maintenance_equipement.tools_bike_category"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+<!--    <record id="group_can_change_partner" model="res.groups">-->
+<!--        <field name="name">Peut changer partenaire</field>-->
+<!--        <field name="category_id" ref="viseo_repair_order.module_category_service_repair"/>-->
+<!--        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>-->
+<!--    </record>-->
+
+
+    </data>
+</odoo>

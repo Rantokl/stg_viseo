@@ -1,0 +1,31 @@
+<odoo>
+
+            <template id="template_maintenance_tools" inherit_id="viseo_maintenance_equipement.viseo_maintenance_equipement_form">
+                <xpath expr="//div[@class='image_container']" position="inside">
+                    <t t-foreach="docs" t-as="doc">
+                        <t t-set="context" t-value="doc.get_view_context()"/>
+                        <t t-if="context['equipment_type'] == 'group'">
+                            <img src="/viseo_maintenance_equipement/static/img/groupe.jpg" class="image group_img" style="width: 100%; min-width: 200px; max-width: 550px; max-height: auto;" alt="group_img"/>
+                        </t>
+                        <t t-if="context['equipment_type'] == 'pont'">
+                            <img src="/viseo_maintenance_equipement/static/img/pont.png" class="image pont_img" style="width: 100%; min-width: 200px; max-width: 550px; max-height: auto;" alt="pont_img"/>
+                        </t>
+                        <t t-if="context['equipment_type'] == 'tools'">
+                            <img src="/viseo_maintenance_equipement/static/img/bulle.jpg" class="image bulle_img" style="width: 100%; min-width: 200px; max-width: 550px; max-height: auto;" alt="bulle_img"/>
+                        </t>
+                    </t>
+                </xpath>
+        </template>
+
+    <template id="assets_backend_maintenance" name="maintenance assets" inherit_id="web.assets_backend">
+    <xpath expr="." position="inside">
+<!--        <link rel="stylesheet" type="text/css" href="/viseo_maintenance_equipement/static/src/css/style.css"/>-->
+
+        <script type="text/javascript" src="/viseo_maintenance_equipement/static/src/js/script.js"/>
+
+<!--        <script src="https://code.jquery.com/jquery-3.6.4.min.js"/>-->
+<!--        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"/>-->
+    </xpath>
+</template>
+
+</odoo>
