@@ -15,3 +15,4 @@ access_equipment_cost,equipment_cost,model_equipment_cost,base.group_user,1,1,1,
 access_type_services_equipment_contract,type_services_equipment_contract,model_type_services_equipment_contract,base.group_user,1,1,1,1
 access_product_for_tools_contracts,product_for_tools_contracts,model_product_for_tools_contracts,base.group_user,1,1,1,1
 access_tools_service_type,tools_service_type,model_tools_service_type,base.group_user,1,1,1,1
+access_prelevement_validation_bike,prelevement_validation_bike,model_prelevement_validation_bike,base.group_user,1,1,1,1

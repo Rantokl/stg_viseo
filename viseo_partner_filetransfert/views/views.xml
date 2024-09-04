@@ -1,0 +1,60 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+<!--
+    <record model="ir.ui.view" id="viseo_partner_filetransfert.list">
+      <field name="name">viseo_partner_filetransfert list</field>
+      <field name="model">viseo_partner_filetransfert.viseo_partner_filetransfert</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+-->
+
+    <!-- actions opening views on models -->
+<!--
+    <record model="ir.actions.act_window" id="viseo_partner_filetransfert.action_window">
+      <field name="name">viseo_partner_filetransfert window</field>
+      <field name="res_model">viseo_partner_filetransfert.viseo_partner_filetransfert</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+-->
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="viseo_partner_filetransfert.action_server">
+      <field name="name">viseo_partner_filetransfert server</field>
+      <field name="model_id" ref="model_viseo_partner_filetransfert_viseo_partner_filetransfert"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="viseo_partner_filetransfert" id="viseo_partner_filetransfert.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="viseo_partner_filetransfert.menu_1" parent="viseo_partner_filetransfert.menu_root"/>
+    <menuitem name="Menu 2" id="viseo_partner_filetransfert.menu_2" parent="viseo_partner_filetransfert.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="viseo_partner_filetransfert.menu_1_list" parent="viseo_partner_filetransfert.menu_1"
+              action="viseo_partner_filetransfert.action_window"/>
+    <menuitem name="Server to list" id="viseo_partner_filetransfert" parent="viseo_partner_filetransfert.menu_2"
+              action="viseo_partner_filetransfert.action_server"/>
+-->
+  </data>
+</odoo>

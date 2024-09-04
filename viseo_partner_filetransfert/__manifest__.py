@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "viseo_maintenance_equipement",
+    'name': "viseo_partner_filetransfert",
 
     'summary': """
         Short (1 phrase/line) summary of the module's purpose, used as
@@ -20,21 +20,13 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','mail','purchase','uom','viseo_sale','viseo_repair_order','viseo_repair'],
+    'depends': ['base'],
 
     # always loaded
     'data': [
-        'security/ir.model.access.csv',
-        'views/group.xml',
+        # 'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
-        'views/sequence.xml',
-        'views/expense.xml',
-        'views/prelevement.xml',
-        'wizard/invoice.xml',
-        'wizard/additive_need.xml',
-        'wizard/quotation_refuse.xml',
-        'views/contrat.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_viseo_partner_filetransfert_viseo_partner_filetransfert,viseo_partner_filetransfert.viseo_partner_filetransfert,model_viseo_partner_filetransfert_viseo_partner_filetransfert,base.group_user,1,1,1,1

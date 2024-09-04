@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+    <record id="additive_need_view_form" model="ir.ui.view">
+        <field name="name">additive.need.bt.view.form</field>
+        <field name="model">additive.need.bt</field>
+        <field name="arch" type="xml">
+            <form string="Besoin Additif B&amp;T">
+                <sheet>
+                    <group>
+
+                            <field name="diagnostic_lines" nolabel="1"  width="12%">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        <separator string=" " colspan="4"/>
+                            <field name="intended_product_ids" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="operation_done"/>
+                                    <field name="time_done"/>
+                                    <field name="time_done_unit"/>
+                                    <field name="product_id"/>
+                                    <field name="product_qty"/>
+                                    <field name="product_uom"/>
+                                    <field name="technician"/>
+                                </tree>
+                            </field>
+
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_add_need_bt" string="Valider" type="object" class="btn btn-sm btn-primary"/>
+                    <button special="cancel" string="ANNULER" class="btn btn-sm btn-danger"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</data>
+</odoo>

@@ -23,22 +23,23 @@ class EquipementBT(models.Model):
     _description = 'Equipement interne'
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
-    name= fields.Char()
-    model = fields.Many2one('model.equipment', string="Modèle")
-    owner_id = fields.Many2one('res.partner', string="Proprietaire")
-    date_start = fields.Date('Date mise en service')
-    cost_reported = fields.Float('Coût réportée(s)')
-    image = fields.Binary("Image", attachment=True)
-    emplacement= fields.Many2one('viseo.vehicle.location')
-    address = fields.Char('Adresse')
-    serial_number = fields.Char('Numéro de série')
-    year_model = fields.Char('Année du modèle')
-    partner_id = fields.Many2one('res.partner', string="Fournisseur")
-    expire_date = fields.Date("Date d'expiration de garantie", compute='_compute_date_waranty' )
-    meeting_count = fields.Integer()
-    contract_count = fields.Integer(compute='_compute_contrat')
+    name= fields.Char(required=True)
+    model = fields.Many2one('model.equipment', string="Modèle", tracking=True)
+    owner_id = fields.Many2one('res.partner', string="Proprietaire", tracking=True)
+    date_start = fields.Date('Date mise en service', tracking=True)
+    # cost_reported = fields.Float('Coût réportée(s)')
+    image = fields.Binary("Image", attachment=True, tracking=True)
+    # emplacement= fields.Many2one('viseo.vehicle.location')
+    address = fields.Char('Adresse', copy=False, tracking=True)
+    serial_number = fields.Char('Numéro de série', copy=False, tracking=True)
+    # year_model = fields.Char('Année du modèle')
+    # partner_id = fields.Many2one('res.partner', string="Fournisseur")
+    # expire_date = fields.Date("Date d'expiration de garantie", compute='_compute_date_waranty' )
+    expire_date = fields.Date("Date d'expiration de garantie", tracking=True)
+    # meeting_count = fields.Integer()
+    # contract_count = fields.Integer(compute='_compute_contrat')
     currency_id = fields.Many2one('res.currency', string="Devise", default=lambda self: self.env.company.currency_id)
-    fuel_logs_count= fields.Integer()
+    fuel_logs_count = fields.Integer()
     cost_total = fields.Monetary(compute="_compute_invoice")
     maintenance_count = fields.Integer(compute='_compute_maint')
     equipment_type = fields.Selection(string="Tyde d'equipement", selection=[
@@ -55,12 +56,12 @@ class EquipementBT(models.Model):
                 [('maintenance_id.tools_id', '=', self.id), ('state', '!=', 'cancel'), ('type', '=', 'out_invoice')])
             s.cost_total = sum([invoice.amount_total for invoice in invoices])
 
-    def _compute_date_waranty(self):
-        contract = self.env['equipment.log.contract'].sudo().search([('equipment_id','=',self.id)])
-        if contract:
-            self.expire_date = contract.expiration_date
-        else:
-            self.expire_date = None
+    # def _compute_date_waranty(self):
+    #     contract = self.env['equipment.log.contract'].sudo().search([('equipment_id','=',self.id)])
+    #     if contract:
+    #         self.expire_date = contract.expiration_date
+    #     else:
+    #         self.expire_date = None
 
 
     #Compute total des maintenances
@@ -330,6 +331,7 @@ class MaintenanceBT(models.Model):
 
     product_lines = fields.One2many('maintenance.picking.product.line', 'maintenance_id', string="Livraison pièces", readonly=True)
     is_additive_quotation = fields.Boolean(string="need_additive_quotation")
+    user_is_quotation_created = fields.Many2one('res.users', string='Devis crée par')
     is_outside_control_done = fields.Boolean(default=False, copy=False, string='Contrôle visuel terminé')
     user_outside_controle = fields.Many2one('res.users', string='Controle extérieur par')
     time_user_outside_controle = fields.Datetime()
@@ -597,11 +599,13 @@ class MaintenanceBT(models.Model):
 
     def action_open_sale(self):
         action = self.env.ref('sale.action_quotations_with_onboarding').read()[0]
-
-        domain = [
-                  ('maintenance_id', '=', self.id)]  # ('partner_id', '=', self.customer_id.id),
+        print("***************************************"*3)
+        print(self.env.ref('sale.action_quotations_with_onboarding').read()[0])
+        print("========================================="*3)
+        print(action)
+        domain = [('maintenance_id', '=', self.id)]  # ('partner_id', '=', self.customer_id.id),
         order = self.env['sale.order'].search(domain)
-
+        
         if len(order) > 1 or len(order) == 0:
             action['domain'] = domain
         elif order:
@@ -684,10 +688,11 @@ class MaintenanceBT(models.Model):
                            "</div>")%(message))
         self.message_post(body = body_message, subject = u"Ordre de réparation", partner_ids = to_notify.partner_id.ids)
 
-
     hide_ref = fields.Boolean('Afficher les références', default=False)
     display_discount = fields.Boolean('Afficher remise', default=False)
     time_user_quotation_created = fields.Datetime()
+
+
     def _get_dict_value(self, product, order_line, requests, fournisseur, repair_id, user_id=None):
         company = self.env.company.id
         team = self.env['crm.team'].search([('company_id', '=', company)]). \
@@ -823,6 +828,16 @@ class MaintenanceBT(models.Model):
             }
             order_line.create(vals)
 
+    def action_additive_need(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'additive.need.bt',
+            'view_mode': 'form',
+            'context': {'default_maintenance_id': self.id},
+            'views': [(False, 'form')],
+            'target': 'new',
+            'name': 'Besoin additif B&amp;T'
+        }
 
     def get_view_context(self):
         self.ensure_one()
@@ -847,6 +862,9 @@ class Diagnostic(models.Model):
 
     name = fields.Char()
     maintenance_id = fields.Many2one('maintenance.bike.tools', string="Ref maintenance")
+    display_type = fields.Selection([
+        ('line_section', "Section"),
+        ('line_note', "Note")], default=False, help="Technical field.")
 
 class ServiceWorkType(models.Model):
     _name = 'maintenance.service.work'
@@ -868,6 +886,9 @@ class MaintenanceProductList(models.Model):
         ('line_note', "Note")], default=False, help="Technical field.")
     operation_done = fields.Char(string="Opérations effectuées")
     time_done = fields.Float(string="Temps passé")
+    time_done_unit = fields.Selection(string="Unité de temps",
+                                selection=[('day', 'jours'), ('hour', 'heure'), ('minut', 'minute')],
+                                default='day')
     technician = fields.Many2many('hr.employee', string='Intervenants', copy=False)
 
 
@@ -1031,14 +1052,15 @@ class MaintenanceSaleOrder(models.Model):
 
 
 
-    def _action_confirm(self):
-        res = super(MaintenanceSaleOrder, self)._action_confirm()
-        # Ajouter le rma sur le transfert
-        if self.maintenance_id:
-            for picking in self.picking_ids:
-                if picking.state not in ('done', 'cancel', 'split', 'partially_available'):
-                    picking.sudo().write({'maintenance_id': self.maintenance_id.id})
-        return res
+    # def _action_confirm(self):
+    #     res = super(MaintenanceSaleOrder, self)._action_confirm()
+    #     # Ajouter le rma sur le transfert
+    #     # if self.maintenance_id:
+    #     #     for picking in self.picking_ids:
+    #     #         if picking.state not in ('done', 'cancel', 'split', 'partially_available'):
+    #     #             picking.sudo().write({'maintenance_id': self.maintenance_id.id})
+    #     raise UserError("---------------------------------------------------")
+    #     return res
 
     def action_confirm(self):
 
@@ -1048,9 +1070,7 @@ class MaintenanceSaleOrder(models.Model):
             for picking in self.picking_ids:
                 if picking.state not in ('done', 'cancel', 'split', 'partially_available'):
                     picking.sudo().write({'maintenance_id': self.maintenance_id.id})
-
-        # Ajouter le rma sur le transfert
-
+        # Ajouter le maintenance sur le transfert
         return res
 
 class AccountMoveInheritMaintenance(models.Model):
@@ -1241,6 +1261,7 @@ class StockRuleMaintenance(models.Model):
         else:
             location = src_location.id
             # if sale_id.from_mrp_operation:
+            # raise UserError(dest_loc)
             location_id = dest_loc
             rule_id = rules.id
             picking_type_id = rules.picking_type_id.id
@@ -1280,10 +1301,10 @@ class InvoiceChoiceMaintenance(models.TransientModel):
             invoices = self.env['account.move']
             for sale in sale_orders:
                 invoices |= sale._create_invoices(grouped=True, final=True)
-            self.repair_id.write({'is_invoiced': True,
+            self.maintenance_id.write({'is_invoiced': True,
                                    'user_invoiced': self.env.user.id,
                                   'time_user_invoiced': datetime.today(),
-                                  'state_ro': 'invoice'})
+                                  'state': 'invoice'})
 
             for inv in invoices:
                 inv.write({'account_department_id': account_department_id.id, 'maintenance_id' : self.maintenance_id.id})
