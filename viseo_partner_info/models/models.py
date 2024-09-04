@@ -7,31 +7,31 @@ import io
 class PartnerInformationDocument(models.Model):
     _inherit = 'res.partner'
 
-    cin_document_partner = fields.Binary(string='Document CIN', attachment=True)
+    cin_document_partner = fields.Binary(string='Document CIN', attachment=True, tracking=True)
     cin_document_partner_filename = fields.Char(string='Nom du document CIN')
 
-    rib_document_partner = fields.Binary(string='Document RIB', attachment=True)
-    rib_document_partner_filename = fields.Char(string='Nom du document RIB')
+    # rib_document_partner = fields.Binary(string='Document RIB', attachment=True)
+    # rib_document_partner_filename = fields.Char(string='Nom du document RIB')
 
-    cr_document_partner = fields.Binary(string='Certificat de Résidence', attachment=True)
+    cr_document_partner = fields.Binary(string='Certificat de Résidence', attachment=True, tracking=True)
     cr_document_partner_filename = fields.Char(string='Nom du document CR')
 
     cif_document_partner = fields.Binary(string='Document CIF', attachment=True)
     cif_document_partner_filename = fields.Char(string='Nom du document CIF')
-    cif_expiration_date = fields.Date(string="CIF Expire le")
-    cif_declaration_date = fields.Date(string="CIF Du")
+    cif_expiration_date = fields.Date(string="CIF Expire le", tracking=True)
+    cif_declaration_date = fields.Date(string="CIF Du", tracking=True)
     required_cif=fields.Boolean(default=False, compute='compute_required_cif')
 
-    nif_document_partner = fields.Binary(string='Document NIF', attachment=True)
+    nif_document_partner = fields.Binary(string='Document NIF', attachment=True, tracking=True)
     nif_document_partner_filename = fields.Char(string='Nom du document NIF')
 
-    rcs_document_partner = fields.Binary(string='Document RCS', attachment=True)
+    rcs_document_partner = fields.Binary(string='Document RCS', attachment=True, tracking=True)
     rcs_document_partner_filename = fields.Char(string='Nom du document RCS')
-    rcs_expiration_date = fields.Date(string="RCS Expire le")
-    rcs_declaration_date = fields.Date(string="RCS Du")
+    rcs_expiration_date = fields.Date(string="RCS Expire le", tracking=True)
+    rcs_declaration_date = fields.Date(string="RCS Du", tracking=True)
     required_rcs=fields.Boolean(default=False, compute='compute_required_rcs')
 
-    stat_document_partner = fields.Binary(string='Document STAT', attachment=True)
+    stat_document_partner = fields.Binary(string='Document STAT', attachment=True, tracking=True)
     stat_document_partner_filename = fields.Char(string='Nom du document STAT')
 
     # cin_document_partner_represent = fields.Binary(string='CIN Représentant ', attachment=True)
@@ -51,6 +51,11 @@ class PartnerInformationDocument(models.Model):
         comodel_name='rib.represent', 
         inverse_name='partner_id', 
         string='RIB du représentant'
+    )
+    rib_document = fields.One2many(
+        comodel_name='rib.document',
+        inverse_name='partner_id',
+        string='Document RIB'
     )
     cr_document_partner_filename_represent = fields.Char(string='Nom du document RIB Représentant')
 
@@ -421,7 +426,7 @@ class PartnerCreationInDevis(models.Model):
                         self.cr_file_empty_raise_error()
                 # ============================  RIB  =============================
                 if rule_person.create_config_rib_partner:
-                    if not self.partner_id.rib_document_partner:
+                    if not self.partner_id.rib_document:
                         self.rib_file_empty_raise_error()
                 # ================================================================
                 if rule_person.create_config_cif_partner:
@@ -446,7 +451,7 @@ class PartnerCreationInDevis(models.Model):
                         self.cr_file_empty_raise_error()
                 # ============================  RIB  ===================================
                 if company_rule.create_config_rib_partner:
-                    if not self.partner_id.rib_document_partner:
+                    if not self.partner_id.rib_document:
                         self.rib_file_empty_raise_error()
                 # ======================================================================
                 if company_rule.create_config_cif_partner:

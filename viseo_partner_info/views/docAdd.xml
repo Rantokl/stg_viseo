@@ -5,58 +5,73 @@
         <field name="model">add_doc_partner.wizard</field>
         <field name="arch" type="xml">
             <form>
-                <group>
+                <group rowspan="0" colspan="0">
                     <group>
                         <field name="rcs_document_partner" attrs="{'invisible': [('company_type','=','person')], 'readonly': False}"/>
                         <field name="rcs_declaration_date" attrs="{'invisible': [('company_type','=','person')],'readonly': False}"/>
                         <field name="rcs_expiration_date" attrs="{'invisible': [('company_type','=','person')],'readonly': False}"/>
                         <field name="cin_document_partner" attrs="{'invisible': [('company_type','=', 'company')]}"  widget="nt_binary_preview" force_save="1"/>
                         <field name="cr_document_partner" attrs="{'invisible': [('company_type','=', 'company')]}"/>
-                        <field name="company_type" invisible="1"/>                        
+                        <field name="company_type" invisible="1"/>
+                        <field name="stat_document_partner" attrs="{'invisible': [('company_type','=', 'person')]}"/>
+                        <field name="nif_document_partner" attrs="{'invisible': [('company_type','=', 'person')]}"/>
                     </group>
                 
                     <group>
                         <field name="cif_document_partner" attrs="{'invisible': [('company_type', '=', 'person')],'readonly': False}"/>
                         <field name="cif_declaration_date" attrs="{'invisible': [('company_type','=','person')],'readonly': False}"/>
                         <field name="cif_expiration_date" attrs="{'invisible': [('company_type','=','person')],'readonly': False}"/>
+                        <field name="hide_button_delete" invisible="1"/>
+                        <field name="rib_document" nolabel="1">
+                                <tree editable="bottom" delete="false">
+                                    <field name="wizard_id" invisible="1"/>
+                                    <field name="rib_document" widget="binary"/>
+                                </tree>
+                            </field>
                     </group>
-                    <group>
-                        <field name="stat_document_partner" attrs="{'invisible': [('company_type','=', 'person')]}"/>
-                        <field name="rib_document_partner" />
-                        <field name="nif_document_partner" attrs="{'invisible': [('company_type','=', 'person')]}"/>
+
                     </group>
-                    <group style="width: 50% !important">
-                            <field name="cr_represent" nolabel="1" attrs="{'invisible': [('company_type','=', 'person')]}">
-                            <tree editable="bottom">
-                                <field name="partner_id" invisible="1"/>
-                                <field name="cr_represent"/>
-                            </tree>
-                        </field>
-                    </group>
-                    <group style="width: 50% !important">
-                            <field name="cin_represent" nolabel="1" attrs="{'invisible': [('company_type','=', 'person')]}">
-                            <tree editable="bottom">
-                                <field name="partner_id" invisible="1"/>
-                                <field name="cin_represent"/>
-                            </tree>
-                        </field>
-                    </group>
-                    <group style="width: 50% !important">
-                            <field name="rib_represent" nolabel="1" attrs="{'invisible': [('company_type','=', 'person')]}">
-                            <tree editable="bottom">
-                                <field name="partner_id" invisible="1"/>
-                                <field name="rib_represent"/>
-                            </tree>
-                        </field>
-                    </group>
-            <footer>
-                <button string="Annuler" special="cancel"/>
-                <button string="Sauvegarder"
-                        type="object" 
-                        name="_add_doc_partner" 
-                        class="oe_highlight"/>
-            </footer>
-                </group>
+
+                    <separator rowspan="0" colspan="0" string="Document représentant" style="font-size:12pt;font-weight: bold" attrs="{'invisible': [('company_type', '=', 'person')]}"/>
+                        <div class="row">
+                                        <div class="col-4">
+
+                                                <field name="cr_represent" nolabel="1" attrs="{'invisible': [('company_type','=', 'person')]}">
+                                                    <tree editable="bottom" delete="false">
+                                                        <field name="wizard_id" invisible="1"/>
+                                                        <field name="cr_represent" widget="binary"/>
+                                                    </tree>
+                                                </field>
+
+                                        </div>
+                                        <div class="col-4">
+
+                                                 <field name="cin_represent" nolabel="1" attrs="{'invisible': [('company_type','=', 'person')]}">
+                                                    <tree editable="bottom" delete="false">
+                                                        <field name="wizard_id" invisible="1"/>
+                                                        <field name="cin_represent" widget="binary"/>
+                                                    </tree>
+                                                </field>
+
+                                        </div>
+                                    <div class="col-4">
+                                            <div>
+                                                 <field name="rib_represent" nolabel="1" attrs="{'invisible': [('company_type','=', 'person')]}">
+                                                    <tree editable="bottom" delete="false">
+                                                        <field name="wizard_id" invisible="1"/>
+                                                        <field name="rib_represent" widget="binary"/>
+                                                    </tree>
+                                                </field>
+                                            </div>
+                                        </div>
+                        </div>
+                    <footer>
+                        <button string="Annuler" special="cancel"/>
+                        <button string="Sauvegarder"
+                                type="object"
+                                name="add_doc_partner"
+                                class="oe_highlight"/>
+                    </footer>
             </form>  
         </field>
     </record>
